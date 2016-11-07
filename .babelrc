@@ -1,0 +1,38 @@
+{
+	"plugins": [
+		"babel-plugin-transform-koaton-es6-modules",
+		"babel-plugin-transform-koa2-async-to-generator",
+		"istanbul"
+	],
+	"ignore": [
+		"core/",
+		"docs/",
+		"lib/",
+		"node_modules/",
+		"src/core/",
+		"templates/",
+		"testcoverage/",
+		"testingapp/",
+		"coverage/"
+	],
+	"env": {
+		"koaton": {
+			"plugins": [
+				"babel-plugin-transform-koaton-es6-modules",
+				"babel-plugin-transform-koa2-async-to-generator",
+				"istanbul"
+			],
+			"ignore": [
+				"core/",
+				"docs/",
+				"lib/",
+				"node_modules/",
+				"src/core/",
+				"templates/",
+				"testcoverage/",
+				"testingapp/",
+				"coverage/"
+			]
+		}
+	}
+}

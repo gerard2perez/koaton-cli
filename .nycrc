@@ -1,0 +1,33 @@
+{
+	"cwd":"casa",
+	"lines":50,
+	"include":[
+		"**"
+	],
+	"exclude":[
+		"core/",
+		"docs/",
+		"lib/",
+		"node_modules/",
+		"src/commands/barebone",
+		"templates/",
+		"testcoverage/",
+		"testingapp/",
+		"coverage/"
+	],
+	"sourceMap": false,
+	"instrument": false,
+	"require": [
+		"babel-register"
+	],
+	"all": true,
+	"extension": [
+      ".js"
+    ],
+	"check-coverage": true,
+	"reporter": [
+		"text",
+		"html"
+	],
+	"report-dir": "./testcoverage"
+}

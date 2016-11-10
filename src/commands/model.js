@@ -58,10 +58,10 @@ export default (new command(__filename, description))
 			override = await utils.challenge(ProyPath("models", `${modelname.toLowerCase()}.js`), `The model ${modelname.green} already exits,do you want to override it?`, options.force);
 
 		if (override) {
-			await utils.write(ProyPath("models", modelname + ".js"), model.toCaminte());
+			utils.writeSync(ProyPath("models", modelname + ".js"), model.toCaminte());
 			if (options.rest) {
 				var restcontroller = `"use strict";\nmodule.exports = {\n\tREST:true\n};`;
-				await utils.write(ProyPath("controllers", `${modelname.toLowerCase()}.js`), restcontroller);
+				utils.writeSync(ProyPath("controllers", `${modelname.toLowerCase()}.js`), restcontroller);
 			}
 		}
 		if (override && options.ember) {
@@ -69,10 +69,10 @@ export default (new command(__filename, description))
 				console.log(`The app ${options.ember} does not exists.`.red);
 				return 1;
 			}
-			await utils.write(ProyPath("ember", options.ember, "app", "models", modelname + ".js"), model.toEmberModel());
+			utils.writeSync(ProyPath("ember", options.ember, "app", "models", modelname + ".js"), model.toEmberModel());
 			if (options.rest) {
-				await utils.write(ProyPath("ember", options.ember, "app", "controllers", `${modelname}.js`), model.toCRUDTable());
-				await utils.write(
+				utils.writeSync(ProyPath("ember", options.ember, "app", "controllers", `${modelname}.js`), model.toCRUDTable());
+				utils.writeSync(
 					ProyPath("ember", options.ember, "app", "templates", `${modelname}.hbs`),
 					`{{crud-table\n\tfields=this.fieldDefinition\n}}`
 				);
@@ -81,7 +81,7 @@ export default (new command(__filename, description))
 				});
 				if (router.indexOf(`this.route('${modelname}')`) === -1) {
 					router = router.replace(/Router.map\(.*?function\(.*?\).*?{/igm, `Router.map(function() {\n\tthis.route('${modelname}');\n`);
-					await utils.write(ProyPath("ember", options.ember, "app", "router.js"), router, 1);
+					utils.writeSync(ProyPath("ember", options.ember, "app", "router.js"), router, 1);
 				}
 			}
 		}

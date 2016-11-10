@@ -62,6 +62,7 @@ tests.push(new TestNode('(no args)', [undefined, {}], true))
 			fs.accessSync(ProyPath("public", "js", "admin.js.map")) === undefined;
 	})
 	.Expect('Builds Ember Apps', true, () => {
+
 		for (const app of scfg.emberApps) {
 			fs.accessSync(ProyPath("public", app.directory));
 			fs.accessSync(ProyPath("public", app.directory, "assets"));
@@ -92,7 +93,9 @@ tests.push(new TestNode('(no args)', [undefined, {}], true))
 		return true;
 	});
 
-
+tests.last.CleanUp(() => {
+	process.chdir('..')
+});
 export {
 	tests as config,
 	cmdname as testname

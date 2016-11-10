@@ -1,6 +1,6 @@
 {
-	"cwd":"casa",
-	"lines":50,
+	"lines":90,
+	"functions":100,
 	"include":[
 		"**"
 	],
@@ -17,17 +17,14 @@
 	],
 	"sourceMap": false,
 	"instrument": false,
-	"require": [
-		"babel-register"
-	],
 	"all": true,
 	"extension": [
       ".js"
     ],
 	"check-coverage": true,
 	"reporter": [
-		"text",
-		"html"
+		"lcov",
+		"text"
 	],
 	"report-dir": "./testcoverage"
 }

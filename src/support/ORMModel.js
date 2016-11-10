@@ -144,7 +144,7 @@ export default Model.extend({
 		this._relations.forEach((relation) => {
 			Object.keys(relation).forEach((property) => {
 				let opts = relation[property];
-				let rel = `${property}:{Type:"${type}",Display:"${opts[3]}",Source:"_${property}"}`;
+				let rel = `${property}:{Type:"${opts[0]}",Display:"${opts[3]}",Source:"_${property}"}`;
 				if (definition.join(",").indexOf(rel) === -1) {
 					definition.push(rel);
 					actions.push(`_${property}(deferred){this.store.findAll('${opts[1]}').then(deferred.resolve,deferred.reject);}`)

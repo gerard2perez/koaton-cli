@@ -12,7 +12,9 @@ tests.push(new TestNode('(no args)', [undefined, {}], true))
 		// global.scfg = new ServerConfiguaration();
 	});
 
-
+	tests.last.CleanUp(() => {
+		process.chdir('..')
+	});
 export {
 	tests as config,
 	cmdname as testname

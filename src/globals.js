@@ -2,7 +2,16 @@ import * as os from 'os';
 import * as rawpath from 'path';
 import * as path from 'upath';
 import * as fs from 'graceful-fs';
+import utils from './utils';
 
+process.env.isproyect = utils.canAccess('public') &&
+	utils.canAccess('app.js') &&
+	utils.canAccess('bower.json') &&
+	utils.canAccess('package.json') &&
+	utils.canAccess('routes') &&
+	utils.canAccess('config');
+
+global.skipshell = false;
 global.__ok = os.platform() === "win32" ? '√' : '✓';
 global.__nok = os.platform() === "win32" ? 'X' : '✗';
 
@@ -41,7 +50,6 @@ if (global.scfg === undefined) {
 	global.Events = function Events(path, event, phase, forcedir) {
 		let Path = ProyPath(path);
 		let m = requireNoCache(ProyPath(path, `${event}_${phase}`), "null");
-		console.log(typeof m);
 		switch (typeof m) {
 			case "undefined":
 			case undefined:
@@ -53,6 +61,7 @@ if (global.scfg === undefined) {
 				}
 			case 'function':
 				return async function eventfn() {
+					/*eslint no-prototype-builtins:0*/
 					try {
 						if (m.prototype === undefined || m.prototype.hasOwnProperty("constructor")) {
 							m(forcedir || Path);

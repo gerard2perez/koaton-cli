@@ -58,6 +58,6 @@ export default (new command(__filename, "mode can be major, minor, patch"))
 		}
 		let final = `${version.major}.${version.minor}.${version.patch}` + (channel ? `-${channel}.${subversion}` : '');
 		packageJSON.version = final;
-		await utils.write("package.json", JSON.stringify(packageJSON, null, 2), -1);
+		utils.writeSync("package.json", JSON.stringify(packageJSON, null, 2), -1);
 		return 0;
 	});

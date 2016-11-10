@@ -8,43 +8,18 @@ import utils from '../utils';
 import command from '../command';
 
 const ncp = Promise.promisify(_ncp.ncp);
-
-export default (new command(__filename, "Run the needed commands to"))
-.Action(async function() {
-	await Events("events", "pre", "modulify");
-	utils.rmdir(Dest());
-	await utils.shell("Building for production".green, ["koaton", "build", "-p"]);
-	utils.mkdir(Dest("controllers"));
-	utils.mkdir(Dest("events"));
-	utils.mkdir(Dest("views"));
-	utils.mkdir(Dest("routes"));
-	utils.mkdir(Dest("config"));
-	utils.mkdir(Dest("commands"));
-	utils.Copy(ProyPath("config", "ember.js"), Dest("config", "ember.js"))
-	await ncp(ProyPath('public'), Dest("public"));
-	await copyall("commands");
-	await copyall("controllers");
-	await copyall("events");
-	await copytemplates("views");
-	await copyall("routes");
-
-	Object.keys(require(ProyPath("config", "ember"))).forEach((ember_app) => {
-		utils.rmdir(Dest("public", ember_app, "index.html"));
-		utils.rmdir(Dest("public", ember_app, "crossdomain.xml"));
-		utils.rmdir(Dest("public", ember_app, "robots.txt"));
-	});
-
-	utils.rmdir(Dest("events", "pre_modulify.js"));
-	utils.rmdir(Dest("events", "post_modulify.js"));
-	utils.writeSync(Dest("events", "pre_serve.js"), preServe);
-
-	try {
-		await Events("events", "post", "modulify", Dest());
-	} catch (e) {
-		console.log(e.stack);
+const UpdateModulesAssetsLinks = function UpdateModulesAssetsLinks(hbs, ext, regex) {
+	let found,
+		res = hbs;
+	while ((found = regex.exec(hbs)) !== null) {
+		let target = scfg.bundles[`${found[1]}.${ext}`];
+		if (target !== undefined) {
+			let htmltag = ext === "css" ? `<link rel="stylesheet" href="/${path.join(scfg.name,target)}"/>` : `<script src="/${path.join(scfg.name,target)}"></script>`
+			res = res.replace(found[0], htmltag);
+		}
 	}
-});
-
+	return res;
+}
 const copytemplates = async function copytemplates(folder) {
 
 	const files = glob.sync(ProyPath(folder, "**", "*.?(js|handlebars)"));
@@ -56,19 +31,8 @@ const copytemplates = async function copytemplates(folder) {
 		let regex_css = /\{\{\{bundle "([^ "]*).css"\}\}\}/igm;
 		let regex_js = /\{\{\{bundle "([^ "]*).js"\}\}\}/igm;
 		let hbs = fs.readFileSync(file, 'utf-8');
-		let found;
-		while ((found = regex_css.exec(hbs)) !== null) {
-			let target = scfg.bundles[`${found[1]}.css`];
-			if (target !== undefined) {
-				hbs = hbs.replace(found[0], `<link rel="stylesheet" href="/${path.join("koaton_toolkit",target)}"/>`);
-			}
-		}
-		while ((found = regex_js.exec(hbs)) !== null) {
-			let target = scfg.bundles[`${found[1]}.js`];
-			if (target !== undefined) {
-				hbs = hbs.replace(found[0], `<script src="/${path.join("koaton_toolkit",target)}"></script>`);
-			}
-		}
+		hbs = UpdateModulesAssetsLinks(hbs, 'css', regex_css);
+		hbs = UpdateModulesAssetsLinks(hbs, 'js', regex_js);
 		fs.writeFileSync(Dest(location, filename), hbs);
 	}
 }
@@ -86,10 +50,38 @@ const copyall = function copyall(folder) {
 const preServe = `
 `;
 const Dest = function Dest(...args) {
-	//args.splice(0, 0, "modulifyoutput");
-	args.splice(0, 0, "koaton_toolkit");
-	args.splice(0, 0, "koaton_modules");
-	args.splice(0, 0, "myclinic");
-	args.splice(0, 0, "..");
+	args.splice(0, 0, scfg.name);
+	args.splice(0, 0, "koaton_module_package");
 	return ProyPath.apply(this, args);
 }
+export default (new command(__filename, "Run the needed commands to"))
+.Action(async function() {
+	await Events("events", "pre", "modulify");
+	utils.rmdir(Dest());
+	utils.mkdir(Dest("controllers"));
+	utils.mkdir(Dest("events"));
+	utils.mkdir(Dest("views"));
+	utils.mkdir(Dest("routes"));
+	utils.mkdir(Dest("config"));
+	utils.mkdir(Dest("commands"));
+	await utils.shell("Building for production".green, ["koaton", "build", "-p"]);
+	utils.Copy(ProyPath("config", "ember.js"), Dest("config", "ember.js"));
+	await ncp(ProyPath('public'), Dest("public"));
+	await copyall("commands");
+	await copyall("controllers");
+	await copyall("events");
+	await copytemplates("views");
+	await copyall("routes");
+
+	Object.keys(require(ProyPath("config", "ember"))).forEach((ember_app) => {
+		utils.rmdir(Dest("public", ember_app, "index.html"));
+		utils.rmdir(Dest("public", ember_app, "crossdomain.xml"));
+		utils.rmdir(Dest("public", ember_app, "robots.txt"));
+	});
+
+	utils.rmdir(Dest("events", "pre_modulify.js"));
+	utils.rmdir(Dest("events", "post_modulify.js"));
+	utils.writeSync(Dest("events", "pre_serve.js"), preServe);
+
+	await Events("events", "post", "modulify", Dest());
+});

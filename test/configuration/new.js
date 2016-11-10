@@ -75,10 +75,10 @@ tests.push(new TestNode('koaton new', ['testingapp', {
 		// skipNpm: true,
 		// skipBower: true
 	}], true,true))
-	.Expect('npm dependencies installed.',true,(_,project)=>{
+	.Expect('npm dependencies installed.',true,(_)=>{
 		return accessSync(path.join(targetdir,'node_modules'));
 	})
-	.Expect('bower dependencies installed.',true,(_,project)=>{
+	.Expect('bower dependencies installed.',true,(_)=>{
 		// return accessSync(path.join(targetdir,'bower_components'));
 		return true; //TODO: Project does not currently have bower dependencies
 	})

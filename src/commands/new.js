@@ -8,12 +8,23 @@ import {
 import welcome from '../welcome';
 import utils from '../utils';
 import command from '../command';
+import secret from '../secret';
 
 
 const keys = Object.keys;
 let proypath = "";
 let application = "";
 let Project;
+
+const makeLink=function makeLink(module){
+	try {
+		fs.symlinkSync(path.join(__dirname, `/../../../${module}`), ProyPath("/node_modules",module));
+		console.log("Linked:"+module+": done".green);
+	} catch (e) {
+		console.log("Linked:"+module+": already exists".green);
+	}
+}
+
 const setupInit = async function setupInit() {
 	await utils.mkdir(Project());
 	await utils.mkdir(Project("ember"));
@@ -21,8 +32,6 @@ const setupInit = async function setupInit() {
 	await utils.copy(TemplatePath("./.gitignore"), Project('./.gitignore'));
 }
 const setupConfig = async function setupConfig(app) {
-	const secret = require('../secret');
-
 	await utils.mkdir(Project("config"));
 	utils.render(TemplatePath('config/models.js'), Project('config/models.js'));
 	utils.render(TemplatePath('config/views.js'), Project('config/views.js'));
@@ -49,13 +58,8 @@ const setupAssets = async function setupAssets() {
 }
 const setupOthers = async function setupOthers() {
 	await utils.mkdir(Project("node_modules"));
-	try {
-		utils.log(`   ${"Linking".cyan}: global koaton`);
-		fs.symlinkSync(path.join(__dirname, "/../../../koaton"), Project("/node_modules/koaton"));
-		console.log(": done".green);
-	} catch (e) {
-		console.log(": already exists".green);
-	}
+	makeLink('koaton');
+	makeLink('koaton-cli');
 	await utils.mkdir(Project("routes"));
 	await utils.copy(TemplatePath("/routes/index.js"), Project("/routes/index.js"));
 	await utils.mkdir(Project("controllers"));
@@ -74,10 +78,14 @@ const setupOthers = async function setupOthers() {
 const setupDependencies = async function setupDependencies(options, db, eg) {
 	const shell = utils.shell;
 	let pk = requireNoCache(TemplatePath('/package.json'));
-	pk.dependencies["koaton-core"] = 'latest';
 	pk.name = application;
+	pk.dependencies[eg] = "x.x.x";
+	if (eg === "handlebars") {
+		pk.dependencies["handlebars-layouts"] = "x.x.x";
+	}
+	pk.dependencies[db.package] = "x.x.x";
+	utils.writeSync(Project("package.json"), JSON.stringify(pk, null, '\t'), null);
 	if (!options.skipNpm) {
-		await utils.write(Project("package.json"), JSON.stringify(pk, null, '\t'), null);
 		welcome.line1(true);
 		await shell("Installing npm dependencies", ["npm", "install", "--loglevel", "info"], proypath);
 		await shell("Installing adapter " + db.package.green, ["npm", "install", db.package, "--save", "--loglevel", "info"], application);
@@ -85,42 +93,35 @@ const setupDependencies = async function setupDependencies(options, db, eg) {
 		if (eg === "handlebars") {
 			await shell("Installing engine " + "handlebars-layouts".green, ["npm", "install", "handlebars-layouts", "--save", "--loglevel", "info"], proypath);
 		}
-	} else {
-		pk.dependencies[eg] = "x.x.x";
-		if (eg === "handlebars") {
-			pk.dependencies["handlebars-layouts"] = "x.x.x";
-		}
-		pk.dependencies[db.package] = "x.x.x";
-		await utils.write(Project("package.json"), JSON.stringify(pk, null, '\t'), null);
 	}
 	if (!options.skipBower) {
 		await shell("Installing bower dependencies", ["bower", "install"], proypath);
 	}
+	pk = requireNoCache(Project('package.json'));
+	pk.dependencies.koaton = 'x.x.x';
+	pk.dependencies["koaton-cli"] = 'x.x.x';
+	utils.writeSync(Project("package.json"), JSON.stringify(pk, null, '\t'), null);
 }
-
+const ArrayToDescription = function ArrayToDescription(array) {
+	return "A value from [ ".yellow +
+		keys(array).map(function(tx) {
+			if (tx.indexOf("is") === 0) {
+				return null;
+			} else {
+				return tx.cyan;
+			}
+		}).join(" | ".yellow) + " ]".yellow
+}
 export default (new command(__filename, 'Creates a new koaton aplication.'))
 .Args("app_name")
 	.Options([
 		[
 			"-d", "--db <driver>",
-			"A value from [ ".yellow +
-			keys(adapters).map(function(tx) {
-				if (tx.indexOf("is") === 0) {
-					return null;
-				} else {
-					return tx.cyan;
-				}
-			}).join(" | ".yellow) + " ]".yellow
+			ArrayToDescription(adapters)
 		],
 		[
 			"-e", "--view-engine <engine>",
-			"A value from [ ".yellow + keys(engines).map(function(tx) {
-				if (tx.indexOf("is") === 0) {
-					return null;
-				} else {
-					return tx.cyan;
-				}
-			}).join(" | ".yellow) + " ]".yellow
+			ArrayToDescription(engines)
 		],
 		["-f", "--force", "Overrides the existing directory."],
 		["-n", "--skip-npm", "Omits npm install"],
@@ -155,5 +156,6 @@ export default (new command(__filename, 'Creates a new koaton aplication.'))
 			welcome.line3("or");
 			console.log('     $' + 'cd %s && koaton serve \n'.bgWhite.black, application);
 		}
+		console.log(!ok);
 		return !ok;
 	});

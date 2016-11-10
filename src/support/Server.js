@@ -51,15 +51,15 @@ export default class ServerConfiguaration {
 		});
 		Object.defineProperty(this, '_emberapps', {
 			enumerable: false,
-			value: {}
+			value: require(ProyPath('config', 'ember')) || {}
 		});
+		makeObjIterable(this._emberapps);
 		Object.defineProperty(this, 'localserver', {
 			enumerable: false,
 			value: require(ProyPath("config", "server"))
 		});
 		this.commands = new CommandLog(this.localkoaton, 'commands', this.UpdateKoaton.bind(this))
 		this.bundles = new MutableArray(BundleItem, this.localkoaton, 'bundles', this.UpdateKoaton.bind(this));
-
 		// this.emberApps = new MutableArray(EmberAppItem, this, '_emberapps', this.UpdateModule.bind(this, ProyPath("config", "ember.js")));
 		// for (const app in embercfg) {
 		// 	this.emberApps.add(app, embercfg[app]);
@@ -98,6 +98,9 @@ export default class ServerConfiguaration {
 		Object.freeze(this.database);
 		Object.freeze(this.commands);
 	}
+	get name(){
+		return this.package.name;
+	}
 	get dev() {
 		return this.env === "development";
 	}
@@ -123,5 +126,8 @@ export default class ServerConfiguaration {
 	}
 	get relations_mode() {
 		return this.localserver.relation_mode === 'ids';
+	}
+	get emberApps(){
+		return this._emberapps;
 	}
 }

@@ -29,15 +29,11 @@ tests.push(new TestNode('(no args)', [undefined, {}], true))
 tests.push(new TestNode(cmdname, ["user", {
 		generate: true
 	}], true, true))
-	.SetUp(() => {
-		process.chdir('testingapp');
-		process.env.isproyect = 'true';
-		global.scfg = new ServerConfiguaration();
-		scfg.env = 'development';
-		fs.removeSync(path.join(process.cwd(), "seeds", "user.js"));
-	})
 	.Expect('Creates a seed file', true, () => {
-		return lfs.accessSync(ProyPath("seeeds","user.js")) === undefined;
+		return fs.accessSync(ProyPath("seeds","user.js")) === undefined;
+	});
+	tests.last.CleanUp(() => {
+		process.chdir('..')
 	});
 
 export {

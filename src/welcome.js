@@ -22,14 +22,15 @@ const center = function center(text) {
 }
 const line1 = function(dodim) {
 	let p = linesize - 6;
-	process.stdout.write("===".grey);
+	let line = "===".grey;
 	let fill = "";
 	while (p > 0) {
 		fill += "-";
 		p--;
 	}
-	process.stdout.write(dodim ? fill.dim : fill);
-	process.stdout.write("===\n".grey);
+	line += dodim ? fill.dim : fill;
+	line += "===\n".grey;
+	console.log(line);
 }
 const line2 = function() {
 	let p = Math.floor((linesize - 3 - 3 - 3) / 2);

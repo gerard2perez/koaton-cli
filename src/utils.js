@@ -40,18 +40,23 @@ export default {
 	spawn: spawn,
 	exec: (cmd, cfg) => {
 		let opts = Object.assign({}, cfg);
-		return new Promise((resolve, reject) => {
-			const child = exec(cmd, opts, (err, stdout, stderr) => {
-				return err ? reject(err) : resolve({
-					stdout: stdout,
-					stderr: stderr
-				})
-			});
-			if (opts.stdout) {
-				child.stdout.pipe(opts.stdout);
-			}
-			if (opts.stderr) {
-				child.stderr.pipe(opts.stderr);
+		return new Promise((resolve) => {
+			try {
+				const child = exec(cmd, opts, (err, stdout, stderr) => {
+					return err ? resolve(err) : resolve({
+						stdout: stdout,
+						stderr: stderr
+					})
+				});
+				if (opts.stdout) {
+					child.stdout.pipe(opts.stdout);
+				}
+				if (opts.stderr) {
+					child.stderr.pipe(opts.stderr);
+				}
+			} catch (e) {
+				console.log("ërror");
+				resolve(e);
 			}
 		});
 	},
@@ -64,6 +69,11 @@ export default {
 		if (cb === undefined) {
 			cb = cwd;
 			cwd = process.cwd();
+		}
+		if ( skipshell ) {
+			console.log( `+ ${display}\t${__ok}`.green );
+			cb(null,0);
+			return;
 		}
 		let buffer = "";
 		let c = null;
@@ -122,24 +132,6 @@ export default {
 			return null;
 		}
 	},
-	write(...args) {
-		let [file, content, mode] = args;
-		let printfn = this.writeuseslog ? this.writeuseslog : console.log;
-		file = path.normalize(file);
-		return this._write(file, content, {}).then(() => {
-			const head = path.basename(file);
-			const body = file.replace(path.join(process.cwd(), "/"), "").replace(head, "");
-			if (mode !== null) {
-				printfn(`   ${mode?'update':'create'}`.cyan + ': ' + body + head.green);
-			}
-			return file;
-		}, (e) => {
-			console.log(e.toString().red);
-		}).catch((e) => {
-			console.log(e.toString().red);
-			return false;
-		});
-	},
 	encoding: (ext) => {
 		switch (ext) {
 			case ".png":
@@ -160,7 +152,7 @@ export default {
 		return this.read(from, {
 			encoding: this.encoding(path.extname(from))
 		}).then((data) => {
-			return this.write(to, data);
+			return this.writeSync(to, data);
 		}).catch((e) => {
 			console.log(e.red);
 			return false;

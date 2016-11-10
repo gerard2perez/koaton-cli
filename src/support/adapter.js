@@ -1,3 +1,4 @@
+import 'colors';
 
 const npmpackages = {
 	"postgres": "pg"
@@ -20,99 +21,75 @@ const alias = {
 	'couchdb': ["couch"],
 	'mysql': ["mariadb"]
 };
-const koaton={
-	"number": 'Number',
-	"integer": 'Integer',
-	"float": 'Float',
-	"double": 'Double',
-	"real": 'Real',
-	"boolean": 'Boolean',
-	"string": 'String',
-	"text": 'Text',
-	"json": 'Json',
-	"date": 'Date',
-	"email":'Email',
-	"password":"Password",
-	"blob": 'Blob'
-};
 
-const caminte={
-	"number": 'Number',
-	"integer": 'Integer',
-	"float": 'Float',
-	"double": 'Double',
-	"real": 'Real',
-	"boolean": 'Boolean',
-	"string": 'String',
-	"text": 'Text',
-	"json": 'Json',
-	"date": 'Date',
-	"email":'Email',
-	"password":"String",
-	"blob": 'Blob'
-};
-const ember = {
-	"password":"string",
-	"number": 'number',
-	"integer": 'number',
-	"float": 'number',
-	"double": 'number',
-	"real": 'number',
-	"boolean": 'boolean',
-	"date": 'date',
-	"email":'email',
-	"string": 'string',
-	"text": 'string',
-	"json": undefined,
-	"blob": 'string'
-};
-const crud = {
-	"password":"password",
-	"number": 'number',
-	"integer": 'number',
-	"float": 'number',
-	"double": 'number',
-	"real": 'number',
-	"boolean": 'boolean',
-	"date": 'date',
-	"email":'email',
-	"string": 'text',
-	"text": 'text',
-	"json": undefined,
-	"blob": 'text'
-};
-let datatypes = {};
-let adapters = {};
-for (let type in caminte) {
-	Object.defineProperty(datatypes,koaton[type],{
-		get:function(){
-			return datatypes[type];
-		}
-	})
-	datatypes[type] = new String(type);
-
-	Object.defineProperty(datatypes[type], "ember", {
-		get: function() {
-			return ember[type];
-		}
-	});
-	Object.defineProperty(datatypes[type], "crud", {
-		get: function() {
-			return crud[type];
-		}
-	});
-	Object.defineProperty(datatypes[type], "caminte", {
-		get: function() {
-			return caminte[type];
-		}
-	});
-	Object.defineProperty(datatypes[type], "koaton", {
-		get: function() {
-			return koaton[type];
-		}
-	});
-	// datatypes[type.toLowerCase()] = datatypes[type];
+function capitalize(string) {
+	return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
+class ExtendedDatatype extends String {
+	constructor(value, transforms) {
+		super(value);
+		for (const transform of transforms.split(' ')) {
+			this.add(transform);
+		}
+	}
+	add(transform) {
+		let [target, value] = transform.split(':');
+		Object.defineProperty(this, target, {
+			enumerable: true,
+			writable: false,
+			value: value === "undefined" ? undefined : value
+
+		})
+	}
+}
+class DataTypes {
+	constructor() {
+		Object.defineProperty(this, 'adapters', {
+			enumerable: false,
+			writable: true,
+			value: {}
+		})
+	}
+	add(datatype, transforms) {
+		this.adapters[datatype] = new ExtendedDatatype(datatype, transforms);
+		Object.defineProperty(this.adapters[datatype], 'koaton', {
+			enumerable: false,
+			writable: false,
+			value: datatype
+		});
+		Object.freeze(this.adapters[datatype]);
+		Object.defineProperty(this, capitalize(datatype), {
+			enumerable: false,
+			get() {
+				//TODO: console.log(`Deprecated: Please use only lower strings for the models datatypes (${capitalize(datatype)})`.yellow);
+				return this.adapters[datatype];
+			}
+		});
+		Object.defineProperty(this, datatype, {
+			enumerable: true,
+			get() {
+				return this.adapters[datatype];
+			}
+		})
+	}
+}
+
+let datatypes = new DataTypes();
+datatypes.add('number', 'ember:number caminte:Number crud:number');
+datatypes.add('integer', 'ember:number caminte:Integer crud:number');
+datatypes.add('float', 'ember:number caminte:Float crud:number');
+datatypes.add('double', 'ember:number caminte:Double crud:number');
+datatypes.add('real', 'ember:number caminte:Real crud:number');
+datatypes.add('boolean', 'ember:boolean caminte:Boolean crud:boolean');
+datatypes.add('string', 'ember:string caminte:String crud:text');
+datatypes.add('text', 'ember:string caminte:Text crud:text');
+datatypes.add('json', 'ember:undefined caminte:Json crud:undefined');
+datatypes.add('date', 'ember:date caminte:Date crud:date');
+datatypes.add('email', 'ember:email caminte:Email crud:email');
+datatypes.add('password', 'ember:string caminte:String crud:password');
+datatypes.add('blob', 'ember:string caminte:Blob crud:text');
+
+let adapters = {};
 const getPort = function(adapter) {
 	return ports[adapter];
 }
@@ -147,14 +124,33 @@ for (let engine in engines) {
 		avaliablengines[engines[engine]] = engines[engine];
 	}
 }
-adapters.isOrDef = function(adpt) {
-	return this[adpt] === undefined ? this.mongo : this[adpt];
-};
-avaliablengines.isOrDef = function(adpt) {
-	return this[adpt] === undefined ? this.handlebars : this[adpt];
-};
+Object.defineProperty(adapters, 'isOrDef', {
+	enumerable: false,
+	configurable: false,
+	value: function(adpt) {
+		return this[adpt] === undefined ? this.mongo : this[adpt];
+	}
+});
+Object.defineProperty(avaliablengines, 'isOrDef', {
+	enumerable: false,
+	configurable: false,
+	value: function(adpt) {
+		console.log(adpt);
+		console.log(this);
+		return this[adpt] === undefined ? this.handlebars : this[adpt];
+	}
+})
 makeObjIterable(datatypes);
 makeObjIterable(adapters);
-export { avaliablengines as engines };
-export { datatypes,adapters };
-export const template= '{"driver": "{{driver}}","user": "{{user}}","database": "{{application}}","password": "{{password}}","port": {{port}},"host": "{{host}}","pool": false,"ssl": false}';
+
+Object.freeze(datatypes);
+Object.freeze(adapters);
+
+export {
+	avaliablengines as engines
+};
+export {
+	datatypes,
+	adapters
+};
+export const template = '{"driver": "{{driver}}","user": "{{user}}","database": "{{application}}","password": "{{password}}","port": {{port}},"host": "{{host}}","pool": false,"ssl": false}';

@@ -89,8 +89,7 @@ class spin {
 						process.stderr.clearLine();
 						process.stderr.cursorTo(0);
 					}
-					process.stderr.write(msg.msg);
-					process.stderr.write("\n");
+					console.log(msg.msg);
 					this.promise(true);
 					break;
 				default:

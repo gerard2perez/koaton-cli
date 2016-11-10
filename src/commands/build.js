@@ -120,20 +120,16 @@ const buildCSS = async function buildCSS(target, source, development, onlypaths,
 			}
 		} else if (file.indexOf(".css")) {
 			watchinFiles[index + target] = readSync(file);
-			if (development) {
-				if (!onlypaths) {
-					const concatCSS = new Concat(true, path.join("css", index + target + ".css"), '\n');
-					for (const url in watchinFiles[index + target]) {
-						concatCSS.add(target, fs.readFileSync(watchinFiles[index + target][url]));
-					}
-					utils.writeSync(ProyPath("public", "css", index + target), concatCSS.content, 'utf-8', true);
-					ITEM.add(`/css/${index+target}`);
-				}
-			} else {
-				const concatCSS = new Concat(true, path.join("css", basename), '\n');
+			const concatCSS = new Concat(true, path.join("css", index + target + ".css"), '\n');
+			if (!development || !onlypaths) {
 				for (const url in watchinFiles[index + target]) {
 					concatCSS.add(target, fs.readFileSync(watchinFiles[index + target][url]));
 				}
+			}
+			if (development && !onlypaths) {
+				utils.writeSync(ProyPath("public", "css", index + target), concatCSS.content, 'utf-8', true);
+				ITEM.add(`/css/${index+target}`);
+			} else if (!development) {
 				concat.add(basename, concatCSS.content);
 			}
 		}
@@ -164,7 +160,7 @@ const buildJS = async function buildJS(target, source, development, onlypaths, l
 		return AllFiles;
 	}
 	let result = uglify.minify(AllFiles, {
-		mangle:false,
+		mangle: false,
 		outSourceMap: onlypaths ? false : " /js/" + target + ".map",
 		sourceMapIncludeSources: onlypaths ? false : development,
 		sourceRoot: "/" + target,
@@ -249,6 +245,9 @@ const postBuildEmber = async function postBuildEmber(application, options) {
 
 	const links = new RegExp(`<link rel="stylesheet" href=".*?assets/.*.css.*>`, "gm");
 	const scripts = new RegExp(`<script src=".*?assets/.*.js.*></script>`, "gm");
+	const transformlinks=function transformlinks(text,expresion){
+		return text.match(expresion).join("\n").replace(/href=".*?assets/igm, `href="/${application}/assets`).replace(new RegExp(application + "/", "gm"), options.directory + "/")
+	};
 	text = utils.new_compile_(indextemplate, {
 		title: options.title || application,
 		layout: options.layout || "main",
@@ -256,8 +255,8 @@ const postBuildEmber = async function postBuildEmber(application, options) {
 		mount: options.mount,
 		app_name: application,
 		meta: text.match(meta)[0],
-		cssfiles: text.match(links).join("\n").replace(/href=".*?assets/igm, `href="/${application}/assets`).replace(new RegExp(application + "/", "gm"), options.directory + "/"),
-		jsfiles: text.match(scripts).join("\n").replace(/src=".*?assets/igm, `src="/${application}/assets`).replace(new RegExp(application + "/", "gm"), options.directory + "/")
+		cssfiles:transformlinks(text, links),
+		jsfiles: transformlinks(text, scripts)
 	});
 	await utils.mkdir(ProyPath("views", "ember_apps"), -1);
 	return utils.writeSync(ProyPath("views", "ember_apps", `${options.directory}.handlebars`), text, 1);
@@ -283,7 +282,7 @@ export default (new command(
 	.Action(async function(config_file, options) {
 		options.prod = options.prod ? "production" : "development";
 		process.env.NODE_ENV = options.prod;
-		const source_file = process.cwd() + ( config_file ||  '/config/bundles.js' );
+		const source_file = process.cwd() + (config_file || '/config/bundles.js');
 		const patterns = require(source_file);
 		await utils.Copy(path.join('assets', 'favicon.ico'), path.join('public', 'favicon.ico'), {
 			encoding: "binary"
@@ -294,7 +293,7 @@ export default (new command(
 			await utils.mkdir(ProyPath("public", "js"), -1)
 			await utils.mkdir(ProyPath("public", "css"), -1)
 			for (let bundle of scfg.bundles) {
-				for (let compiledfile of bundle){
+				for (let compiledfile of bundle) {
 					utils.rmdir(path.join("public", path.normalize(compiledfile)));
 				}
 			}

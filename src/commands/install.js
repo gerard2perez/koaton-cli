@@ -4,6 +4,15 @@ import * as fs from 'fs';
 import utils from '../utils';
 import command from '../command';
 
+const makeLink=function makeLink(module){
+	try {
+		fs.symlinkSync(path.join(__dirname, `/../../../${module}`), ProyPath("/node_modules",module));
+		console.log("Linked:"+module+": done".green);
+	} catch (e) {
+		console.log("Linked:"+module+": already exists".green);
+	}
+}
+
 export default (new command(__filename, "SetUps a recent clonned proyect. (root/Administrator permission needed to work with nginx)"))
 .Args()
 	.Options()
@@ -24,22 +33,8 @@ export default (new command(__filename, "SetUps a recent clonned proyect. (root/
 			await utils.shell("Restarting Nginx", ["nginx", "-s", "reload"], process.cwd());
 		}
 		await utils.mkdir(ProyPath("node_modules"));
-		try {
-			process.stdout.write(`   ${"Linking".cyan}: global koaton`);
-			fs.symlinkSync(path.join(__dirname, "/../../../koaton"), ProyPath("/node_modules/koaton"));
-			console.log(": done".green);
-		} catch (e) {
-			console.log(": already exists".green);
-		}
-
-		try {
-			process.stdout.write(`   ${"Linking".cyan}: global koaton-cli`);
-			fs.symlinkSync(path.join(__dirname, "/../../../koaton-cli"), ProyPath("/node_modules/koaton-cli"));
-			console.log(": done".green);
-		} catch (e) {
-			console.log(": already exists".green);
-		}
-
+		makeLink('koaton');
+		makeLink('koaton-cli');
 		await utils.shell("Installing bower dependencies", ["bower", "install"], process.cwd());
 		await utils.shell("Installing npm dependencies", ["npm", "install", "--loglevel", "info"], process.cwd());
 		return false;

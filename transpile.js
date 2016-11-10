@@ -8,6 +8,7 @@ const transpilepaths = [
 	// ["src/core/", "core"],
 	["src/", "lib"]
 ];
+
 const transform = Promise.promisify(babel.transformFile, {
 	context: babel
 });

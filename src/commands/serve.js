@@ -100,23 +100,22 @@ const deleted = function(file) {
 					});
 				});
 			},
+			findDirences = function findDirences(source, target){
+				let diff = [];
+				for (const file in source) {
+					if (target.indexOf(source[file]) === -1) {
+						diff = diff.concat(glob.sync(source[file]));
+					}
+				}
+				return diff;
+			},
 			getDiferences = function(...args) {
 				let [oldbranch, newbranch] = args;
 				let isnew = oldbranch === undefined;
 				oldbranch = oldbranch || [];
 				newbranch = newbranch || [];
-				let added = [],
-					removed = [];
-				for (const file in newbranch) {
-					if (oldbranch.indexOf(newbranch[file]) === -1) {
-						added = added.concat(glob.sync(newbranch[file]));
-					}
-				}
-				for (const file in oldbranch) {
-					if (newbranch.indexOf(oldbranch[file]) === -1) {
-						removed = removed.concat(glob.sync(oldbranch[file]));
-					}
-				}
+				let added = findDirences(newbranch,oldbranch),
+					removed = findDirences(oldbranch,newbranch);
 				return {
 					isnew: isnew,
 					added: added.filter((file) => {
@@ -393,7 +392,7 @@ const deleted = function(file) {
 					hostsd += "\n" + entry;
 				}
 			}
-			await utils.write(hostsdlocation, hostsd.replace(/\n+/igm, "\n"), true);
+			utils.writeSync(hostsdlocation, hostsd.replace(/\n+/igm, "\n"), true);
 		}
 	};
 export default (new command(__filename, 'Runs your awsome Koaton applicaction using nodemon'))
@@ -429,7 +428,7 @@ export default (new command(__filename, 'Runs your awsome Koaton applicaction us
 				port: process.env.port
 			});
 		}
-		await utils.write(path.join(process.cwd(), `${require(path.join(process.cwd(),"package.json")).name}.conf`), nginx_conf);
+		utils.writeSync(path.join(process.cwd(), `${require(path.join(process.cwd(),"package.json")).name}.conf`), nginx_conf);
 		if (options.production === "development") {
 			await buildHosts();
 			livereload.listen({

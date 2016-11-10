@@ -49,7 +49,9 @@ tests.push(new TestNode(cmdname, ["patch", {}], true, true))
 
 tests.push(new TestNode(cmdname, ["major", {}], true, true))
 	.Expect('Creates a seed file', "2.0.0", () => requireNoCache(ProyPath("package.json")).version);
-
+	tests.last.CleanUp(() => {
+		process.chdir('..')
+	});
 export {
 	tests as config,
 	cmdname as testname

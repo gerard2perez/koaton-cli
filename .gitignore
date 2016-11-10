@@ -10,9 +10,10 @@
 /coverage/
 /core/
 /cli/
-.npmignore
 /testingapp/
 /testcoverage/
 /docs/
 /lib/
 /**/barebone.js
+duplication.html
+reloadcoverage.js

@@ -10,7 +10,6 @@ const list = async function list() {
 	let fix = (new RegExp(/"[^"]*"/igm)).exec(data);
 	if (fix !== null) {
 		fix.forEach(function(pattern) {
-
 			data = data.replace(pattern, pattern.replace(/"/igm, "").replace("-", "_"));
 		});
 
@@ -80,7 +79,7 @@ export default (new command(__filename, "Runs your awsome Koaton on production m
 			port: options.port || 62626
 		};
 		const app = path.basename(process.cwd());
-		const cmd = `NODE_ENV=${env.NODE_ENV} port=${env.port} forever start --colors --uid "koaton_${app}" -a app.js`;
+		const cmd = `NODE_ENV=production port=${env.port} forever start --colors --uid "koaton_${app}" -a app.js`;
 		const cmdwin = `cmd /c "set NODE_ENV=production & set port=${env.port} & forever start --colors --uid "koaton_${app}" -a app.js"`;
 		if (options.logs) {
 			let f_list = await list();
@@ -97,7 +96,11 @@ export default (new command(__filename, "Runs your awsome Koaton on production m
 				}
 			}
 		} else if (options.stop) {
-			await utils.exec(`forever stop koaton_${app}`, {});
+			if (app === "all") {
+				await utils.exec(`forever stop koaton_${app}`, {});
+			} else {
+				await utils.exec(`forever stopall`, {});
+			}
 		} else if (options.list) {
 			let r = await list();
 			if (r.hasProcess) {
@@ -106,23 +109,13 @@ export default (new command(__filename, "Runs your awsome Koaton on production m
 				console.log("\nNo forever processes running");
 			}
 		} else {
-			let err = null;
-			try {
-				await utils.exec(`forever stop koaton_${app}`, {});
-			} catch (e) {
-				err = null;
+			await utils.exec(`forever stop koaton_${app}`, {});
+			let res;
+			if ((res = (await utils.exec(cmd, {})).stdout !== undefined || (await utils.exec(cmdwin, {})).stdout !== undefined)) {
+				console.log(`${app} is running ... `);
+			} else {
+				console.log(res);
 			}
-			try {
-				await utils.exec(cmd, {});
-			} catch (e) {
-				err = e;
-			}
-			try {
-				await utils.exec(cmdwin, {});
-			} catch (e) {
-				err = e;
-			}
-			console.log(`${app} is running ... `);
 		}
 		return 0;
 	});

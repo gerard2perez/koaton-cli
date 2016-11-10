@@ -36,6 +36,7 @@ export function include() {
 				let module = require(ProyPath("commands", file));
 				mods[path.basename(file).replace(".js","")] = module.default ? module.default:module;
 			});
+		makeObjIterable(mods);
 	}
 	return mods;
 }
@@ -47,7 +48,8 @@ export function render(v){
 	help += hmany(require('./index').default);
 
 	const proycommands = include();
-	if (proycommands.length > 0) {
+	console.log(proycommands);
+	if (Object.keys(proycommands).length > 0) {
 		help += "Project commands:\n";
 		help += hmany(proycommands);
 	}

@@ -1,14 +1,12 @@
-/*globals describe, it*/
+/*globals describe, it, cleanString*/
 import * as assert from 'assert';
 import * as co from 'co';
 import commands from '../src/commands';
 import configuration from './configuration';
-// import {test_config,cwd,testname} from './configuration/cmd_adapter';
 
-const test_order_for_commands = ['forever', 'fail'].concat(['new', 'adapter', 'ember', 'model', 'install', 'build', 'seed', 'semver', 'modulify'/*, 'serve' //TODO enable. FIX 001*/ , 'forever', 'publish']);
-
-const glog = console.log.bind(console);
-global.log = glog;
+const test_order_for_commands = [
+	// 'build', 'fail'
+].concat(['new', 'adapter', 'ember', 'model', 'install', 'build', 'seed', 'semver', 'modulify'/*, 'serve' //TODO enable. FIX 001*/ , 'forever', 'publish']);
 
 const notestcase = function(testname) {
 	describe(testname, () => {
@@ -30,11 +28,10 @@ const testcase = function testcase(test_config, cwd, testname, command) {
 					try {
 						let buffer = "";
 						console.log = (data) => {
-							ori(data);
+							// ori(data);
 							buffer += (data || "").toString();
 						};
 						let res = yield command.action.apply(null, testdata.args);
-						ori(res, (!res).toString());
 						console.log = ori;
 						assert.equal(!res, testdata.expect[0], `${testname} ${testdata.name} shell result.`);
 						testdata.expect.splice(0, 1);

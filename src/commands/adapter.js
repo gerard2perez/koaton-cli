@@ -31,7 +31,7 @@ const handleGenerate = async function handleGenerate(driver, options) {
 	let connections = require(ProyPath("config", "connections"));
 	connections[driver] = adapterCFG;
 	const output = '"use strict";\nmodule.exports=' + JSON.stringify(connections, null, '\t') + ";";
-	await utils.write(ProyPath("config", "connections.js"), output, true);
+	utils.writeSync(ProyPath("config", "connections.js"), output, true);
 }
 const renderdriverlist = function renderdriverlist(installed, available) {
 	console.log("    Installed drivers: ");
@@ -66,7 +66,6 @@ export default (new command(
 		const dependencies = require(path.resolve() + "/package.json").dependencies;
 		let installed = {};
 		let available = {};
-		delete adapters.isOrDef;
 		for (const adapter of adapters) {
 			if (dependencies[adapter.package] !== undefined) {
 				installed[adapter.toString()] = adapter.package;

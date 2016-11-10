@@ -15,7 +15,8 @@
     "cover:watch": "npm run cover & chokidar src test -c \"cls & npm run cover\" -d 2000",
     "cover:live": "npm-run-all --parallel cover:watch cover:reload",
     "codeclimate": "codeclimate analyze -f html -e duplication > duplication.html",
-    "doc": "esdoc -c esdoc.json"
+    "doc": "esdoc -c esdoc.json",
+    "commit": "git-cz"
   },
   "bin": {
     "koaton": "./koaton"
@@ -94,10 +95,17 @@
     "babel-plugin-transform-koa2-async-to-generator": "git+https://gerardopp@bitbucket.org/gerardopp/babel-plugin-transform-koa2-async-to-generator.git",
     "babel-plugin-transform-koaton-es6-modules": "git+https://gerardopp@bitbucket.org/gerardopp/babel-plugin-transform-koaton-es6-modules.git",
     "babel-register": "^6.18.0",
+    "commitizen": "^2.8.6",
+    "cz-conventional-changelog": "^1.2.0",
     "eslint": "^3.7.0",
     "eslint-config-airbnb-base": "^8.0.0",
     "eslint-plugin-import": "^1.16.0",
     "mocha": "^3.1.0",
     "nyc": "^8.3.0"
+},
+"config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   }
 }

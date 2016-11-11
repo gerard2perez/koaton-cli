@@ -1,8 +1,23 @@
 /*global describe, it*/
+import * as co from 'co';
 import * as assert from 'assert';
 import BundleItem from '../../../src/support/BundleItem';
+import * as utils from '../../../src/utils2';
 
-describe('BundleItem', function() {
+console.log(utils);
+
+// async function functiona() {
+
+// 	console.log("end");
+// }
+// // let res;
+// // while ((res = functiona().next())) {
+// // 	console.log(res);
+// // }
+// functiona().next();
+// functiona().next();
+
+describe('BundleItem', function(done) {
 	let Item = new BundleItem('target.css');
 	it('Initialize with 0 Items', function() {
 		assert.equal(0, Item.content.length);
@@ -17,12 +32,12 @@ describe('BundleItem', function() {
 	});
 
 	it('Add an Item', function() {
-		assert.equal(Item,Item.add('origin_c.css'));
+		assert.equal(Item, Item.add('origin_c.css'));
 		assert.equal(3, Item.content.length);
 	});
 
 	it('Prevent adding duplicated Item', function() {
-		assert.equal(Item,Item.add('origin_c.css'));
+		assert.equal(Item, Item.add('origin_c.css'));
 		assert.equal(3, Item.content.length);
 	});
 
@@ -39,19 +54,18 @@ describe('BundleItem', function() {
 			index++;
 			assert.equal(!source, false);
 		}
-		assert.equal(3,index);
+		assert.equal(3, index);
 	});
-	it('Return html tags when converting to string',function(){
+	it('Return html tags when converting to string', function() {
 		let JSItem = new BundleItem('target.js', 'origin_a.js');
-		assert.equal(Item.toString(),'<link rel="stylesheet" href="origin_a.css"><link rel="stylesheet" href="origin_b.css"><link rel="stylesheet" href="origin_c.css">');
-		assert.equal(JSItem.toString(),'<script src="origin_a.js"></script>');
+		assert.equal(Item.toString(), '<link rel="stylesheet" href="origin_a.css"><link rel="stylesheet" href="origin_b.css"><link rel="stylesheet" href="origin_c.css">');
+		assert.equal(JSItem.toString(), '<script src="origin_a.js"></script>');
 	});
-	it('Clears Content',function(){
-		assert.equal(Item,Item.clear());
-		assert.equal(0,Item.content.length);
+	it('Clears Content', function() {
+		assert.equal(Item, Item.clear());
+		assert.equal(0, Item.content.length);
 	})
-	it('Returns target name',function(){
-		assert.equal(Item.valueOf(),'target.css');
-	})
-
+	it('Returns target name', function() {
+		assert.equal(Item.valueOf(), 'target.css');
+	});
 });

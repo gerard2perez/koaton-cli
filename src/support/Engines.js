@@ -16,4 +16,7 @@ Object.defineProperty(avaliablengines, 'isOrDef', {
 	}
 });
 
+makeObjIterable(avaliablengines);
+Object.freeze(avaliablengines);
+
 export default avaliablengines;

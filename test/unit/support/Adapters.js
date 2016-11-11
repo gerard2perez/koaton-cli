@@ -2,8 +2,6 @@
 import * as assert from 'assert';
 import {Adapters,Template} from '../../../src/support/Adapters';
 
-console.log(Template);
-
 describe('Adapters', function() {
 	it('returns "mongoose", .mongoose', function() {
 		assert.equal("mongoose", Adapters.mongoose);

@@ -1,12 +1,22 @@
-const EAIEnum = ['name', 'mount', 'directory', 'access', 'adapter', 'subdomain', 'layout'];
-const DefEAIEnum = ['emberapp', '/', '/emberapp', 'public', 'localhost', 'www', 'main'];
+const Defaults = {
+	'name': 'emberapp',
+	'mount': '/',
+	'directory': '/emberapp',
+	'access':'public',
+	'adapter':'localhost',
+	'subdomain':'www',
+	'layout':'main'
+}
+
 export default class EmberAppItem {
-	constructor(application, data) {
-		data.name = application;
-		for (let property of EAIEnum) {
+	constructor(...args) {
+		let [application, data] = args;
+		data = Object.assign({},Defaults,data||{});
+		data.name = application || Defaults.name;
+		for (let property in Defaults) {
 			Object.defineProperty(this, property, {
 				enumerable: property !== 'name',
-				value: data[property] || DefEAIEnum[property]
+				value: data[property]
 			});
 		}
 		Object.freeze(this);

@@ -1,10 +1,10 @@
 import * as path from 'upath';
 
 const bundletemplates = {
-	".js": (file) => {
+	".css": (file) => {
 		return `<link rel="stylesheet" href="${file}">`;
 	},
-	".css": (file) => {
+	".js": (file) => {
 		return `<script src="${file}"></script>`;
 	}
 }
@@ -25,11 +25,13 @@ export default class BundleItem {
 		Object.defineProperty(this, 'content', {
 			writable: true,
 			enumerable: false,
-			value: source instanceof Array ? source : [source]
+			value: source instanceof Array ? source : ( source ? [source]:[] )
 		});
 	}
 	add(item) {
-		this.content.push(item);
+		if (this.content.indexOf(item) === -1) {
+			this.content.push(item);
+		}
 		return this;
 	}
 	clear() {

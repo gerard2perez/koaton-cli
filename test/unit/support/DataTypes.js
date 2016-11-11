@@ -40,4 +40,8 @@ describe('DataTypes', function() {
 	it('retutns "password", .Password', function() {
 		assert.equal("password", DataTypes.Password);
 	});
+	it('is "of" iterable',function(){
+		assert.equal(!!DataTypes[Symbol.iterator],true);
+	})
+
 });

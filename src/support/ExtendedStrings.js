@@ -6,32 +6,40 @@ function capitalize(string) {
 }
 
 export default class ExtendedStrings {
-	constructor() {
-		Object.defineProperty(this, 'adapters', {
+	constructor(baseprop) {
+		Object.defineProperty(this, 'privot', {
 			enumerable: false,
 			writable: true,
 			value: {}
 		})
+		this.baseProperty = baseprop;
 	}
-	add(datatype, transforms) {
-		this.adapters[datatype] = new MutableString(datatype, transforms);
-		Object.defineProperty(this.adapters[datatype], 'koaton', {
-			enumerable: false,
-			writable: false,
-			value: datatype
-		});
-		Object.freeze(this.adapters[datatype]);
-		Object.defineProperty(this, capitalize(datatype), {
+	add(...args) {
+		let [target, transforms,alias]=args;
+		if (target.indexOf(":") === -1) {
+			alias=target;
+			this.privot[target] = new MutableString(target, transforms);
+			Object.defineProperty(this.privot[target], this.baseProperty, {
+				configurable:false,
+				enumerable: false,
+				writable: true,
+				value: target
+			});
+			Object.freeze(this.privot[target]);
+		} else {
+			[alias,target] = target.split(':');
+		}
+		Object.defineProperty(this, capitalize(alias), {
 			enumerable: false,
 			get() {
 				//TODO: console.log(`Deprecated: Please use only lower strings for the models datatypes (${capitalize(datatype)})`.yellow);
-				return this.adapters[datatype];
+				return this.privot[target];
 			}
 		});
-		Object.defineProperty(this, datatype, {
+		Object.defineProperty(this, alias, {
 			enumerable: true,
 			get() {
-				return this.adapters[datatype];
+				return this.privot[target];
 			}
 		})
 	}

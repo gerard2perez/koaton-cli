@@ -8,10 +8,10 @@ export default class MutableString extends String {
 	add(transform) {
 		let [target, value] = transform.split(':');
 		Object.defineProperty(this, target, {
+			configurable:true,
 			enumerable: true,
 			writable: false,
 			value: value === "undefined" ? undefined : value
-
 		})
 	}
 }

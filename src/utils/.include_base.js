@@ -8,7 +8,7 @@ export default function loadmodules(dir) {
 		.filter(item => item !== "index.js")
 		.filter(item => item !== "help.js")
 		.forEach((file) => {
-			let module = requireNoCache(path.join(__dirname, file));
+			let module = require(path.join(__dirname, file));
 			mods[path.basename(file).replace(".js", "")] = module.default ? module.default : module
 		});
 	mods[Symbol.iterator] = function() {

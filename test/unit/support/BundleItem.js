@@ -2,9 +2,7 @@
 import * as co from 'co';
 import * as assert from 'assert';
 import BundleItem from '../../../src/support/BundleItem';
-import * as utils from '../../../src/utils2';
-
-console.log(utils);
+import utils from '../../../src/utils';
 
 // async function functiona() {
 
@@ -17,7 +15,7 @@ console.log(utils);
 // functiona().next();
 // functiona().next();
 
-describe('BundleItem', function(done) {
+describe('BundleItem', function() {
 	let Item = new BundleItem('target.css');
 	it('Initialize with 0 Items', function() {
 		assert.equal(0, Item.content.length);

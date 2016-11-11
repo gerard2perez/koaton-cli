@@ -3,18 +3,10 @@
 		"lcov",
 		"text"
 	],
-	"include": [
-		"src"
-	],
-	"exclude": [
-		"src/commands/barebone.js"
-	],
 	"sourceMap": false,
 	"instrument": false,
 	"cache": true,
-	"check-coverage": true,
-	"extension": [
-		".js"
-	],
+	"check-coverage": false,
+	"all": false,
 	"report-dir": "./testcoverage"
 }

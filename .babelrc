@@ -1,4 +1,5 @@
 {
+
 	"env": {
 		"koaton": {
 			"plugins": [
@@ -7,15 +8,12 @@
 				"istanbul"
 			],
 			"ignore": [
-				"core/",
 				"docs/",
 				"lib/",
 				"node_modules/",
-				"src/core/",
 				"templates/",
 				"testcoverage/",
 				"testingapp/",
-				"coverage/"
 			]
 		}
 	}

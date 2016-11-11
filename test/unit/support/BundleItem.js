@@ -1,19 +1,6 @@
 /*global describe, it*/
-import * as co from 'co';
 import * as assert from 'assert';
 import BundleItem from '../../../src/support/BundleItem';
-import utils from '../../../src/utils';
-
-// async function functiona() {
-
-// 	console.log("end");
-// }
-// // let res;
-// // while ((res = functiona().next())) {
-// // 	console.log(res);
-// // }
-// functiona().next();
-// functiona().next();
 
 describe('BundleItem', function() {
 	let Item = new BundleItem('target.css');

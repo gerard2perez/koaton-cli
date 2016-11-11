@@ -8,7 +8,7 @@
 		"eslint:live": "npm run eslint & chokidar src -c \"cls && npm run eslint\"",
 		"eslint": "eslint src --ignore-path .gitignore",
 		"export": "node transpile.js v1",
-		"test": "cross-env NODE_ENV=koaton mocha ./test/unit/**/*.js --compilers js:babel-register",
+		"test": "cross-env NODE_ENV=koaton mocha test/unit/**/*.js --compilers js:babel-register",
 		"test:live": "npm t -- -w",
 		"cover": "nyc npm t",
 		"cover:reload": "node reloadcoverage.js",

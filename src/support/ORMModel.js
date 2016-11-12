@@ -1,7 +1,7 @@
 import inflector from './inflector';
 import datatypes from './DataTypes';
 
-export default class Model {
+export default class ORMModel {
 	valueOf() {
 		return this._modelname.toString();
 	}

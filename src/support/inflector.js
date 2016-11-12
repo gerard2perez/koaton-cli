@@ -25,7 +25,6 @@ inflections.irregular.forEach((inflect) => {
 });
 
 uncountable.forEach((inflect) => {
-	console.log(inflect)
 	inflector.inflections.uncountable(inflect[0]);
 });
 

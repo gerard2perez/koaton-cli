@@ -21,7 +21,6 @@ export default class ObjectArray extends Updater {
 		});
 	}
 	has(mutable_item) {
-
 		for (const nameditem in this.target) {
 			const item = this.target[nameditem];
 			if (mutable_item instanceof this.mutable) {
@@ -29,20 +28,10 @@ export default class ObjectArray extends Updater {
 					return true;
 				}
 			} else {
-				if (item.valueOf() === mutable_item) {
-					return true;
-				}
+				return item.valueOf() === mutable_item;
 			}
 		}
 		return false;
-	}
-	item(itemname) {
-		for (const item of this.target) {
-			if (item.valueOf() === itemname) {
-				return item;
-			}
-		}
-		return undefined;
 	}
 	add(...args) {
 		let item = null;
@@ -50,11 +39,9 @@ export default class ObjectArray extends Updater {
 			case 1:
 				item = args[0];
 				break;
-			case 2:
+			default:
 				item = new this.mutable(...args, this.onupdate);
 				break;
-			default:
-				throw 'unexpected amount of parameters';
 		}
 		if (!this.has(item)) {
 			if (this.isarray) {
@@ -62,6 +49,13 @@ export default class ObjectArray extends Updater {
 			} else {
 				this.target[item.valueOf()] = item;
 			}
+			Object.defineProperty(this, item.valueOf(), {
+				configurable: true,
+				enumerable: true,
+				get() {
+					return item;
+				}
+			})
 			this.onupdate(item, "a");
 		}
 		return this;
@@ -77,15 +71,23 @@ export default class ObjectArray extends Updater {
 			})
 		};
 	}
-	remove(mutable_item) {
-		let idx = "";
-		for (const nameditem in this.target) {
-			const item = this.target[nameditem];
+	remove(...args) {
+		let mutable_item = (args[0] instanceof this.mutable ? args[0] : this[args[0]]);
+		if (!mutable_item) {
+			return this;
+		}
+		for (const item of this) {
 			if (item.equals(mutable_item)) {
-				idx = nameditem;
+				if (this.isarray) {
+					delete this.target.splice(this.target.indexOf(item), 1);
+				} else {
+					delete this.target[item.valueOf()];
+					delete this[item.valueOf()];
+				}
+				this.onupdate(item, "r");
+				break;
 			}
 		}
-		delete this.target[idx];
 		return this;
 	}
 }

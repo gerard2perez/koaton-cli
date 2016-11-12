@@ -1,5 +1,5 @@
 import inflector from './inflector';
-import {datatypes} from './adapter';
+import datatypes from './DataTypes';
 
 export default class Model {
 	valueOf() {

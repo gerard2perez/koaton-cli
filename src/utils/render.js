@@ -6,7 +6,7 @@ export default function render(source, dest, compiling_data) {
 	let raw = fs.readFileSync(source, 'utf-8');
 	let compiled = compile(raw, compiling_data);
 	fs.outputFileSync(dest, compiled);
-	console.log(`   ${'create'.cyan}: ${relpath(source)}`);
+	console.log(`   ${'create'.cyan}: ${relpath(dest)}`);
 	return {
 		raw: raw,
 		compiled: compiled

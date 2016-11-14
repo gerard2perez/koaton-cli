@@ -15,4 +15,4 @@ describe('nlog', function() {
 		// assert.equal('tell me something\n', f.log());
 		assert.ok(true);
 	});
-})
+});

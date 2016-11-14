@@ -1,9 +1,7 @@
 import 'colors';
 import * as fs from 'graceful-fs';
 import * as path from 'path';
-import {
-	datatypes
-} from '../support/adapter';
+import datatypes from '../support/Adapters';
 import utils from '../utils';
 import command from '../command';
 import inflector from '../support/inflector';
@@ -89,6 +87,5 @@ export default (new command(__filename, description))
 			scfg.database.remove(model);
 		}
 		scfg.database.add(model);
-		console.log();
 		return 0;
 	});

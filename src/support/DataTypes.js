@@ -12,7 +12,7 @@ datatypes.add('string', 'ember:string caminte:String crud:text');
 datatypes.add('text', 'ember:string caminte:Text crud:text');
 datatypes.add('json', 'ember:undefined caminte:Json crud:undefined');
 datatypes.add('date', 'ember:date caminte:Date crud:date');
-datatypes.add('email', 'ember:email caminte:Email crud:email');
+datatypes.add('email', 'ember:string caminte:Email crud:email');
 datatypes.add('password', 'ember:string caminte:String crud:password');
 datatypes.add('blob', 'ember:string caminte:Blob crud:text');
 makeObjIterable(datatypes);

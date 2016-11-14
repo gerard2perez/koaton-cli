@@ -18,3 +18,4 @@
 duplication.html
 _*
 npm-debug*
+.barebone.js

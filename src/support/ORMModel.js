@@ -1,6 +1,11 @@
 import inflector from './inflector';
 import datatypes from './DataTypes';
+import compile from '../utils/compile';
 
+const compileCaminte = compile.bind(null, '"use strict";\nmodule.exports = function(schema,relation) {\n\treturn {\n\t\tmodel: {\n\t\t\t{{model}}\n\t\t},\n\t\textra: {},\n\t\trelations: {\n\t\t\t{{relations}}\n\t\t}\n\t};\n};');
+const compileEmber = compile.bind(null, `import Model from 'ember-data/model';\nimport attr from 'ember-data/attr';\nimport { hasMany, belongsTo } from 'ember-data/relationships';\nexport default Model.extend({\n\t{{definition}}\n});`);
+const compileCRUDTable = compile.bind(null, `import Ember from 'ember';\nimport crud from 'ember-cli-crudtable/mixins/crud-controller';\nexport default Ember.Controller.extend(crud('{{model}}'), {\n\tactions: {\n\t\t{{actions}}\n\t},\n\tfieldDefinition: {\n\t\t{{definition}}\n\t}\n});`);
+let database = {};
 export default class ORMModel {
 	valueOf() {
 		return this._modelname.toString();
@@ -8,14 +13,17 @@ export default class ORMModel {
 	equals(target) {
 		return this._modelname.toString() === target._modelname.toString();
 	}
-	constructor(...args) {
-		let [name, fields, relations, allmodels] = args;
-		relations.forEach((relation) => {
-			Object.keys(relation).forEach((property) => {
-				let opts = relation[property].split(" ");
-				opts[2] = opts[2] ? opts[2] : `${property}Id`;
-				relation[property] = opts;
-			});
+	constructor(name, ...args) {
+		let [fields, relations = {}, allmodels = {}] = args;
+		if (fields === undefined) {
+			throw new Error("fields can't be undefined");
+		}
+		database = Object.assign(database, allmodels);
+		Object.keys(relations).forEach((property) => {
+			console.log(relations[property]);
+			let opts = relations[property].split(" ");
+			opts[2] = opts[2] ? opts[2] : `${property}Id`;
+			relations[property] = opts;
 		});
 		Object.defineProperty(this, '_relations', {
 			enumerable: false,
@@ -35,28 +43,22 @@ export default class ORMModel {
 			writable: false,
 			value: inflector.titleize(this._modelname)
 		});
-
-		if (fields !== undefined) {
-			fields = fields.split(' ').map((f) => {
-				let field = f.split(':');
-				return {
-					name: field[0],
-					type: field[1]
-				};
+		fields = fields.split(' ').map((f) => {
+			let field = f.split(':');
+			return {
+				name: field[0],
+				type: field[1]
+			};
+		});
+		fields.forEach(((field) => {
+			Object.defineProperty(this, field.name, {
+				enumerable: true,
+				configurable: false,
+				writable: false,
+				value: datatypes[inflector.titleize(field.type || "String")]
 			});
-			fields.forEach(((field) => {
-				Object.defineProperty(this, field.name, {
-					enumerable: true,
-					configurable: false,
-					writable: false,
-					value: datatypes[  inflector.titleize(field.type || "String")]
-				});
-			}));
-		}
+		}));
 		Object.defineProperty(this, '_fields', {
-			/*enumerable: false,
-			configurable: false,
-			writable: false,*/
 			get: function() {
 				let res = [];
 				Object.keys(this).forEach((property) => {
@@ -72,53 +74,31 @@ export default class ORMModel {
 			definition.push(`${key}:{type:schema.${datatypes[this[key]].caminte}}`);
 		});
 		let relations = [];
-		this._relations.forEach((relation) => {
-			Object.keys(relation).forEach((property) => {
-				let opts = relation[property];
-				let rel = `"${property}":relation.${opts[0]}("${opts[1]}.${opts[2]}")`;
-				if (relations.join(",").indexOf(rel) === -1) {
-					relations.push(rel);
-				}
-			});
+		Object.keys(this._relations).forEach((property) => {
+			let opts = this._relations[property];
+			let rel = `"${property}":relation.${opts[0]}("${opts[1]}.${opts[2]}")`;
+			relations.push(rel);
 		});
-		return `"use strict";
-module.exports = function(schema,relation) {
-	return {
-		model: {
-			${definition.join(',\n\t\t\t')}
-		},
-		extra: {},
-		relations: {
-			${relations.join(',\n\t\t\t')}
-		}
-	};
-};`;
+		return compileCaminte({
+			model: definition.join(',\n\t\t\t'),
+			relations: relations.join(',\n\t\t\t')
+		});
 	}
 	toEmberModel() {
 		let definition = [];
 		Object.keys(this).forEach((key) => {
 			definition.push(`${key}:attr('${datatypes[this[key]].ember}')`);
 		});
-		this._relations.forEach((relation) => {
-			Object.keys(relation).forEach((property) => {
-				let opts = relation[property];
-				let rel = `${property}:${opts[0]}("${opts[1]}")`;
-				if (definition.join(",").indexOf(rel) === -1) {
-					definition.push(rel);
-				}
-			});
+		Object.keys(this._relations).forEach((property) => {
+			let opts = this._relations[property];
+			let rel = `${property}:${opts[0]}("${opts[1]}")`;
+			definition.push(rel);
 		});
-		return `import Model from 'ember-data/model';
-import attr from 'ember-data/attr';
-import { hasMany, belongsTo } from 'ember-data/relationships';
-export default Model.extend({
-	${definition.join(',\n\t')}
-});`;
+		return compileEmber({
+			definition: definition.join(',\n\t')
+		});
 	}
-	toCRUDTable(HM) {
-		let HOSTMODEL = HM || {
-			fields: {}
-		};
+	toCRUDTable() {
 		let definition = [];
 		let actions = [];
 		Object.keys(this).forEach((key) => {
@@ -133,55 +113,33 @@ export default Model.extend({
 
 			}
 			entity[key].Type = type;
-			if (HOSTMODEL.fields[key]) {
-				Object.keys(HOSTMODEL.fields[key]).forEach((dfield) => {
-					entity[key][dfield] = HOSTMODEL.fields[key][dfield];
-				});
-			}
 			entity = JSON.stringify(entity);
 			definition.push(entity.substr(1, entity.length - 2));
 		});
-		this._relations.forEach((relation) => {
-			Object.keys(relation).forEach((property) => {
-				let opts = relation[property];
-				let rel = `${property}:{Type:"${opts[0]}",Display:"${opts[3]}",Source:"_${property}"}`;
-				if (definition.join(",").indexOf(rel) === -1) {
-					definition.push(rel);
-					actions.push(`_${property}(deferred){this.store.findAll('${opts[1]}').then(deferred.resolve,deferred.reject);}`)
-				}
-			});
+		Object.keys(this._relations).forEach((property) => {
+			let opts = this._relations[property];
+			let display;
+			Object.keys(database[opts[1]]).some((key) => {
+				display = key;
+				return true;
+			})
+			let rel = `${property}:{Type:"${opts[0]}",Display:"${display}",Source:"_${property}"}`;
+			definition.push(rel);
+			actions.push(`_${property}(deferred){this.store.findAll('${opts[1]}').then(deferred.resolve,deferred.reject);}`)
 		});
-		return `import Ember from 'ember';
-import crud from 'ember-cli-crudtable/mixins/crud-controller';
-export default Ember.Controller.extend(crud('${this._modelname}'), {
-	actions: {
-		${actions.join(',\n\t\t')}
-	},
-	fieldDefinition: {
-		${definition.join(',\n\t\t')}
-	}
-});
-`;
+		return compileCRUDTable({
+			model: this._modelname,
+			actions: actions.join(',\n\t\t'),
+			definition: definition.join(',\n\t\t')
+		});
 	}
 	toMeta() {
 		let relations = [];
-		this._relations.forEach((relation) => {
-			Object.keys(relation).forEach((property) => {
-				let opts = relation[property];
-				let rel = {};
-				rel[property] = opts.join(' ');
-				let none = false;
-				relations.forEach((relobj) => {
-					Object.keys(relobj).forEach((key) => {
-						if (key === property) {
-							none = true;
-						}
-					});
-				})
-				if (!none) {
-					relations.push(rel);
-				}
-			});
+		Object.keys(this._relations).forEach((property) => {
+			let opts = this._relations[property];
+			let rel = {};
+			rel[property] = opts.join(' ');
+			relations.push(rel);
 		});
 		let meta = {
 			model: this._fields,

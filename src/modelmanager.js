@@ -1,5 +1,5 @@
 import model from './support/ORMModel';
-import {datatypes} from './support/adapter';
+import datatypes from './support/Adapters';
 /**
  * Transform a Koaton model to cli syntax
  * @param {KoatonModelFile} koatonmodel - Content of a KoatonModel.js

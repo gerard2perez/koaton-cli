@@ -8,6 +8,7 @@
 				"istanbul"
 			],
 			"ignore": [
+				"config/",
 				"docs/",
 				"lib/",
 				"node_modules/",

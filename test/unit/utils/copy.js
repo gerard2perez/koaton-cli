@@ -1,0 +1,46 @@
+/*global describe, it*/
+import * as assert from 'assert';
+import * as fs from 'fs-extra';
+import * as co from 'co';
+import * as utils from '../../../src/utils';
+import f from '../../support/console';
+
+
+describe('copy', function() {
+	it('copies no console output', function(done) {
+		utils.rmdir('./koaton_c');
+		co(async function() {
+			f.init(false);
+			await utils.copy('./koaton', './koaton_c', utils.writemodes.void);
+			f.init(true);
+			assert.equal("", f.log());
+			assert.ok(utils.canAccess('./koaton_c'));
+			utils.rmdir('./koaton_c');
+		}).then(done,done).catch(done);
+	});
+	it('copies console output create', function(done) {
+		utils.rmdir('./koaton.png');
+		this.timeout(10000);
+		co(async function() {
+			f.init();
+			let res = await utils.copy('./templates/public/img/koaton.png', './koaton.png', utils.writemodes.create);
+			f.init(true);
+			assert.equal(res, "koaton.png");
+			assert.equal('   \u001b[36mcreate\u001b[39m: \u001b[32mkoaton.png\u001b[39m', f.log());
+
+			f.init();
+			await utils.copy('./templates/public/img/koaton.png', './koaton.png', utils.writemodes.update);
+			f.init(true);
+			assert.ok(utils.canAccess('./koaton.png'));
+			utils.rmdir('./koaton.png');
+		}).then(done,done).catch(done);
+	});
+
+	it('returns null if source file not found', function(done) {
+		this.timeout(10000);
+		co(async function() {
+			let res = await utils.copy('./templates/public/img/koaton3.png', './koaton.png', utils.writemodes.create);
+			assert.equal(res, null);
+		}).then(done,done).catch(done);
+	});
+});

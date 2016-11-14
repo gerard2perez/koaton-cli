@@ -19,13 +19,8 @@ function encoding(ext) {
 
 export default function copy_async(...args) {
 	let [from, to, mode] = args;
-	to = to || from;
 	return Promise.promisify(readFile)(from, {
 			encoding: encoding(extname(from))
 		})
-		.then(data => write(to, data, mode))
-		.catch(e => {
-			console.log(e.red);
-			return null;
-		});
+		.then(data => write(to, data, mode)).catch(e => { return null;});
 }

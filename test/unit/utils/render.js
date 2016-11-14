@@ -8,7 +8,7 @@ import f from '../../support/console';
 const template = "Say {{something}}!";
 
 describe('render', function() {
-	it('copiles a file with args', function() {
+	it('compiles a file with args', function() {
 		utils.rmdir('./render.txt');
 		utils.rmdir('./compiled.txt');
 		fs.outputFileSync('./render.txt', template);

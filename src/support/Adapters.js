@@ -31,5 +31,5 @@ Object.defineProperty(adapters, 'isOrDef', {
 });
 
 Object.freeze(adapters);
-export {template as Template, adapters as Adapters}
+export {template, adapters}
 export default adapters;

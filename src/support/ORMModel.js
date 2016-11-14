@@ -20,7 +20,6 @@ export default class ORMModel {
 		}
 		database = Object.assign(database, allmodels);
 		Object.keys(relations).forEach((property) => {
-			console.log(relations[property]);
 			let opts = relations[property].split(" ");
 			opts[2] = opts[2] ? opts[2] : `${property}Id`;
 			relations[property] = opts;

@@ -392,7 +392,7 @@ const deleted = function(file) {
 					hostsd += "\n" + entry;
 				}
 			}
-			utils.writeSync(hostsdlocation, hostsd.replace(/\n+/igm, "\n"), true);
+			utils.write(hostsdlocation, hostsd.replace(/\n+/igm, "\n"), true);
 		}
 	};
 export default (new command(__filename, 'Runs your awsome Koaton applicaction using nodemon'))
@@ -417,18 +417,18 @@ export default (new command(__filename, 'Runs your awsome Koaton applicaction us
 		let server_template = await utils.read(TemplatePath('subdomain.conf'), 'utf-8');
 		let nginx_conf = await utils.read(TemplatePath('server.conf'), 'utf-8');
 		const hostname = require(`${process.cwd()}/config/server`).hostname;
-		nginx_conf = utils.new_compile_(nginx_conf, {
+		nginx_conf = utils.compile(nginx_conf, {
 			hostname: hostname
 		});
 		const subdomains = require(`${process.cwd()}/config/server`).subdomains;
 		for (const idx in subdomains) {
-			nginx_conf += utils.new_compile_(server_template, {
+			nginx_conf += utils.compile(server_template, {
 				subdomain: subdomains[idx],
 				hostname: hostname,
 				port: process.env.port
 			});
 		}
-		utils.writeSync(path.join(process.cwd(), `${require(path.join(process.cwd(),"package.json")).name}.conf`), nginx_conf);
+		utils.write(path.join(process.cwd(), `${require(path.join(process.cwd(),"package.json")).name}.conf`), nginx_conf);
 		if (options.production === "development") {
 			await buildHosts();
 			livereload.listen({

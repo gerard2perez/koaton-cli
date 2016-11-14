@@ -4,7 +4,7 @@ import command from '../command';
 import {
 	adapters,
 	template
-} from '../support/adapter';
+} from '../support/Adapters';
 import utils from '../utils';
 
 const handleGenerate = async function handleGenerate(driver, options) {
@@ -13,7 +13,7 @@ const handleGenerate = async function handleGenerate(driver, options) {
 		delete require.cache[path.resolve() + "/package.json"];
 		console.log(`${driver}@${require(path.resolve() + "/package.json").dependencies[adapters[driver].package]} installed`);
 	}
-	let adapterCFG = JSON.parse(utils.new_compile_(template, {
+	let adapterCFG = JSON.parse(utils.compile(template, {
 		adapter: driver,
 		driver: adapters[driver].package,
 		user: options.user || '',
@@ -31,7 +31,7 @@ const handleGenerate = async function handleGenerate(driver, options) {
 	let connections = require(ProyPath("config", "connections"));
 	connections[driver] = adapterCFG;
 	const output = '"use strict";\nmodule.exports=' + JSON.stringify(connections, null, '\t') + ";";
-	utils.writeSync(ProyPath("config", "connections.js"), output, true);
+	utils.write(ProyPath("config", "connections.js"), output, true);
 }
 const renderdriverlist = function renderdriverlist(installed, available) {
 	console.log("    Installed drivers: ");

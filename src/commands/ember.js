@@ -78,12 +78,12 @@ export default (new command(__filename, "Creates a new ember app with the especi
 				subdomain: options.subdomain || "www",
 				layout: "main"
 			};
-			utils.writeSync(ProyPath("config", "ember.js"), `"use strict";\n\nmodule.exports=${JSON.stringify(emberjs,2,2)};`, true);
+			utils.write(ProyPath("config", "ember.js"), `"use strict";\n\nmodule.exports=${JSON.stringify(emberjs,2,2)};`, true);
 			let embercfg = await utils.read(path.join(ember_proyect_path, "config", "environment.js"), {
 				encoding: 'utf-8'
 			});
 			embercfg = embercfg.replace(/baseURL: ?'.*',/, `baseURL: '${options.mount}',`);
-			utils.writeSync(path.join(ember_proyect_path, "config", "environment.js"), embercfg, true);
+			utils.write(path.join(ember_proyect_path, "config", "environment.js"), embercfg, true);
 		}
 		return res;
 	});

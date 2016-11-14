@@ -94,9 +94,9 @@ export default class ServerConfiguaration {
 			}
 		});
 
-		Object.freeze(this.bundles);
-		Object.freeze(this.database);
-		Object.freeze(this.commands);
+		// Object.freeze(this.bundles);
+		// Object.freeze(this.database);
+		// Object.freeze(this.commands);
 	}
 	get name(){
 		return this.package.name;

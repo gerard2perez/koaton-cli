@@ -12,7 +12,11 @@ export default class ExtendedStrings {
 			writable: true,
 			value: {}
 		})
-		this.baseProperty = baseprop;
+		Object.defineProperty(this,'baseProperty',{
+			enumerable:false,
+			writable:false,
+			value:baseprop
+		});
 	}
 	add(...args) {
 		let [target, transforms,alias]=args;

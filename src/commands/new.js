@@ -1,17 +1,13 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import 'colors';
-import {
-	adapters,
-	engines
-} from '../support/adapter';
+import adapters from '../support/Adapters';
+import engines from '../support/Engines';
 import welcome from '../welcome';
 import utils from '../utils';
 import command from '../command';
 import secret from '../secret';
 
-
-const keys = Object.keys;
 let proypath = "";
 let application = "";
 let Project;
@@ -84,7 +80,7 @@ const setupDependencies = async function setupDependencies(options, db, eg) {
 		pk.dependencies["handlebars-layouts"] = "x.x.x";
 	}
 	pk.dependencies[db.package] = "x.x.x";
-	utils.writeSync(Project("package.json"), JSON.stringify(pk, null, '\t'), null);
+	utils.write(Project("package.json"), JSON.stringify(pk, null, '\t'), null);
 	if (!options.skipNpm) {
 		welcome.line1(true);
 		await shell("Installing npm dependencies", ["npm", "install", "--loglevel", "info"], proypath);
@@ -100,17 +96,11 @@ const setupDependencies = async function setupDependencies(options, db, eg) {
 	pk = requireNoCache(Project('package.json'));
 	pk.dependencies.koaton = 'x.x.x';
 	pk.dependencies["koaton-cli"] = 'x.x.x';
-	utils.writeSync(Project("package.json"), JSON.stringify(pk, null, '\t'), null);
+	utils.write(Project("package.json"), JSON.stringify(pk, null, '\t'), null);
 }
 const ArrayToDescription = function ArrayToDescription(array) {
 	return "A value from [ ".yellow +
-		keys(array).map(function(tx) {
-			if (tx.indexOf("is") === 0) {
-				return null;
-			} else {
-				return tx.cyan;
-			}
-		}).join(" | ".yellow) + " ]".yellow
+		Object.keys(array).map(tx => tx.cyan).join(" | ".yellow) + " ]".yellow
 }
 export default (new command(__filename, 'Creates a new koaton aplication.'))
 .Args("app_name")

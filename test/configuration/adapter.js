@@ -31,7 +31,7 @@ tests.push(new TestNode(cmdname, ["redbird", {}], true, true))
 
 tests.push(new TestNode(cmdname, ["sqlite3", {}], true, true))
 	.Expect('Installs the driver', true, (log) => {
-		return log.indexOf("installed") > -1 && log.indexOf("connections.js") > -1;
+		return log.indexOf("installed") > -1;
 	});
 
 tests.push(new TestNode(cmdname, ["mysql", {

@@ -5,7 +5,7 @@ import commands from '../src/commands';
 import configuration from './configuration';
 
 const test_order_for_commands = [
-	// 'build', 'fail'
+	// 'model', 'fail'
 ].concat(['new', 'adapter', 'ember', 'model', 'install', 'build', 'seed', 'semver', 'modulify'/*, 'serve' //TODO enable. FIX 001*/ , 'forever', 'publish']);
 
 const notestcase = function(testname) {

@@ -92,7 +92,7 @@ const buildCSS = async function buildCSS(target, source, development, onlypaths,
 				watchinFiles[index + target] = content.imports;
 				watchinFiles[index + target].push(file);
 				if (!onlypaths) {
-					utils.writeSync(path.join("public", "css", index + target), content.css.toString(), 'utf-8', true);
+					utils.write(path.join("public", "css", index + target), content.css.toString(), 'utf-8', true);
 				}
 				console.log();
 				ITEM.add(`/css/${index+target}`);
@@ -112,7 +112,7 @@ const buildCSS = async function buildCSS(target, source, development, onlypaths,
 			if (development) {
 				watchinFiles[index + target] = content.stats.includedFiles;
 				if (!onlypaths) {
-					utils.writeSync(path.join("public", "css", index + target), content.css.toString(), 'utf-8', true);
+					utils.write(path.join("public", "css", index + target), content.css.toString(), 'utf-8', true);
 				}
 				ITEM.add(`/css/${index+target}`);
 			} else {
@@ -127,7 +127,7 @@ const buildCSS = async function buildCSS(target, source, development, onlypaths,
 				}
 			}
 			if (development && !onlypaths) {
-				utils.writeSync(ProyPath("public", "css", index + target), concatCSS.content, 'utf-8', true);
+				utils.write(ProyPath("public", "css", index + target), concatCSS.content, 'utf-8', true);
 				ITEM.add(`/css/${index+target}`);
 			} else if (!development) {
 				concat.add(basename, concatCSS.content);
@@ -138,7 +138,7 @@ const buildCSS = async function buildCSS(target, source, development, onlypaths,
 	if (!onlypaths) {
 		if (!development) {
 			const file = hasFileName(target, concat.content.toString());
-			utils.writeSync(
+			utils.write(
 				path.join("public", "css", file),
 				concat.content.toString(), 'utf-8', true);
 
@@ -172,7 +172,7 @@ const buildJS = async function buildJS(target, source, development, onlypaths, l
 	});
 	if (!onlypaths) {
 		const file = development ? target : hasFileName(target, result.code.toString());
-		utils.writeSync(path.join("public", "js", file), result.code, {
+		utils.write(path.join("public", "js", file), result.code, {
 			encoding: 'utf-8'
 		}, true);
 		if (development) {
@@ -218,7 +218,7 @@ const preBuildEmber = async function preBuildEmber(application, options) {
 	});
 	embercfg = embercfg.replace(/baseURL: ?'.*',/, `baseURL: '${options.mount}',`);
 	embercfg = embercfg.replace(/rootURL: ?'.*',/, `rootURL: '${options.mount}',`);
-	return utils.writeSync(path.join(ember_proyect_path, "config", "environment.js"), embercfg, 0);
+	return utils.write(path.join(ember_proyect_path, "config", "environment.js"), embercfg, 0);
 }
 const buildEmber = async function buildEmber(application, options) {
 	await utils.mkdir(path.join(process.cwd(), "public", options.mount));
@@ -248,7 +248,7 @@ const postBuildEmber = async function postBuildEmber(application, options) {
 	const transformlinks=function transformlinks(text,expresion){
 		return text.match(expresion).join("\n").replace(/href=".*?assets/igm, `href="/${application}/assets`).replace(new RegExp(application + "/", "gm"), options.directory + "/")
 	};
-	text = utils.new_compile_(indextemplate, {
+	text = utils.compile(indextemplate, {
 		title: options.title || application,
 		layout: options.layout || "main",
 		path: options.directory,
@@ -259,7 +259,7 @@ const postBuildEmber = async function postBuildEmber(application, options) {
 		jsfiles: transformlinks(text, scripts)
 	});
 	await utils.mkdir(ProyPath("views", "ember_apps"), -1);
-	return utils.writeSync(ProyPath("views", "ember_apps", `${options.directory}.handlebars`), text, 1);
+	return utils.write(ProyPath("views", "ember_apps", `${options.directory}.handlebars`), text, 1);
 	//}
 }
 export {

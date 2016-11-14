@@ -81,7 +81,7 @@ export default (new command(__filename, "Run the needed commands to"))
 
 	utils.rmdir(Dest("events", "pre_modulify.js"));
 	utils.rmdir(Dest("events", "post_modulify.js"));
-	utils.writeSync(Dest("events", "pre_serve.js"), preServe);
+	utils.write(Dest("events", "pre_serve.js"), preServe);
 
 	await Events("events", "post", "modulify", Dest());
 });

@@ -51,7 +51,7 @@ export default class ServerConfiguaration {
 		});
 		Object.defineProperty(this, '_emberapps', {
 			enumerable: false,
-			value: Object.assign({}, require(ProyPath('config', 'ember')))
+			value: Object.assign({}, requireSafe(ProyPath('config', 'ember'),{}))
 		});
 		makeObjIterable(this._emberapps);
 		Object.defineProperty(this, 'localserver', {

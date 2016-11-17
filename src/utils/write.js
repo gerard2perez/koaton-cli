@@ -2,7 +2,6 @@ import 'colors';
 import * as fs from 'graceful-fs';
 import * as path from 'upath';
 import writemodes from './writemodes';
-import canAccess from './canAccess';
 import relpath from './relpath';
 
 

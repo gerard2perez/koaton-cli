@@ -2,7 +2,6 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 export default function loadmodules(dir) {
-	process.stdout.write(dir + '\n')
 	let mods = {};
 	fs.readdirSync(dir)
 		.filter(item => !(/(^|\/)\.[^\/\.]/g).test(item))
@@ -11,7 +10,7 @@ export default function loadmodules(dir) {
 		.forEach((file) => {
 			let name = path.basename(file).replace(".js", "");
 			let module = require(path.join(dir, name));
-			mods[name] = module.default ? module.default : (module[name] ? module[name]:module);
+			mods[name] = module.default ? module.default : module;
 		});
 	mods[Symbol.iterator] = function() {
 		let keys = Object.keys(this),
@@ -23,6 +22,9 @@ export default function loadmodules(dir) {
 			})
 		};
 	};
-	mods.default = mods;
+	Object.defineProperty(mods,'default',{
+		enumerable:false,
+		value: mods
+	});
 	return mods;
 }

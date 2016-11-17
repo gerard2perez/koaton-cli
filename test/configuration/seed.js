@@ -10,11 +10,6 @@ let cmdname = 'koaton seed';
 tests.push(new TestNode(cmdname, [undefined, {
 		H: true
 	}], true, true))
-	.Expect('Renders help', true, (log) => {
-		return log.indexOf("koaton seed") > -1;
-	});
-
-tests.push(new TestNode('(no args)', [undefined, {}], true))
 	.SetUp(() => {
 		process.chdir('testingapp');
 		process.env.isproyect = 'true';
@@ -22,6 +17,11 @@ tests.push(new TestNode('(no args)', [undefined, {}], true))
 		scfg.env = 'development';
 		fs.removeSync(ProyPath("seeds", "user.js"));
 	})
+	.Expect('Renders help', true, (log) => {
+		return log.indexOf("koaton seed") > -1;
+	});
+
+tests.push(new TestNode('(no args)', [undefined, {}], true))
 	.Expect('Nothing to seed', true, (log) => {
 		return log.indexOf("Nothing to seed") > -1;
 	});

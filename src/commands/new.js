@@ -1,7 +1,5 @@
-import * as path from 'path';
-import * as fs from 'fs-extra';
 import 'colors';
-import adapters from '../support/Adapters';
+import {adapters} from '../support/Adapters';
 import engines from '../support/Engines';
 import welcome from '../welcome';
 import utils from '../utils';
@@ -12,14 +10,7 @@ let proypath = "";
 let application = "";
 let Project;
 
-const makeLink=function makeLink(module){
-	try {
-		fs.symlinkSync(path.join(__dirname, `/../../../${module}`), ProyPath("/node_modules",module));
-		console.log("Linked:"+module+": done".green);
-	} catch (e) {
-		console.log("Linked:"+module+": already exists".green);
-	}
-}
+
 
 const setupInit = async function setupInit() {
 	await utils.mkdir(Project());
@@ -54,8 +45,8 @@ const setupAssets = async function setupAssets() {
 }
 const setupOthers = async function setupOthers() {
 	await utils.mkdir(Project("node_modules"));
-	makeLink('koaton');
-	makeLink('koaton-cli');
+	utils.symlink('koaton');
+	utils.symlink('koaton-cli');
 	await utils.mkdir(Project("routes"));
 	await utils.copy(TemplatePath("/routes/index.js"), Project("/routes/index.js"));
 	await utils.mkdir(Project("controllers"));
@@ -76,9 +67,9 @@ const setupDependencies = async function setupDependencies(options, db, eg) {
 	let pk = requireNoCache(TemplatePath('/package.json'));
 	pk.name = application;
 	pk.dependencies[eg] = "x.x.x";
-	if (eg === "handlebars") {
-		pk.dependencies["handlebars-layouts"] = "x.x.x";
-	}
+	// if (eg === "handlebars") {
+	pk.dependencies["handlebars-layouts"] = "x.x.x";
+	// }
 	pk.dependencies[db.package] = "x.x.x";
 	utils.write(Project("package.json"), JSON.stringify(pk, null, '\t'), null);
 	if (!options.skipNpm) {
@@ -86,9 +77,9 @@ const setupDependencies = async function setupDependencies(options, db, eg) {
 		await shell("Installing npm dependencies", ["npm", "install", "--loglevel", "info"], proypath);
 		await shell("Installing adapter " + db.package.green, ["npm", "install", db.package, "--save", "--loglevel", "info"], application);
 		await shell("Installing engine " + eg.green, ["npm", "install", eg, "--save", "--loglevel", "info"], proypath);
-		if (eg === "handlebars") {
-			await shell("Installing engine " + "handlebars-layouts".green, ["npm", "install", "handlebars-layouts", "--save", "--loglevel", "info"], proypath);
-		}
+		// if (eg === "handlebars") {
+		await shell("Installing engine " + "handlebars-layouts".green, ["npm", "install", "handlebars-layouts", "--save", "--loglevel", "info"], proypath);
+		// }
 	}
 	if (!options.skipBower) {
 		await shell("Installing bower dependencies", ["bower", "install"], proypath);
@@ -125,19 +116,13 @@ export default (new command(__filename, 'Creates a new koaton aplication.'))
 		Project = ProyPath.bind(ProyPath, app_name);
 		application = app_name;
 		proypath = ProyPath(app_name);
-		var ok = await utils.challenge(proypath, `destination ${proypath.yellow} is not empty, continue?`, options.force);
-		if (ok) {
-			// process.stdin.destroy();
-			try {
-				await setupInit(app_name);
-				await setupAssets(app_name);
-				await setupConfig(app_name);
-				await setupOthers(app_name);
-				await setupDependencies(options, adapters.isOrDef(options.db), engines.isOrDef(options.viewEngine));
-				await utils.shell("Initializing git".green, ["git", "init"], proypath);
-			} catch (e) {
-				console.log(e.stack);
-			}
+		if (await utils.challenge(proypath, `destination ${proypath.yellow} is not empty, continue?`, options.force)) {
+			await setupInit(app_name);
+			await setupAssets(app_name);
+			await setupConfig(app_name);
+			await setupOthers(app_name);
+			await setupDependencies(options, adapters.isOrDef(options.db), engines.isOrDef(options.viewEngine));
+			await utils.shell("Initializing git".green, ["git", "init"], proypath);
 			welcome.line1(true);
 			console.log("   To run your app first: ");
 			console.log('     $' + ' cd %s '.bgWhite.black, application);
@@ -145,7 +130,7 @@ export default (new command(__filename, 'Creates a new koaton aplication.'))
 			console.log('     $' + ' koaton serve '.bgWhite.black);
 			welcome.line3("or");
 			console.log('     $' + 'cd %s && koaton serve \n'.bgWhite.black, application);
+			return false;
 		}
-		console.log(!ok);
-		return !ok;
+		return true;
 	});

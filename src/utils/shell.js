@@ -37,9 +37,7 @@ export default Promise.promisify(function shell(display, command, ...args) {
 		shell: true
 	});
 	spinner.start(50, display, undefined, process.stdout.columns).then(() => {
-		cb(null, c || child.exitCode);
-	}, (err) => {
-		cb(err, c || child.exitCode);
+		cb(null, c);
 	});
 	child.stderr.on('data', output);
 	child.stdout.on('data', output);

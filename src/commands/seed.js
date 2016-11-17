@@ -14,7 +14,7 @@ export default (new command(__filename, "Creates or run seed in your project."))
 		fs.ensureDirSync(ProyPath("seeds"));
 		if (model && options.generate && scfg.database.models[model] && !utils.canAccess(ProyPath('seeds', `${model}.js`))) {
 			console.log("file need creation");
-			let [skey, ...keys] = Object.keys(scfg.database.item(model));
+			let [skey, ...keys] = Object.keys(scfg.database[model]);
 			skey = {
 				[skey]: 'unic'
 			};
@@ -26,10 +26,6 @@ export default (new command(__filename, "Creates or run seed in your project."))
 				model: `${JSON.stringify(skey)},${JSON.stringify(seed)}`
 			});
 		} else if (!options.generate) {
-			try {
-				await require('../../../koaton/lib/orm').initialize(app, true);
-			} catch (e) {
-				console.log(e.stack);
-			}
+			await require('../../../koaton/lib/orm').initialize(app, true);
 		}
 	});

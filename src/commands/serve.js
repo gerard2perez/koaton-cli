@@ -414,21 +414,7 @@ export default (new command(__filename, 'Runs your awsome Koaton applicaction us
 				port: process.env.port
 			};
 
-		let server_template = await utils.read(TemplatePath('subdomain.conf'), 'utf-8');
-		let nginx_conf = await utils.read(TemplatePath('server.conf'), 'utf-8');
-		const hostname = require(`${process.cwd()}/config/server`).hostname;
-		nginx_conf = utils.compile(nginx_conf, {
-			hostname: hostname
-		});
-		const subdomains = require(`${process.cwd()}/config/server`).subdomains;
-		for (const idx in subdomains) {
-			nginx_conf += utils.compile(server_template, {
-				subdomain: subdomains[idx],
-				hostname: hostname,
-				port: process.env.port
-			});
-		}
-		utils.write(path.join(process.cwd(), `${require(path.join(process.cwd(),"package.json")).name}.conf`), nginx_conf);
+
 		if (options.production === "development") {
 			await buildHosts();
 			livereload.listen({
@@ -439,7 +425,6 @@ export default (new command(__filename, 'Runs your awsome Koaton applicaction us
 		screen.start();
 		if (options.production === "development") {
 			await require('./build').copystatic();
-
 			await WactchAndCompressImages(new chokidar.watch(path.join('assets', 'img'), {
 				persistent: true,
 				ignoreInitial: true,
@@ -494,7 +479,7 @@ export default (new command(__filename, 'Runs your awsome Koaton applicaction us
 									layout: embercfg[ember_app].layout,
 									title: embercfg[ember_app].title
 								};
-								utils.nlog(`Building ${ember_app.green} second plane`);
+								console.log(`Building ${ember_app.green} second plane`);
 								await buildcmd.preBuildEmber(ember_app, configuration);
 								let b = serveEmber(ember_app, embercfg[ember_app], indexapp)
 								building.push(b);

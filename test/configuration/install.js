@@ -1,15 +1,17 @@
-import * as path from 'upath';
-import * as fs from 'fs-extra';
 import TestNode from '../support/TestNode';
+import ServerConfiguaration from '../../src/support/Server';
 import '../support/array';
+
 
 let tests = [];
 let cmdname = 'koaton install';
 tests.push(new TestNode('(no args)', [undefined, {}], true))
 	.SetUp(() => {
 		process.chdir('testingapp');
-		// process.env.isproyect = 'true';
-		// global.scfg = new ServerConfiguaration();
+		process.env.isproyect = 'true';
+		global.scfg = new ServerConfiguaration();
+
+
 	});
 
 	tests.last.CleanUp(() => {

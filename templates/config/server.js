@@ -7,6 +7,10 @@ var host = 'http://localhost' + (port != 80 ? ':' + port : '');
 var DEBUG = env !== 'production'
 
 module.exports = {
+	token_timeout:{
+		dev:60*20,
+		prod:60*5
+	},
 	pagination:{
 		limit:50
 	},

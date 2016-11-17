@@ -3,6 +3,10 @@
 		"lcov",
 		"text"
 	],
+	"exclude":[
+		"/**/globals.js",
+		"utils"
+	],
 	"sourceMap": false,
 	"instrument": false,
 	"cache": true,

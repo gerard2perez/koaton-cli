@@ -7,9 +7,7 @@ const mkdir = Promise.promisify(fs.mkdirs);
 
 export default function mkdir_async(file) {
 	return mkdir(path.normalize(file)).then(() => {
-		console.log(`   ${"create"}.cyan: ${relpath(file)}`);
+		console.log(`   ${"create".cyan}: ${relpath(file)}`);
 		return file;
-	},(e)=>{
-		console.log(e);
 	});
 }

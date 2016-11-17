@@ -5,8 +5,9 @@ import commands from '../src/commands';
 import configuration from './configuration';
 
 const test_order_for_commands = [
-	// 'model', 'fail'
-].concat(['new', 'adapter', 'ember', 'model', 'install', 'build', 'seed', 'semver', 'modulify'/*, 'serve' //TODO enable. FIX 001*/ , 'forever', 'publish']);
+	// 'fail',
+	// 'nginx', 'fail'
+].concat(['new', 'adapter', 'ember', 'model', 'nginx', 'install', 'build', 'seed', 'semver', 'modulify' /*, 'serve' //TODO enable. FIX 001*/ , 'forever', 'publish']);
 
 const notestcase = function(testname) {
 	describe(testname, () => {
@@ -18,7 +19,7 @@ const notestcase = function(testname) {
 
 const testcase = function testcase(test_config, cwd, testname, command) {
 	describe(testname, function() {
-		for (const testdata of (test_config || [])) {
+		for (const testdata of(test_config || [])) {
 			it(testdata.name, function(done) {
 				this.timeout(1000 * 60 * 5);
 				testdata.SetUp();
@@ -28,7 +29,7 @@ const testcase = function testcase(test_config, cwd, testname, command) {
 					try {
 						let buffer = "";
 						console.log = (data) => {
-							// ori(data);
+							ori(data);
 							buffer += (data || "").toString();
 						};
 						let res = yield command.action.apply(null, testdata.args);

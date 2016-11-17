@@ -8,6 +8,7 @@
 				"istanbul"
 			],
 			"ignore": [
+				"serverconf",
 				"config/",
 				"docs/",
 				"lib/",

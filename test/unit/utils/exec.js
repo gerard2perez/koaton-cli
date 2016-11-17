@@ -20,12 +20,8 @@ describe('exec', function() {
 
 	it('return error', function(done) {
 		co(async function() {
-			try {
-				let res = await utils.exec(undefined,null);
-			} catch (e) {
-				//TODO: exec:test I can't make it fail.
-				assert.ok(e);
-			}
+			let res = await utils.exec('lsa -kl', null);
+			assert.ok(res instanceof Error);
 			done();
 		});
 	});

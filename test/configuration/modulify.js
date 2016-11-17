@@ -1,3 +1,4 @@
+import * as fs from 'fs-extra';
 import TestNode from '../support/TestNode';
 import '../support/array';
 import ServerConfiguaration from '../../src/support/Server';
@@ -16,7 +17,16 @@ tests.push(new TestNode(cmdname, [{
 	})
 	.Expect('Renders help', true, log => log.indexOf(cmdname) > -1);
 
-tests.push(new TestNode("(no args)", [{}], true));
+tests.push(new TestNode("(no args)", [{}], true))
+	.SetUp(() => {
+		let source = fs.readFileSync('views/ember_apps/restapp.handlebars', 'utf-8');
+		if (source.indexOf("admin.css") === -1) {
+			source = source.replace("{{{bundle \"restapp.css\"}}}", "{{{bundle \"restapp.css\"}}}\n\t\t{{{bundle \"admin.css\"}}}")
+				.replace("{{{bundle \"restapp.js\"}}}", "{{{bundle \"restapp.js\"}}}\n\t\t{{{bundle \"admin.js\"}}}");
+		}
+		fs.writeFileSync('views/ember_apps/restapp.handlebars', source);
+		process.stdout.write("update test\n");
+	});
 tests.last.CleanUp(() => {
 	process.chdir('..')
 });

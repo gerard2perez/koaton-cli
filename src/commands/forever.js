@@ -18,8 +18,8 @@ const list = async function list() {
 	let has = data[0].indexOf("No forever processes running") === -1;
 	return {
 		hasProcess: has,
-		header: has !== null ? data[1].trim().split(' ').slice(1) : [],
-		data: has !== null ? data.slice(2).map((d) => {
+		header: has ? data[1].trim().split(' ').slice(1) : [],
+		data: has ? data.slice(2).map((d) => {
 			return d.trim().split(' ')
 		}) : []
 	}
@@ -96,10 +96,12 @@ export default (new command(__filename, "Runs your awsome Koaton on production m
 				}
 			}
 		} else if (options.stop) {
-			if (app === "all") {
+			if (options.stop === "all") {
+				await utils.exec(`forever stopall`, {});
+			} else if (options.stop === ".") {
 				await utils.exec(`forever stop koaton_${app}`, {});
 			} else {
-				await utils.exec(`forever stopall`, {});
+				await utils.exec(`forever stop koaton_${options.stop}`, {});
 			}
 		} else if (options.list) {
 			let r = await list();

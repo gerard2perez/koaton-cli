@@ -14,7 +14,6 @@
 /testcoverage/
 /docs/
 /lib/
-/**/barebone.js
 duplication.html
 _*
 npm-debug*

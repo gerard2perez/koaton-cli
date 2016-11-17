@@ -1,20 +1,21 @@
 import 'colors';
 import * as Promise from 'bluebird';
-import * as _ncp from 'ncp';
 import * as fs from 'graceful-fs';
 import * as glob from 'glob';
 import * as path from 'upath';
+import * as fse from 'fs-extra';
 import utils from '../utils';
 import command from '../command';
 
-const ncp = Promise.promisify(_ncp.ncp);
 const UpdateModulesAssetsLinks = function UpdateModulesAssetsLinks(hbs, ext, regex) {
 	let found,
 		res = hbs;
+		// console.log(hbs,ext,regex);
 	while ((found = regex.exec(hbs)) !== null) {
 		let target = scfg.bundles[`${found[1]}.${ext}`];
 		if (target !== undefined) {
-			let htmltag = ext === "css" ? `<link rel="stylesheet" href="/${path.join(scfg.name,target)}"/>` : `<script src="/${path.join(scfg.name,target)}"></script>`
+			console.log(target.file);
+			let htmltag = ext === "css" ? `<link rel="stylesheet" href="/${path.join(scfg.name,target.file)}"/>` : `<script src="/${path.join(scfg.name,target.file)}"></script>`
 			res = res.replace(found[0], htmltag);
 		}
 	}
@@ -43,7 +44,7 @@ const copyall = function copyall(folder) {
 		let filename = path.basename(file);
 		let location = file.replace(filename, "").replace(path.normalize(process.cwd()), "");
 		utils.mkdir(Dest(location));
-		promises.push(utils.Copy(file, Dest(location, filename)));
+		promises.push(utils.copy(file, Dest(location, filename)));
 	})
 	return Promise.all(promises);
 }
@@ -64,9 +65,12 @@ export default (new command(__filename, "Run the needed commands to"))
 	utils.mkdir(Dest("routes"));
 	utils.mkdir(Dest("config"));
 	utils.mkdir(Dest("commands"));
-	await utils.shell("Building for production".green, ["koaton", "build", "-p"]);
-	utils.Copy(ProyPath("config", "ember.js"), Dest("config", "ember.js"));
-	await ncp(ProyPath('public'), Dest("public"));
+	process.stdout.write("update pre-asd\n");
+	// await utils.shell("Building for production".green, ["koaton", "build", "-p"]);
+	process.stdout.write("update post-sada\n");
+	utils.copy(ProyPath("config", "ember.js"), Dest("config", "ember.js"));
+	fse.copySync(ProyPath('public'), Dest("public"));
+	// await ncp(ProyPath('public'), Dest("public"));
 	await copyall("commands");
 	await copyall("controllers");
 	await copyall("events");

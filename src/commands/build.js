@@ -13,7 +13,10 @@ import {
 import utils from '../utils';
 import command from '../command';
 import BundleItem from '../support/BundleItem';
+import spin from '../spinner';
 
+
+const spinner = spin();
 const copystatic = async function copystatic() {
 	const copy = requireSafe(ProyPath("config", "copy"), {});
 	for (const dir in copy) {
@@ -22,7 +25,7 @@ const copystatic = async function copystatic() {
 			let directories = readSync(ProyPath(copy[dir][idx]));
 			for (const i in directories) {
 				const file = directories[i];
-				await utils.Copy(file, ProyPath("public", dir, path.basename(file)));
+				await utils.copy(file, ProyPath("public", dir, path.basename(file)));
 			}
 		}
 	}
@@ -52,11 +55,11 @@ const compressImages = function(files, dest) {
 }
 const buildCSS = async function buildCSS(target, source, development, onlypaths, logger) {
 	if (scfg.bundles.has(target)) {
-		scfg.bundles.item(target).clear();
+		scfg.bundles[target].clear();
 	} else {
 		scfg.bundles.add(new BundleItem(target, []));
 	}
-	const ITEM = scfg.bundles.item(target);
+	const ITEM = scfg.bundles[target];
 
 	utils.writeuseslog = logger;
 	const less = require('less'),
@@ -149,7 +152,7 @@ const buildCSS = async function buildCSS(target, source, development, onlypaths,
 	return watchinFiles;
 }
 const buildJS = async function buildJS(target, source, development, onlypaths, logger) {
-	const ITEM = scfg.bundles.item(target) || new BundleItem(target, []);
+	const ITEM = scfg.bundles[target] || new BundleItem(target, []);
 	ITEM.clear();
 	utils.writeuseslog = logger;
 	let AllFiles = [];
@@ -284,7 +287,7 @@ export default (new command(
 		process.env.NODE_ENV = options.prod;
 		const source_file = process.cwd() + (config_file || '/config/bundles.js');
 		const patterns = require(source_file);
-		await utils.Copy(path.join('assets', 'favicon.ico'), path.join('public', 'favicon.ico'), {
+		await utils.copy(path.join('assets', 'favicon.ico'), path.join('public', 'favicon.ico'), {
 			encoding: "binary"
 		});
 		if (Object.keys(patterns).length === 0) {
@@ -321,8 +324,8 @@ export default (new command(
 				});
 				await postBuildEmber(ember_app, configuration);
 			}
-			utils.log("Compressing Images");
+			spinner.start(50, "Compressing Images", undefined, process.stdout.columns);
 			await compressImages([path.join('assets', 'img', '*.{jpg,png}')], path.join('public', 'img'));
-			utils.nlog("Images Compressed");
+			spinner.end("Images Compressed".green);
 		}
 	});

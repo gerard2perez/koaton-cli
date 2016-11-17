@@ -15,11 +15,11 @@ let id = 0;
 
 export default class ServerConfiguaration {
 	UpdateKoaton() {
-		fs.writeFileSync(ProyPath(".koaton"), JSON.stringify(this.localkoaton, 2, 2));
-	}
-	UpdateModule(filepath) {
-		fs.writeFileSync(filepath, '"use strict";\nmodule.exports=' + JSON.stringify(this.emberApps, 4, 4));
-	}
+			fs.writeFileSync(ProyPath(".koaton"), JSON.stringify(this.localkoaton, 2, 2));
+		}
+		// UpdateModule(filepath) {
+		// 	fs.writeFileSync(filepath, '"use strict";\nmodule.exports=' + JSON.stringify(this.emberApps, 4, 4));
+		// }
 	constructor() {
 		this.port = process.env.port;
 		this.env = process.env.NODE_ENV;
@@ -46,12 +46,12 @@ export default class ServerConfiguaration {
 			value: {
 				bundles: {},
 				database: {},
-				commands: localkoaton.commands || []
+				commands: [].concat(localkoaton.commands)
 			}
 		});
 		Object.defineProperty(this, '_emberapps', {
 			enumerable: false,
-			value: require(ProyPath('config', 'ember')) || {}
+			value: Object.assign({}, require(ProyPath('config', 'ember')))
 		});
 		makeObjIterable(this._emberapps);
 		Object.defineProperty(this, 'localserver', {
@@ -98,7 +98,7 @@ export default class ServerConfiguaration {
 		// Object.freeze(this.database);
 		// Object.freeze(this.commands);
 	}
-	get name(){
+	get name() {
 		return this.package.name;
 	}
 	get dev() {
@@ -114,20 +114,20 @@ export default class ServerConfiguaration {
 		return this.package.version;
 	}
 	get hostname() {
-		if (this.host.match(ipformat)) {
-			return this.host;
-		} else if (this.host.indexOf("www") === 0) {
-			return this.host;
-		} else if (this.host !== "localhost") {
-			return "www." + this.host;
-		} else {
-			return this.host;
+			if (this.host.match(ipformat)) {
+				return this.host;
+			} else if (this.host.indexOf("www") === 0) {
+				return this.host;
+			} else if (this.host !== "localhost") {
+				return "www." + this.host;
+			} else {
+				return this.host;
+			}
 		}
-	}
-	get relations_mode() {
-		return this.localserver.relation_mode === 'ids';
-	}
-	get emberApps(){
-		return this._emberapps;
-	}
+		// get relations_mode() {
+		// 	return this.localserver.relation_mode === 'ids';
+		// }
+		get emberApps() {
+			return this._emberapps;
+		}
 }

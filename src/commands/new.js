@@ -1,5 +1,7 @@
 import 'colors';
-import {adapters} from '../support/Adapters';
+import {
+	adapters
+} from '../support/Adapters';
 import engines from '../support/Engines';
 import welcome from '../welcome';
 import utils from '../utils';
@@ -111,26 +113,24 @@ export default (new command(__filename, 'Creates a new koaton aplication.'))
 	.Action(async function(app_name, options) {
 		if (!app_name) {
 			console.log('The command requires a name to run.\n\tkoaton new -h\nto see help.'.yellow);
-			return 0;
+		} else {
+			Project = ProyPath.bind(ProyPath, app_name);
+			application = app_name;
+			proypath = ProyPath(app_name);
+			if (await utils.challenge(proypath, `destination ${proypath.yellow} is not empty, continue?`, options.force)) {
+				await setupInit(app_name);
+				await setupAssets(app_name);
+				await setupConfig(app_name);
+				await setupOthers(app_name);
+				await setupDependencies(options, adapters.isOrDef(options.db), engines.isOrDef(options.viewEngine));
+				await utils.shell("Initializing git".green, ["git", "init"], proypath);
+				welcome.line1(true);
+				console.log("   To run your app first: ");
+				console.log('     $' + ' cd %s '.bgWhite.black, application);
+				console.log('   and then: ');
+				console.log('     $' + ' koaton serve '.bgWhite.black);
+				welcome.line3("or");
+				console.log('     $' + 'cd %s && koaton serve \n'.bgWhite.black, application);
+			}
 		}
-		Project = ProyPath.bind(ProyPath, app_name);
-		application = app_name;
-		proypath = ProyPath(app_name);
-		if (await utils.challenge(proypath, `destination ${proypath.yellow} is not empty, continue?`, options.force)) {
-			await setupInit(app_name);
-			await setupAssets(app_name);
-			await setupConfig(app_name);
-			await setupOthers(app_name);
-			await setupDependencies(options, adapters.isOrDef(options.db), engines.isOrDef(options.viewEngine));
-			await utils.shell("Initializing git".green, ["git", "init"], proypath);
-			welcome.line1(true);
-			console.log("   To run your app first: ");
-			console.log('     $' + ' cd %s '.bgWhite.black, application);
-			console.log('   and then: ');
-			console.log('     $' + ' koaton serve '.bgWhite.black);
-			welcome.line3("or");
-			console.log('     $' + 'cd %s && koaton serve \n'.bgWhite.black, application);
-			return false;
-		}
-		return true;
 	});

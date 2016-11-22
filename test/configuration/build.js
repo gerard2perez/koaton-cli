@@ -30,6 +30,7 @@ tests.push(new TestNode(cmdname, [undefined, {
 
 tests.push(new TestNode('(no args)', [undefined, {}], true))
 	.SetUp(() => {
+		global.skipshell = false;
 		process.chdir('testingapp');
 		spawn("git", ["clone", "https://github.com/gerard2p/koatonstyle.git", "assets/flatadmin"]);
 		addtoBundle({

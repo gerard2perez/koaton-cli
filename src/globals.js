@@ -50,7 +50,7 @@ global.accessSync = function accessSync(dir) {
 }
 global.Events = function Events(path, event, phase, forcedir) {
 	let Path = ProyPath(path);
-	let m = requireNoCache(ProyPath(path, `${event}_${phase}`), "null");
+	let m = requireNoCache(ProyPath(path, `${event}_${phase}`));
 	switch (typeof m) {
 		case "undefined":
 		case undefined:
@@ -83,7 +83,7 @@ global.requireSafe = function requireSafe(lib, defaults) {
 		return require(lib);
 	} catch (e) {
 		if (defaults === undefined) {
-			console.log(e.stack);
+			// console.log(e.stack);
 		}
 		return defaults;
 	}
@@ -120,6 +120,7 @@ global.TemplatePath = function(...args) {
 if (process.env.isproyect === 'true') {
 	console.log(process.env.isproyect);
 	global.scfg = new(require('./support/Server').default)();
+	require(ProyPath('node_modules','koaton/lib/support','globals'));
 
 } else {
 	global.scfg = {version: "0.0.0"};

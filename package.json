@@ -33,6 +33,8 @@
 		"url": "https://github.com/gerard2p/koaton-cli.git"
 	},
 	"keywords": [
+		"koaton",
+		"cli",
 		"koa",
 		"bootstrap",
 		"seed",

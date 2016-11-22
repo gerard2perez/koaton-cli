@@ -23,6 +23,7 @@ tests.push(new TestNode(cmdname, [{
 		process.env.isproyect = 'true';
 		global.scfg = new ServerConfiguaration();
 		scfg.port=62626;
+		global.skipshell = true;
 	})
 	.Expect('Renders help', true, (log) => {
 		return log.indexOf(cmdname) > -1;

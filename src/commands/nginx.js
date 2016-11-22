@@ -17,11 +17,7 @@ async function getnginxpath() {
 export async function copyconf(name) {
 	await utils.copy(ProyPath(name), path.join(await getnginxpath(), "enabled_sites", name));
 	console.log(`   ${"copying".cyan}: ${name}`);
-	try {
-		await utils.shell("Restarting Nginx", ["nginx", "-s", "reload"], process.cwd());
-	} catch (e) {
-		console.log(e);
-	}
+	await utils.shell("Restarting Nginx", ["nginx", "-s", "reload"], process.cwd());
 }
 
 export default (new command(__filename, 'helps bind the server to nginx'))

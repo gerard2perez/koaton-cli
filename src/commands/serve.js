@@ -100,7 +100,7 @@ const deleted = function(file) {
 					});
 				});
 			},
-			findDirences = function findDirences(source, target){
+			findDirences = function findDirences(source, target) {
 				let diff = [];
 				for (const file in source) {
 					if (target.indexOf(source[file]) === -1) {
@@ -114,8 +114,8 @@ const deleted = function(file) {
 				let isnew = oldbranch === undefined;
 				oldbranch = oldbranch || [];
 				newbranch = newbranch || [];
-				let added = findDirences(newbranch,oldbranch),
-					removed = findDirences(oldbranch,newbranch);
+				let added = findDirences(newbranch, oldbranch),
+					removed = findDirences(oldbranch, newbranch);
 				return {
 					isnew: isnew,
 					added: added.filter((file) => {
@@ -293,12 +293,10 @@ const deleted = function(file) {
 		})(app, cfg.mount, cfg.subdomain || "");
 	},
 	seedkoaton_modules = function() {
-		console.log(requireNoCache);
 		fs.access(ProyPath("koaton_modules"), fs.RF_OK | fs.W_OK, (err) => {
 			if (!err) {
 				readDir(ProyPath("koaton_modules")).forEach((Module) => {
-					console.log(Module);
-					requireNoCache(ProyPath("koaton_modules", Module, "koaton_prebuild.js"))();
+					requireNoCache(ProyPath("koaton_modules", Module, "koaton_prebuild.js"), () => {})();
 				});
 			}
 		});
@@ -415,8 +413,6 @@ export default (new command(__filename, 'Runs your awsome Koaton applicaction us
 				NODE_ENV: process.env.NODE_ENV,
 				port: process.env.port
 			};
-
-
 		if (options.production === "development") {
 			await buildHosts();
 			livereload.listen({
@@ -459,10 +455,10 @@ export default (new command(__filename, 'Runs your awsome Koaton applicaction us
 						"*.tmp",
 						"*.json"
 					],
-					verbose: false,
+					verbose: true,
 					script: 'app.js',
 					env: env,
-					stdout: false
+					stdout: true
 				})
 				.once('start', function() {
 					co(async function() {
@@ -537,7 +533,8 @@ export default (new command(__filename, 'Runs your awsome Koaton applicaction us
 						icon: path.join(__dirname, 'koaton.png'),
 						sound: 'Basso'
 					});
-				}).on('crash', () => {
+				}).on('crash', (e) => {
+					console.log(e);
 					resolve(1);
 				});
 			const exitHandler = function() {

@@ -15,7 +15,6 @@
 		"cover:watch": "npm run cover & chokidar src test -c \"cls & npm run cover\"",
 		"cover:live": "npm-run-all --parallel cover:watch cover:reload",
 		"codeclimate": "codeclimate analyze -f html -e duplication > duplication.html",
-		"doc": "esdoc -c esdoc.json",
 		"commit": "git-cz",
 		"semantic-release": "semantic-release pre && npm publish && semantic-release post"
 	},
@@ -63,7 +62,6 @@
 		"glob": "^7.0.5",
 		"graceful-fs": "^4.1.10",
 		"gulp-livereload": "^3.8.1",
-		"i": "^0.3.4",
 		"imagemin": "^5.2.1",
 		"imagemin-mozjpeg": "^6.0.0",
 		"imagemin-pngquant": "^5.0.0",

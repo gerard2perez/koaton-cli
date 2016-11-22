@@ -10,12 +10,6 @@ engines:
     eslint:
         enabled: true
         channel: eslint-3
-    nodesecurity:
-        enabled: false
-    markdownlint:
-        include_paths:
-            - .md
-        enabled: true
     fixme:
         enabled: true
 ratings:

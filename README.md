@@ -2,7 +2,7 @@
 
 [![Build Status](https://img.shields.io/travis/gerard2p/koaton-cli.svg?style=flat-square&branch=master)](https://travis-ci.org/gerard2p/koaton-cli)[![Dependency Status](https://david-dm.org/gerard2p/koaton-cli.svg?style=flat-square)](https://david-dm.org/gerard2p/koaton-cli)[![Code Climate](https://codeclimate.com/github/gerard2p/koaton-cli/badges/gpa.svg)](https://codeclimate.com/github/gerard2p/koaton-cli)
 
-Koaton is a CLI tool that allow you to easily create and manage your [Koaton](github.com/gerard2p/koaton) projects.
+Koaton is a CLI tool that allow you to easily create and manage your [Koaton](https://github.com/gerard2p/koaton) projects.
 
   The Latest Version
   ------------------

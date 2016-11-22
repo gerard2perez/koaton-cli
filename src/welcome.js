@@ -79,8 +79,5 @@ export default {
 		const index = Math.floor((Math.random() * jutsus.length));
 		console.log(center("Koaton: " + jutsus[index].name.red));
 		line1(true);
-	},
-	lift() {
-
 	}
 };

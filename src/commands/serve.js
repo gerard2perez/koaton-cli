@@ -293,9 +293,11 @@ const deleted = function(file) {
 		})(app, cfg.mount, cfg.subdomain || "");
 	},
 	seedkoaton_modules = function() {
+		console.log(requireNoCache);
 		fs.access(ProyPath("koaton_modules"), fs.RF_OK | fs.W_OK, (err) => {
 			if (!err) {
 				readDir(ProyPath("koaton_modules")).forEach((Module) => {
+					console.log(Module);
 					requireNoCache(ProyPath("koaton_modules", Module, "koaton_prebuild.js"))();
 				});
 			}

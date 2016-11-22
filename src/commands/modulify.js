@@ -65,6 +65,7 @@ export default (new command(__filename, "Run the needed commands to"))
 	utils.mkdir(Dest("routes"));
 	utils.mkdir(Dest("config"));
 	utils.mkdir(Dest("commands"));
+	utils.mkdir(Dest("models"));
 	process.stdout.write("update pre-asd\n");
 	// await utils.shell("Building for production".green, ["koaton", "build", "-p"]);
 	process.stdout.write("update post-sada\n");
@@ -72,6 +73,7 @@ export default (new command(__filename, "Run the needed commands to"))
 	fse.copySync(ProyPath('public'), Dest("public"));
 	// await ncp(ProyPath('public'), Dest("public"));
 	await copyall("commands");
+	await copyall("models");
 	await copyall("controllers");
 	await copyall("events");
 	await copytemplates("views");

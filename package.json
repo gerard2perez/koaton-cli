@@ -16,6 +16,7 @@
     "cover:live": "npm-run-all --parallel cover:watch cover:reload",
     "codeclimate": "codeclimate analyze -f html -e duplication > duplication.html",
     "commit": "git-cz",
+	"commit:push": "git-cz & git push",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "tandlint": "npm-run-all --parallel export:live eslint:live",
     "make-help": "node help2md.js"

@@ -29,6 +29,6 @@
 		"koa-socket": "^4.3.0",
 		"koa-static": "^2.0.0",
 		"koa-passport":"^2.0.0",
-		"koaton":"x.x.x"
+		"koaton":"latest"
 	}
 }

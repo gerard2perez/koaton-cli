@@ -26,8 +26,10 @@ const testcase = function testcase(test_config, cwd, testname, command) {
 				co(function*() {
 					let err = null;
 					const ori = console.log;
+					const write = process.stdout.write;
 					try {
 						let buffer = "";
+						 process.stderr.write=()=>{};
 						console.log = (data) => {
 							// ori(data);
 							buffer += (data || "").toString();
@@ -46,6 +48,7 @@ const testcase = function testcase(test_config, cwd, testname, command) {
 					} finally {
 						testdata.CleanUp();
 						console.log = ori;
+						 process.stderr.write = write;
 					}
 					if (err) {
 						throw err;

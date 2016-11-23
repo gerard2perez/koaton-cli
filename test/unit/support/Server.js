@@ -4,9 +4,6 @@ import * as fs from 'fs-extra';
 import Server from '../../../src/support/Server';
 import ORMModel from '../../../src/support/ORMModel';
 
-console.log(ProyPath())
-console.log(process.cwd())
-
 let user = `"use strict";
 module.exports = function(schema,relation) {
 	return {
@@ -56,7 +53,6 @@ describe('Server', function() {
 	});
 	it('add a new model', function() {
 		server.database.add(new ORMModel('city', 'name'));
-		// console.log(JSON.stringify(server.database.toJSON()));
 	});
 	it('reads all project properties (development)', function() {
 		server.env = "development";

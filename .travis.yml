@@ -1,7 +1,4 @@
 ---
-os:
-  - linux
-  - osx
 services:
   - mongodb
 language: node_js

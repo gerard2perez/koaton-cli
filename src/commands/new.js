@@ -85,8 +85,6 @@ const setupDependencies = async function setupDependencies(options, db, eg) {
 		await shell("Installing bower dependencies", ["bower", "install"], proypath);
 	}
 	pk = requireNoCache(Project('package.json'));
-	pk.dependencies.koaton = 'x.x.x';
-	pk.dependencies["koaton-cli"] = 'x.x.x';
 	utils.write(Project("package.json"), JSON.stringify(pk, null, '\t'), null);
 }
 const ArrayToDescription = function ArrayToDescription(array) {

@@ -15,7 +15,6 @@ describe('ORMModel', function() {
 		address: address
 	});
 
-	// console.log(users);
 	it("throw an exception when missing args", function() {
 		try {
 			let nomodel = new ORMModel('admin');

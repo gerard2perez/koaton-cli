@@ -54,7 +54,7 @@ export default class ORMModel {
 				enumerable: true,
 				configurable: false,
 				writable: false,
-				value: datatypes[inflector.titleize(field.type || "String")]
+				value: datatypes[(field.type || "string").toLowerCase()]
 			});
 		}));
 		Object.defineProperty(this, '_fields', {

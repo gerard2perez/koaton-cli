@@ -115,7 +115,6 @@ global.TemplatePath = function(...args) {
 	return path.normalize(path.join.apply(path, args));
 };
 if (process.env.isproyect === 'true') {
-	console.log(process.env.isproyect);
 	global.scfg = new(require('./support/Server').default)();
 	require(ProyPath('node_modules','koaton/lib/support','globals'));
 

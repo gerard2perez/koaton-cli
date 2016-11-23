@@ -227,7 +227,7 @@ const deleted = function(file) {
 	},
 	serveEmber = function(app, cfg, index) {
 		return Promise.promisify((...args) => {
-			let [app, mount, subdomain, cb] = args;
+			let [app, mount, cb] = args;
 			let appst = {
 				log: false,
 				result: ""
@@ -465,7 +465,6 @@ export default (new command(__filename, 'Runs your awsome Koaton applicaction us
 						await TriggerEvent('pre', 'serve');
 						screen.line1(true);
 						let ignoreemberdirs = [];
-						let indexapp = 0;
 						await TriggerEvent('pre', 'ember_build');
 						for (var ember_app in embercfg) {
 							ignoreemberdirs.push(path.join("public", ember_app, "/"));
@@ -479,7 +478,7 @@ export default (new command(__filename, 'Runs your awsome Koaton applicaction us
 								};
 								console.log(`Building ${ember_app.green} second plane`);
 								await buildcmd.preBuildEmber(ember_app, configuration);
-								let b = serveEmber(ember_app, embercfg[ember_app], indexapp)
+								let b = serveEmber(ember_app, embercfg[ember_app])
 								building.push(b);
 								await b;
 								await buildcmd.postBuildEmber(ember_app, configuration);
@@ -489,7 +488,6 @@ export default (new command(__filename, 'Runs your awsome Koaton applicaction us
 									result: `${ember_app.yellow} → ${embercfg[ember_app].mount.cyan}`
 								}));
 							}
-							indexapp++;
 						}
 						screen.line1(true);
 					}).then(() => {

@@ -4,16 +4,14 @@ import * as co from 'co';
 import * as program from 'commander';
 import './globals';
 import commands from './commands';
-import {
-	render as renderH,
-	include as includeH
-} from './commands/help';
+import {render as renderH} from './support/help';
+import include from './utils/.include_base';
 
 process.env.NODE_ENV = process.argv.indexOf("-p") > -1 || process.argv.indexOf("--production") > -1 ? "production" : "development";
 process.env.port = parseInt(process.argv[process.argv.indexOf("--port") + 1], 10) || 62626;
 const help = process.argv.slice(2)[0];
 
-const pcmds = includeH();
+const pcmds = include(ProyPath('commands'));
 if (!help || help === "-h" || help === "--help") {
 	console.log(renderH());
 	process.exit(0);

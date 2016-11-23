@@ -58,7 +58,7 @@ global.Events = function Events(path, event, phase, forcedir) {
 		case 'number':
 		case 'object':
 			return async function() {
-				return;
+				// do nothing.
 			}
 		case 'function':
 			return async function eventfn() {
@@ -82,9 +82,6 @@ global.requireSafe = function requireSafe(lib, defaults) {
 	try {
 		return require(lib);
 	} catch (e) {
-		if (defaults === undefined) {
-			// console.log(e.stack);
-		}
 		return defaults;
 	}
 }

@@ -1,7 +1,7 @@
 import datatypes from './DataTypes';
 import compile from '../utils/compile';
+import inflector from './inflector';
 
-const inflector = require(ProyPath('./node_modules/koaton/lib/support/inflector')).default;
 const compileCaminte = compile.bind(null, '"use strict";\nmodule.exports = function(schema,relation) {\n\treturn {\n\t\tmodel: {\n\t\t\t{{model}}\n\t\t},\n\t\textra: {},\n\t\trelations: {\n\t\t\t{{relations}}\n\t\t}\n\t};\n};');
 const compileEmber = compile.bind(null, `import Model from 'ember-data/model';\nimport attr from 'ember-data/attr';\nimport { hasMany, belongsTo } from 'ember-data/relationships';\nexport default Model.extend({\n\t{{definition}}\n});`);
 const compileCRUDTable = compile.bind(null, `import Ember from 'ember';\nimport crud from 'ember-cli-crudtable/mixins/crud-controller';\nexport default Ember.Controller.extend(crud('{{model}}'), {\n\tactions: {\n\t\t{{actions}}\n\t},\n\tfieldDefinition: {\n\t\t{{definition}}\n\t}\n});`);

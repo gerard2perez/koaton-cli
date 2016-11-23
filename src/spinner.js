@@ -3,30 +3,20 @@ import * as co from 'co';
 
 const os = require('os').platform();
 
-const spinners = [
-	"←↖↑↗→↘↓↙",
-	"▁▃▄▅▆▇█▇▆▅▄▃",
-	"▉▊▋▌▍▎▏▎▍▌▋▊▉",
-	"▖▘▝▗",
-	"▌▀▐▄",
-	"┤┘┴└├┌┬┐",
-	"◢◣◤◥",
-	"◰◳◲◱",
-	"◴◷◶◵",
-	"◐◓◑◒",
-	"|/-\\",
-	".oO@*", ["◡◡", "⊙⊙", "◠◠"],
-	["◜ ", " ◝", " ◞", "◟ "],
-	"◇◈◆",
-	"⣾⣽⣻⢿⡿⣟⣯⣷",
-	"⠁⠂⠄⡀⢀⠠⠐⠈", [">))'>", " >))'>", "  >))'>", "   >))'>", "    >))'>", "   <'((<", "  <'((<", " <'((<"]
-];
-
+const spinners = {
+	'aix': "⣾⣽⣻⢿⡿⣟⣯⣷",
+	'darwin': "◐◓◑◒",
+	'freebsd': "▁▃▄▅▆▇█▇▆▅▄▃",
+	'linux': "◐◓◑◒",
+	'openbsd': "▁▃▄▅▆▇█▇▆▅▄▃",
+	'sunos': "⣾⣽⣻⢿⡿⣟⣯⣷",
+	'win32': "|/-\\"
+}
 const spinner = co.wrap(function(...args) {
 	let [interval, text, extra, size] = args;
 	extra = extra === undefined ? "" : extra;
 	const that = this;
-	const spin = os === 'win32' ? spinners[10] : spinners[9];
+	const spin = spinners[os];
 	const l = spin.length;
 	let current = -1;
 	that.text = text || "";
@@ -92,10 +82,7 @@ class spin {
 					console.log(msg.msg);
 					this.promise(true);
 					break;
-				default:
-					console.log("spinner message not recognized");
-					console.log(msg);
-					break;
+				// no default
 			}
 		}
 	}

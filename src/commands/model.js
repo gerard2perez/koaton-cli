@@ -5,8 +5,8 @@ import datatypes from '../support/Adapters';
 import utils from '../utils';
 import command from '../command';
 import ModelManager from '../modelmanager';
+import inflector from '../support/inflector';
 
-const inflector = require(ProyPath('./node_modules/koaton/lib/support/inflector')).default;
 let description = `Creates a new model. fields must be sourrounded by "".
 	${"Fields syntax".yellow}:
 		${"field_name"}:${"type".cyan}	${"[ ".yellow+Object.keys(datatypes).map((c)=>{return c.toLowerCase().cyan}).join( " | ".yellow )+" ]".yellow}

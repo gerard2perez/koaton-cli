@@ -1,6 +1,7 @@
 ![Koaton](/koaton-cli.png)
 
 [![Build Status](https://img.shields.io/travis/gerard2p/koaton-cli.svg?style=flat-square&branch=master)](https://travis-ci.org/gerard2p/koaton-cli)[![Dependency Status](https://david-dm.org/gerard2p/koaton-cli.svg?style=flat-square)](https://david-dm.org/gerard2p/koaton-cli)[![Code Climate](https://codeclimate.com/github/gerard2p/koaton-cli/badges/gpa.svg)](https://codeclimate.com/github/gerard2p/koaton-cli)
+![PRs Welcome](https://img.shields.io/badge/PRs%20🔀-Welcome-brightgreen.svg?style=flat-square)
 
 ![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)
 ![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg?style=flat-square)

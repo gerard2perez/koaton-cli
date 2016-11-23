@@ -1,5 +1,6 @@
-import * as path from 'path';
-import utils from '../utils';
+import {
+	sync as glob
+} from 'glob';
 
 export function hmany(commands) {
 	let help = "";
@@ -25,31 +26,19 @@ export function hsingle(definition) {
 	});
 	return help + "\n\n";
 }
-export function include() {
-	let mods = {};
-	if (utils.canAccess(ProyPath("commands"))) {
-		readDir(ProyPath("commands"))
-			.filter(item => !(/(^|\/)\.[^\/\.]/g).test(item))
-			.filter(item => item !== "index.js")
-			.filter(item => item !== "help.js")
-			.forEach((file) => {
-				let module = require(ProyPath("commands", file));
-				mods[path.basename(file).replace(".js","")] = module.default ? module.default:module;
-			});
-		makeObjIterable(mods);
-	}
-	return mods;
-}
-export function render(v){
+export function render(v) {
 	let version = v || require(LibPath("package.json")).version;
 	let help = "";
 	help += `  version: ${version}\n`;
 	help += "  Command list:\n";
-	help += hmany(require('./index').default);
+	help += hmany(require('../commands').default);
 
-	const proycommands = include();
-	console.log(proycommands);
-	if (Object.keys(proycommands).length > 0) {
+	let proycommands=[];
+	for (const file of glob(ProyPath('commands', "*.js")).concat(glob(ProyPath('koaton_modules', '**', 'commands', "*.js")))) {
+		const command = require(file);
+		proycommands.push( command.default? command.default:command);
+	}
+	if (proycommands.length > 0) {
 		help += "Project commands:\n";
 		help += hmany(proycommands);
 	}

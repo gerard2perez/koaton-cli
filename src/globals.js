@@ -1,7 +1,7 @@
 import * as os from 'os';
 import * as rawpath from 'path';
 import * as path from 'upath';
-import * as fs from 'graceful-fs';
+import * as fs from 'fs-extra';
 import {
 	canAccess
 } from './utils';

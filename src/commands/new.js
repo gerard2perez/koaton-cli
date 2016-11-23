@@ -47,8 +47,6 @@ const setupAssets = async function setupAssets() {
 }
 const setupOthers = async function setupOthers() {
 	await utils.mkdir(Project("node_modules"));
-	utils.symlink('koaton');
-	utils.symlink('koaton-cli');
 	await utils.mkdir(Project("routes"));
 	await utils.copy(TemplatePath("/routes/index.js"), Project("/routes/index.js"));
 	await utils.mkdir(Project("controllers"));

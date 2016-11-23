@@ -1,4 +1,4 @@
-import * as fs from 'graceful-fs';
+import * as fs from 'fs-extra';
 
 export default function canAccess(path) {
 	try {

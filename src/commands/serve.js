@@ -4,7 +4,7 @@ import * as livereload from 'gulp-livereload';
 import * as notifier from 'node-notifier';
 import * as Promise from 'bluebird';
 import * as path from 'path';
-import * as fs from 'graceful-fs';
+import * as fs from 'fs-extra';
 import * as co from 'co';
 import screen from '../welcome';
 import * as MM from '../modelmanager';

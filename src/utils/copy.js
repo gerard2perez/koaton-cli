@@ -1,7 +1,7 @@
 import * as Promise from 'bluebird';
 import {
 	readFile
-} from 'graceful-fs';
+} from 'fs-extra';
 import {
 	extname
 } from 'upath';

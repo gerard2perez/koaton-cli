@@ -1,6 +1,5 @@
-import * as i from 'i';
+import * as inflecor from 'inflection';
 
-const inflect = i();
 class TestNode {
 	constructor(name, args, expect, rename) {
 		if (rename) {
@@ -10,7 +9,7 @@ class TestNode {
 			console.log();
 			let params = typeof args.last === 'object' ? args.last : {};
 			name = ` ${terms}` + Object.keys(params).map((key) => {
-				let newkey = inflect.dasherize(inflect.underscore(key));
+				let newkey = inflecor.dasherize(inflecor.underscore(key));
 				if (typeof params[key] === 'boolean') {
 					return "--" + newkey;
 				} else {

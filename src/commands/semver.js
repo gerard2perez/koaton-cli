@@ -1,6 +1,6 @@
 /*eslint no-fallthrough:0*/
 import 'colors';
-import * as fs from 'graceful-fs';
+import * as fs from 'fs-extra';
 import utils from '../utils';
 import command from '../command';
 

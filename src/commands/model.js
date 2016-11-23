@@ -1,5 +1,5 @@
 import 'colors';
-import * as fs from 'graceful-fs';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import datatypes from '../support/Adapters';
 import utils from '../utils';

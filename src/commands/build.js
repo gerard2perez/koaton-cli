@@ -1,6 +1,6 @@
 import * as path from 'upath';
 import * as crypto from "crypto";
-import * as fs from "graceful-fs";
+import * as fs from "fs-extra";
 import * as uglify from "uglify-js";
 import * as Concat from 'concat-with-sourcemaps';
 import {

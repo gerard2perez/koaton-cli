@@ -8,9 +8,6 @@ export default (new command(__filename, "SetUps a recent clonned proyect. (root/
 	.Options()
 	.Action(async function() {
 		await copyconf(`${scfg.name}.conf`);
-		await utils.mkdir(ProyPath("node_modules"));
-		utils.symlink('koaton');
-		utils.symlink('koaton-cli');
 		await utils.shell("Installing bower dependencies", ["bower", "install"], process.cwd());
 		await utils.shell("Installing npm dependencies", ["npm", "install", "--loglevel", "info"], process.cwd());
 	});

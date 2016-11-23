@@ -17,10 +17,9 @@
 	"dependencies": {
 		"co-views": "^2.1.0",
 		"caminte": "^0.2.7",
-		"i": "^0.3.4",
 		"koa": "1.x.x",
-		"koa-bodyparser": "^2.0.1",
 		"koa-error": "^2.0.0",
+		"koa-bodyparser": "^2.0.1",
 		"koa-etag": "^2.1.1",
 		"koa-session": "^3.3.1",
 		"koa-helmet": "^1.0.0",
@@ -29,6 +28,7 @@
 		"koa-router": "^5.4.0",
 		"koa-socket": "^4.3.0",
 		"koa-static": "^2.0.0",
-		"koa-passport":"^2.0.0"
+		"koa-passport":"^2.0.0",
+		"koaton":"x.x.x"
 	}
 }

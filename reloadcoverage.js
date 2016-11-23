@@ -1,6 +1,6 @@
 const chokidar = require('chokidar');
 const livereload = require('gulp-livereload');
-const fs = require('graceful-fs');
+const fs = require('fs-extra');
 const glob = require('glob');
 
 function test() {

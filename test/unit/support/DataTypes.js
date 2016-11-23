@@ -3,41 +3,41 @@ import * as assert from 'assert';
 import DataTypes from '../../../src/support/DataTypes';
 
 describe('DataTypes', function() {
-	it('retutns "number", .number', function() {
+	it('returns "number", .number', function() {
 		assert.equal("number", DataTypes.number);
 	});
-	it('retutns "number", .number.koaton', function() {
+	it('returns "number", .number.koaton', function() {
 		assert.equal("number", DataTypes.number.koaton);
 	});
-	it('retutns "Number", .number.caminte', function() {
+	it('returns "Number", .number.caminte', function() {
 		assert.equal("Number", DataTypes.number.caminte);
 	});
-	it('retutns "number", .number.crud', function() {
+	it('returns "number", .number.crud', function() {
 		assert.equal("number", DataTypes.number.crud);
 	});
-	it('retutns "number", .number.ember', function() {
+	it('returns "number", .number.ember', function() {
 		assert.equal("number", DataTypes.number.ember);
 	});
-	it('retutns "number", .Number', function() {
+	it('returns "number", .Number', function() {
 		assert.equal("number", DataTypes.Number);
 	});
 
-	it('retutns "password", .password', function() {
+	it('returns "password", .password', function() {
 		assert.equal("password", DataTypes.password);
 	});
-	it('retutns "password", .password.koaton', function() {
+	it('returns "password", .password.koaton', function() {
 		assert.equal("password", DataTypes.password.koaton);
 	});
-	it('retutns "String", .password.caminte', function() {
+	it('returns "String", .password.caminte', function() {
 		assert.equal("String", DataTypes.password.caminte);
 	});
-	it('retutns "password", .password.crud', function() {
+	it('returns "password", .password.crud', function() {
 		assert.equal("password", DataTypes.password.crud);
 	});
-	it('retutns "string", .password.ember', function() {
+	it('returns "string", .password.ember', function() {
 		assert.equal("string", DataTypes.password.ember);
 	});
-	it('retutns "password", .Password', function() {
+	it('returns "password", .Password', function() {
 		assert.equal("password", DataTypes.Password);
 	});
 	it('is "of" iterable',function(){

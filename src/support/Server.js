@@ -1,5 +1,5 @@
 import * as path from 'path';
-import * as fs from 'graceful-fs';
+import * as fs from 'fs-extra';
 import {
 	sync
 } from 'glob';

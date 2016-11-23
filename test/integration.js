@@ -29,7 +29,7 @@ const testcase = function testcase(test_config, cwd, testname, command) {
 					try {
 						let buffer = "";
 						console.log = (data) => {
-							ori(data);
+							// ori(data);
 							buffer += (data || "").toString();
 						};
 						let res = yield command.action.apply(null, testdata.args);

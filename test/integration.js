@@ -7,7 +7,7 @@ import configuration from './configuration';
 const test_order_for_commands = [
 	// 'fail',
 	// 'nginx', 'fail'
-].concat(['new', 'adapter', 'ember', 'model', 'nginx', 'install', 'build', 'seed', 'semver', 'modulify' /*, 'serve' //TODO enable. FIX 001*/ , 'forever', 'publish']);
+].concat(['new', 'adapter', 'ember', 'model', /*'nginx',*/ 'install', 'build', 'seed', 'semver', 'modulify' /*, 'serve' //TODO enable. FIX 001*/ , 'forever', 'publish']);
 
 const notestcase = function(testname) {
 	describe(testname, () => {

@@ -119,6 +119,7 @@
       "src/globals.js",
       "src/support/inflector.js",
       "src/commands/serve.js",
+	  "src/commands/nginx.js",
       "src/welcome.js"
     ],
     "sourceMap": false,

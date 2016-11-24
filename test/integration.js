@@ -26,10 +26,12 @@ const testcase = function testcase(test_config, cwd, testname, command) {
 				co(function*() {
 					let err = null;
 					const ori = console.log;
-					const write = process.stdout.write;
+					const write_e = process.stderr.write;
+					const write_o = process.stdout.write;
 					try {
 						let buffer = "";
-						 process.stderr.write=()=>{};
+						process.stderr.write = () => {};
+						process.stdout.write = () => {};
 						console.log = (data) => {
 							// ori(data);
 							buffer += (data || "").toString();
@@ -43,12 +45,13 @@ const testcase = function testcase(test_config, cwd, testname, command) {
 							assert.equal(actual, mustbe, message);
 						}
 					} catch (e) {
-						console.log(e.red);
+						ori(e.red);
 						err = e;
 					} finally {
 						testdata.CleanUp();
 						console.log = ori;
-						 process.stderr.write = write;
+						process.stderr.write = write_e;
+						process.stdout.write = write_o;
 					}
 					if (err) {
 						throw err;

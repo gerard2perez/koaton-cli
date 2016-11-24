@@ -6,7 +6,7 @@ import command from '../command';
 
 const list = async function list() {
 	let data = await utils.exec(`forever list`, {});
-	data = data.stdout.replace("info:    Forever processes running", "").replace(/ /igm, "-").replace(/data:/igm, "");
+	data = cleanString(data.stdout).replace("info:    Forever processes running", "").replace(/ /igm, "-").replace(/data:/igm, "");
 	let fix = (new RegExp(/"[^"]*"/igm)).exec(data);
 	if (fix !== null) {
 		fix.forEach(function(pattern) {

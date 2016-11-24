@@ -10,8 +10,7 @@ tests.push(new TestNode('(no args)', [undefined, {}], true))
 		process.chdir('testingapp');
 		process.env.isproyect = 'true';
 		global.scfg = new ServerConfiguaration();
-
-
+		global.skipshell = true;
 	});
 
 	tests.last.CleanUp(() => {

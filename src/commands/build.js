@@ -1,3 +1,4 @@
+/*eslint no-div-regex: 0*/
 import * as path from 'upath';
 import * as crypto from "crypto";
 import * as fs from "fs-extra";
@@ -249,7 +250,9 @@ const postBuildEmber = async function postBuildEmber(application, options) {
 	const links = new RegExp(`<link rel="stylesheet" href=".*?assets/.*.css.*>`, "gm");
 	const scripts = new RegExp(`<script src=".*?assets/.*.js.*></script>`, "gm");
 	const transformlinks=function transformlinks(text,expresion){
-		return text.match(expresion).join("\n").replace(/href=".*?assets/igm, `href="/${application}/assets`).replace(new RegExp(application + "/", "gm"), options.directory + "/")
+		return text.match(expresion).join("\n")
+					.replace(/=".*?assets/igm, `="/${options.directory}/assets`)
+					// .replace(new RegExp(application + "/", "gm"), options.directory + "/")
 	};
 	text = utils.compile(indextemplate, {
 		title: options.title || application,

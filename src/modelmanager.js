@@ -8,7 +8,7 @@ import datatypes from './support/DataTypes';
 const modelize = function(koatonmodel) {
 	let res = [];
 	res[0] = [];
-	res[1] = [];
+	res[1] = koatonmodel.relations;
 	Object.keys(koatonmodel.model).forEach((property) => {
 		res[0].push(`${property}:${koatonmodel.model[property].type.koaton}`);
 	});
@@ -33,17 +33,14 @@ const schema = {
 	}
 }
 schema.belongsTo = schema.hasMany;
-export default (n, f, r, m) => {
-	let name = n,
-		fields = f,
-		relations = {},
-		models = m || {};
-	if (typeof f === 'function') {
-		fields = modelize(f(datatypes, schema));
+export default (...args) => {
+	let [name,fields,relations={},models={}] = args;
+	if (typeof fields === 'function') {
+		fields = modelize(fields(datatypes, schema));
 		relations = fields[1];
 		fields = fields[0];
 	} else {
-		relations = clone(r || {});
+		relations = clone(relations || {});
 	}
 	return new model(name, fields, relations, models);
 };

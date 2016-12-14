@@ -7,7 +7,7 @@ import MutableArray from './MutableArray';
 import BundleItem from './BundleItem';
 import CommandLog from './CommandLog';
 import Model from './ORMModel';
-import MM from '../modelmanager';
+import ModelManager from '../modelmanager';
 // import EmberAppItem from './EmberAppItem';
 
 const ipformat = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
@@ -69,11 +69,12 @@ export default class ServerConfiguaration {
 		this.database.toJSON = function() {
 			let result = {
 				models: {},
-				relations: []
+				relations: {}
 			};
 			for (const model of this.target) {
-				result.models[model._modelname] = model.toMeta().model
-				result.relations.concat(model.toMeta().relations);
+				result.models[model._modelname] = model.toMeta().model;
+				Object.assign(result.relations,model.toMeta().relations);
+				// result.relations=model.toMeta().relations;
 			}
 			return result;
 		};
@@ -81,7 +82,7 @@ export default class ServerConfiguaration {
 			this.bundles.add(idx, localkoaton.bundles[idx]);
 		}
 		sync(ProyPath("models", "*.js")).forEach((files) => {
-			this.database.add(MM(path.basename(files).replace(".js", ""), require(files)));
+			this.database.add(ModelManager(path.basename(files).replace(".js", ""), require(files)));
 		});
 		Object.defineProperty(this.database, 'models', {
 			get: function() {

@@ -5,7 +5,6 @@ import inflector from './inflector';
 const compileCaminte = compile.bind(null, '"use strict";\nmodule.exports = function(schema,relation) {\n\treturn {\n\t\tmodel: {\n\t\t\t{{model}}\n\t\t},\n\t\textra: {},\n\t\trelations: {\n\t\t\t{{relations}}\n\t\t}\n\t};\n};');
 const compileEmber = compile.bind(null, `import Model from 'ember-data/model';\nimport attr from 'ember-data/attr';\nimport { hasMany, belongsTo } from 'ember-data/relationships';\nexport default Model.extend({\n\t{{definition}}\n});`);
 const compileCRUDTable = compile.bind(null, `import Ember from 'ember';\nimport crud from 'ember-cli-crudtable/mixins/crud-controller';\nexport default Ember.Controller.extend(crud('{{model}}'), {\n\tactions: {\n\t\t{{actions}}\n\t},\n\tfieldDefinition: {\n\t\t{{definition}}\n\t}\n});`);
-let database = {};
 export default class ORMModel {
 	valueOf() {
 		return this._modelname.toString();
@@ -13,12 +12,15 @@ export default class ORMModel {
 	equals(target) {
 		return this._modelname.toString() === target._modelname.toString();
 	}
+	relation(property,target,mode,foreign_key){
+		let key = foreign_key || `${target}Id`;
+		this._relations[property] = [mode,target,key];
+	}
 	constructor(name, ...args) {
-		let [fields, relations = {}, allmodels = {}] = args;
+		let [fields, relations = {}] = args;
 		if (fields === undefined) {
 			throw new Error("fields can't be undefined");
 		}
-		database = Object.assign(database, allmodels);
 		Object.keys(relations).forEach((property) => {
 			let opts = relations[property].split(" ");
 			opts[2] = opts[2] ? opts[2] : `${property}Id`;
@@ -27,8 +29,8 @@ export default class ORMModel {
 		Object.defineProperty(this, '_relations', {
 			enumerable: false,
 			configurable: false,
-			writable: false,
-			value: relations
+			writable: true,
+			value: relations || {}
 		});
 		Object.defineProperty(this, '_modelname', {
 			enumerable: false,
@@ -133,12 +135,10 @@ export default class ORMModel {
 		});
 	}
 	toMeta() {
-		let relations = [];
+		let relations = {};
 		Object.keys(this._relations).forEach((property) => {
 			let opts = this._relations[property];
-			let rel = {};
-			rel[property] = opts.join(' ');
-			relations.push(rel);
+			relations[property] = opts.join(' ');
 		});
 		let meta = {
 			model: this._fields,

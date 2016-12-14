@@ -1,3 +1,4 @@
+import * as spawn from 'cross-spawn';
 import * as chokidar from 'chokidar';
 import * as nodemon from 'nodemon';
 import * as livereload from 'gulp-livereload';
@@ -7,7 +8,7 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as co from 'co';
 import screen from '../welcome';
-import * as MM from '../modelmanager';
+import * as ModelManager from '../modelmanager';
 import command from '../command';
 import utils from '../utils';
 import spin from '../spinner';
@@ -228,12 +229,14 @@ const deleted = function(file) {
 	serveEmber = function(app, cfg, index) {
 		return Promise.promisify((...args) => {
 			let [app, mount, cb] = args;
+			console.log(args);
 			let appst = {
 				log: false,
 				result: ""
 			};
-			const ember = utils.spawn("ember", ["serve", "-lr", "false", "--output-path", path.join("..", "..", "public", cfg.directory), "--port", 4200 + index], {
-				cwd: ProyPath("ember", app)
+			const ember = spawn("ember", ["serve", "-lr", "false", "--output-path", path.join("..", "..", "public", cfg.directory), "--port", 4200 + index], {
+				cwd: ProyPath("ember", app),
+				shell:true
 			});
 			ember.stdout.on('data', (buffer) => {
 				if (appst.log) {
@@ -290,7 +293,7 @@ const deleted = function(file) {
 				}
 				console.log(buffer.toString());
 			});
-		})(app, cfg.mount, cfg.subdomain || "");
+		})(app, cfg.mount);
 	},
 	seedkoaton_modules = function() {
 		fs.access(ProyPath("koaton_modules"), fs.RF_OK | fs.W_OK, (err) => {
@@ -319,7 +322,7 @@ const deleted = function(file) {
 	WatchModels = function WatchModels(chokidar) {
 		const addmodelfn = function addmodelfn(file) {
 			let model = path.basename(file).replace(".js", "");
-			let Model = MM(model, requireNoCache(file)).toMeta();
+			let Model = ModelManager(model, requireNoCache(file)).toMeta();
 			scfg.database.models[model] = Model.model;
 			if (Model.relations.length > 0) {
 				scfg.database.relations[model] = Model.relations;
@@ -477,11 +480,15 @@ export default (new command(__filename, 'Runs your awsome Koaton applicaction us
 									title: embercfg[ember_app].title
 								};
 								console.log(`Building ${ember_app.green} second plane`);
-								await buildcmd.preBuildEmber(ember_app, configuration);
-								let b = serveEmber(ember_app, embercfg[ember_app])
-								building.push(b);
-								await b;
-								await buildcmd.postBuildEmber(ember_app, configuration);
+								try {
+									await buildcmd.preBuildEmber(ember_app, configuration);
+									let b = serveEmber(ember_app, embercfg[ember_app])
+									building.push(b);
+									await b;
+									await buildcmd.postBuildEmber(ember_app, configuration);
+								} catch (e) {
+									console.log(e);
+								}
 							} else {
 								building.push(Promise.resolve({
 									log: false,

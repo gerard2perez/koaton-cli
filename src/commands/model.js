@@ -38,20 +38,15 @@ export default (new command(__filename, description))
 		}
 		let modelname = inflector.singularize(name.toLowerCase()),
 			cmd = `koaton model ${modelname} ${fields} ${destmodel||""} ${as||""} ${relation_property||""} ${foreign_key||""}`.trim(),
-			key = foreign_key || "",
 			targetmodel = inflector.singularize((destmodel || "").toLowerCase());
 
 		scfg.commands.add(cmd);
-		let linkaction = null,
-			relations = scfg.database.has(modelname) ? scfg.database.relations[modelname] : [];
+		let linkaction = null;
 		if (as === "as") {
-			linkaction = linkactions[fields.toLowerCase()]
-			let relation = {};
-			fields = scfg.database.models[modelname];
-			relation[`${relation_property}`] = `${emberrel[linkaction]} ${targetmodel} ${key}`;
-			relations.push(relation);
+			linkaction = linkactions[fields.toLowerCase()];
+			scfg.database[modelname].relation(relation_property,targetmodel,emberrel[linkaction],foreign_key);
 		}
-		let model = ModelManager(modelname, fields, relations, scfg.database.models),
+		let model = scfg.database[modelname],
 			override = await utils.challenge(ProyPath("models", `${modelname.toLowerCase()}.js`), `The model ${modelname.green} already exits,do you want to override it?`, options.force);
 
 		if (override) {

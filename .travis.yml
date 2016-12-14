@@ -1,4 +1,7 @@
 ---
+branches:
+  only:
+    - master
 services:
   - mongodb
 language: node_js
@@ -20,7 +23,6 @@ cache:
     - node_modules
 before_install:
   - npm config set spin false
-  - npm install -g glob
   - npm install -g ember-cli@2.9.1
   - npm install -g bower
   - npm install -g forever

@@ -1,8 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import {
-	sync
-} from 'glob';
+import { sync } from 'glob';
 import MutableArray from './MutableArray';
 import BundleItem from './BundleItem';
 import CommandLog from './CommandLog';
@@ -14,17 +12,17 @@ const ipformat = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|
 let id = 0;
 
 export default class ServerConfiguaration {
-	UpdateKoaton() {
-			fs.writeFileSync(ProyPath(".koaton"), JSON.stringify(this.localkoaton, 2, 2));
-		}
+	UpdateKoaton () {
+		fs.writeFileSync(ProyPath('.koaton'), JSON.stringify(this.localkoaton, 2, 2));
+	}
 		// UpdateModule(filepath) {
-		// 	fs.writeFileSync(filepath, '"use strict";\nmodule.exports=' + JSON.stringify(this.emberApps, 4, 4));
+		// 	fs.writeFileSync(filepath, ''use strict';\nmodule.exports=' + JSON.stringify(this.emberApps, 4, 4));
 		// }
-	constructor() {
+	constructor () {
 		this.port = process.env.port;
 		this.env = process.env.NODE_ENV;
-		if (!fs.existsSync(ProyPath(".koaton"))) {
-			fs.writeFileSync(ProyPath(".koaton"), JSON.stringify({
+		if (!fs.existsSync(ProyPath('.koaton'))) {
+			fs.writeFileSync(ProyPath('.koaton'), JSON.stringify({
 				bundles: {},
 				database: {
 					models: {},
@@ -33,7 +31,7 @@ export default class ServerConfiguaration {
 				commands: []
 			}, 4, 4));
 		}
-		const localkoaton = JSON.parse(fs.readFileSync(ProyPath(".koaton"), 'utf-8'));
+		const localkoaton = JSON.parse(fs.readFileSync(ProyPath('.koaton'), 'utf-8'));
 		// const embercfg = require(ProyPath('config', 'ember'));
 
 		this.id = ++id;
@@ -51,29 +49,29 @@ export default class ServerConfiguaration {
 		});
 		Object.defineProperty(this, '_emberapps', {
 			enumerable: false,
-			value: Object.assign({}, requireSafe(ProyPath('config', 'ember'),{}))
+			value: Object.assign({}, requireSafe(ProyPath('config', 'ember'), {}))
 		});
 		makeObjIterable(this._emberapps);
 		Object.defineProperty(this, 'localserver', {
 			enumerable: false,
-			value: require(ProyPath("config", "server"))
+			value: require(ProyPath('config', 'server'))
 		});
-		this.commands = new CommandLog(this.localkoaton, 'commands', this.UpdateKoaton.bind(this))
+		this.commands = new CommandLog(this.localkoaton, 'commands', this.UpdateKoaton.bind(this));
 		this.bundles = new MutableArray(BundleItem, this.localkoaton, 'bundles', this.UpdateKoaton.bind(this));
-		// this.emberApps = new MutableArray(EmberAppItem, this, '_emberapps', this.UpdateModule.bind(this, ProyPath("config", "ember.js")));
+		// this.emberApps = new MutableArray(EmberAppItem, this, '_emberapps', this.UpdateModule.bind(this, ProyPath('config', 'ember.js')));
 		// for (const app in embercfg) {
 		// 	this.emberApps.add(app, embercfg[app]);
 		// }
 
 		this.database = new MutableArray(Model, this.localkoaton, 'database', this.UpdateKoaton.bind(this));
-		this.database.toJSON = function() {
+		this.database.toJSON = function () {
 			let result = {
 				models: {},
 				relations: {}
 			};
 			for (const model of this.target) {
 				result.models[model._modelname] = model.toMeta().model;
-				Object.assign(result.relations,model.toMeta().relations);
+				Object.assign(result.relations, model.toMeta().relations);
 				// result.relations=model.toMeta().relations;
 			}
 			return result;
@@ -81,16 +79,16 @@ export default class ServerConfiguaration {
 		for (const idx in localkoaton.bundles) {
 			this.bundles.add(idx, localkoaton.bundles[idx]);
 		}
-		sync(ProyPath("models", "*.js")).forEach((files) => {
-			this.database.add(ModelManager(path.basename(files).replace(".js", ""), require(files)));
+		sync(ProyPath('models', '*.js')).forEach((files) => {
+			this.database.add(ModelManager(path.basename(files).replace('.js', ''), require(files)));
 		});
 		Object.defineProperty(this.database, 'models', {
-			get: function() {
+			get: function () {
 				return this.toJSON().models;
 			}
 		});
 		Object.defineProperty(this.database, 'relations', {
-			get: function() {
+			get: function () {
 				return this.toJSON().relations;
 			}
 		});
@@ -99,36 +97,36 @@ export default class ServerConfiguaration {
 		// Object.freeze(this.database);
 		// Object.freeze(this.commands);
 	}
-	get name() {
+	get name () {
 		return this.package.name;
 	}
-	get dev() {
-		return this.env === "development";
+	get dev () {
+		return this.env === 'development';
 	}
-	get token_timeout() {
-		return this.dev ? this.localserver.token_timeout.dev : this.localserver.token_timeout.prod;
+	get tokenTimeout () {
+		return this.dev ? this.localserver.tokenTimeout.dev : this.localserver.tokenTimeout.prod;
 	}
-	get host() {
+	get host () {
 		return this.dev ? this.localserver.host.dev : this.localserver.host.prod;
 	}
-	get version() {
+	get version () {
 		return this.package.version;
 	}
-	get hostname() {
-			if (this.host.match(ipformat)) {
-				return this.host;
-			} else if (this.host.indexOf("www") === 0) {
-				return this.host;
-			} else if (this.host !== "localhost") {
-				return "www." + this.host;
-			} else {
-				return this.host;
-			}
+	get hostname () {
+		if (this.host.match(ipformat)) {
+			return this.host;
+		} else if (this.host.indexOf('www') === 0) {
+			return this.host;
+		} else if (this.host !== 'localhost') {
+			return 'www.' + this.host;
+		} else {
+			return this.host;
 		}
+	}
 		// get relations_mode() {
 		// 	return this.localserver.relation_mode === 'ids';
 		// }
-		get emberApps() {
-			return this._emberapps;
-		}
+	get emberApps () {
+		return this._emberapps;
+	}
 }

@@ -1,14 +1,12 @@
-import {
-	exec
-} from 'child_process';
+import { exec as exe } from 'child_process';
 
-export default function exec_async(cmd, cfg) {
+export default function exec (cmd, cfg) {
 	return new Promise((resolve) => {
-		exec(cmd, cfg, (err, stdout, stderr) => {
+		exe(cmd, cfg, (err, stdout, stderr) => {
 			return err ? resolve(err) : resolve({
 				stdout: stdout,
 				stderr: stderr
-			})
+			});
 		});
-	})
+	});
 }

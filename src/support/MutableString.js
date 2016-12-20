@@ -1,17 +1,17 @@
 export default class MutableString extends String {
-	constructor(value, transforms) {
+	constructor (value, transforms) {
 		super(value);
 		for (const transform of transforms.split(' ')) {
 			this.add(transform);
 		}
 	}
-	add(transform) {
+	add (transform) {
 		let [target, value] = transform.split(':');
 		Object.defineProperty(this, target, {
-			configurable:true,
+			configurable: true,
 			enumerable: true,
 			writable: false,
-			value: value === "undefined" ? undefined : value
-		})
+			value: value === 'undefined' ? undefined : value
+		});
 	}
 }

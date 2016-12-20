@@ -4,7 +4,7 @@ import TestNode from '../support/TestNode';
 import '../support/array';
 // import requireNoCache from '../support/custom_require';
 
-const targetdir = path.join(process.cwd(), "testingapp");
+const targetdir = path.join(process.cwd(), 'testingapp');
 
 let tests = [];
 let cmdname = 'koaton new';
@@ -16,15 +16,15 @@ tests.push(new TestNode('(no args)', ['', {}], true))
 // tests.push(new TestNode('Must render help',['-h',{}],false));
 
 tests.push(new TestNode('koaton new', ['testingapp', {
-		skipNpm: true,
-		skipBower: true,
-		db: 'mysql'
-	}], true, true))
+	skipNpm: true,
+	skipBower: true,
+	db: 'mysql'
+}], true, true))
 	.Expect(() => {
 		let res = true;
 		try {
-			res = res && requireNoCache(path.join(targetdir, "package.json")).dependencies.mysql !== undefined;
-			res = res && requireNoCache(path.join(targetdir, "package.json")).dependencies.mongoose === undefined;
+			res = res && requireNoCache(path.join(targetdir, 'package.json')).dependencies.mysql !== undefined;
+			res = res && requireNoCache(path.join(targetdir, 'package.json')).dependencies.mongoose === undefined;
 		} catch (e) {
 			console.log(e.stack);
 			res = false;
@@ -52,19 +52,19 @@ tests.push(new TestNode('koaton new', ['testingapp', {
 // 		return res;
 // 	});
 tests.push(new TestNode('koaton new', ['testingapp', {
-		skipNpm: true,
-		skipBower: true,
-		force: true,
-		viewEngine: 'handlebars',
-		db: 'redis'
-	}], true, true))
+	skipNpm: true,
+	skipBower: true,
+	force: true,
+	viewEngine: 'handlebars',
+	db: 'redis'
+}], true, true))
 	.Expect(() => {
 		let res = true;
 		try {
-			res = res && requireNoCache(path.join(targetdir, "package.json")).dependencies.redis !== undefined;
-			res = res && requireNoCache(path.join(targetdir, "package.json")).dependencies.handlebars !== undefined;
-			res = res && requireNoCache(path.join(targetdir, "package.json")).dependencies.ejs === undefined;
-			res = res && requireNoCache(path.join(targetdir, "package.json")).dependencies.mysql === undefined;
+			res = res && requireNoCache(path.join(targetdir, 'package.json')).dependencies.redis !== undefined;
+			res = res && requireNoCache(path.join(targetdir, 'package.json')).dependencies.handlebars !== undefined;
+			res = res && requireNoCache(path.join(targetdir, 'package.json')).dependencies.ejs === undefined;
+			res = res && requireNoCache(path.join(targetdir, 'package.json')).dependencies.mysql === undefined;
 		} catch (e) {
 			console.log(e.stack);
 			res = false;
@@ -75,14 +75,14 @@ tests.push(new TestNode('koaton new', ['testingapp', {
 	force:true
 		// skipNpm: true,
 		// skipBower: true
-	}], true,true))
-	.Expect('npm dependencies installed.',true,(_)=>{
-		return accessSync(path.join(targetdir,'node_modules'));
+}], true, true))
+	.Expect('npm dependencies installed.', true, (_) => {
+		return accessSync(path.join(targetdir, 'node_modules'));
 	})
-	.Expect('bower dependencies installed.',true,(_)=>{
+	.Expect('bower dependencies installed.', true, (_) => {
 		// return accessSync(path.join(targetdir,'bower_components'));
-		return true; //TODO: Project does not currently have bower dependencies
-	})
+		return true; // TODO: Project does not currently have bower dependencies
+	});
 tests.last.CleanUp(() => {
 	// fs.removeSync(targetdir);
 });

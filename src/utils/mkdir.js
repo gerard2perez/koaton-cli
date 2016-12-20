@@ -3,11 +3,11 @@ import * as fs from 'fs-extra';
 import * as path from 'upath';
 import relpath from './relpath';
 
-const mkdir = Promise.promisify(fs.mkdirs);
+const _mkdir = Promise.promisify(fs.mkdirs);
 
-export default function mkdir_async(file) {
-	return mkdir(path.normalize(file)).then(() => {
-		console.log(`   ${"create".cyan}: ${relpath(file)}`);
+export default function mkdir (file) {
+	return _mkdir(path.normalize(file)).then(() => {
+		console.log(`   ${'create'.cyan}: ${relpath(file)}`);
 		return file;
 	});
 }

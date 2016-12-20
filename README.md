@@ -2,10 +2,10 @@
 
 [![Build Status](https://img.shields.io/travis/gerard2p/koaton-cli/master.svg?style=flat-square)](https://travis-ci.org/gerard2p/koaton-cli)[![Dependency Status](https://david-dm.org/gerard2p/koaton-cli.svg?style=flat-square)](https://david-dm.org/gerard2p/koaton-cli)![PRs Welcome](https://img.shields.io/badge/PRs%20🔀-Welcome-brightgreen.svg?style=flat-square)
 
-[![Code Climate](https://codeclimate.com/github/gerard2p/koaton-cli/badges/gpa.svg)](https://codeclimate.com/github/gerard2p/koaton-cli) [![Test Coverage](https://codeclimate.com/github/gerard2p/koaton-cli/badges/coverage.svg)](https://codeclimate.com/github/gerard2p/koaton-cli/coverage) [![Issue Count](https://codeclimate.com/github/gerard2p/koaton-cli/badges/issue_count.svg)](https://codeclimate.com/github/gerard2p/koaton-cli)
+[![Code Climate](https://codeclimate.com/github/gerard2p/koaton-cli/badges/gpa.svg?style=flat-square)](https://codeclimate.com/github/gerard2p/koaton-cli?style=flat-square) [![Test Coverage](https://codeclimate.com/github/gerard2p/koaton-cli/badges/coverage.svg?style=flat-square)](https://codeclimate.com/github/gerard2p/koaton-cli/coverage) [![Issue Count](https://codeclimate.com/github/gerard2p/koaton-cli/badges/issue_count.svg?style=flat-square)](https://codeclimate.com/github/gerard2p/koaton-cli)
 
 
-![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg?style=flat-square)
+![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg?style=flat-square)[![js-happiness-style](https://img.shields.io/badge/code%20style-happiness-brightgreen.svg?style=flat-square)](https://github.com/JedWatson/happiness)
 
 Koaton is a CLI tool that allow you to easily create and manage your [Koaton](https://github.com/gerard2p/koaton) projects.
 

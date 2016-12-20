@@ -4,8 +4,7 @@ import * as path from 'upath';
 import writemodes from './writemodes';
 import relpath from './relpath';
 
-
-export default function write_sync(...args) {
+export default function writeSync (...args) {
 	let [file, content, mode] = args;
 	file = path.normalize(file);
 	try {
@@ -13,10 +12,10 @@ export default function write_sync(...args) {
 		let label;
 		switch (mode) {
 			case writemodes.update:
-				label = "update".cyan + ":";
+				label = 'update'.cyan + ':';
 				break;
 			case writemodes.create:
-				label = "create".cyan + ":";
+				label = 'create'.cyan + ':';
 				break;
 			default:
 				label = null;

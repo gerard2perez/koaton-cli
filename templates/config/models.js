@@ -1,3 +1,3 @@
 module.exports = {
-    connection: 'mongo'
+    																				connection: 'mongo'
 };

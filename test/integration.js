@@ -7,34 +7,34 @@ import configuration from './configuration';
 const test_order_for_commands = [
 	// 'fail',
 	// 'nginx', 'fail'
-].concat(['new', 'adapter', 'ember', 'model', /*'nginx',*/ 'install', 'build', 'seed', 'semver', 'modulify' /*, 'serve' //TODO enable. FIX 001*/ , 'forever', 'publish']);
+].concat(['new', 'adapter', 'ember', 'model', /* 'nginx',*/ 'install', 'build', 'seed', 'semver', 'modulify' /*, 'serve' //TODO enable. FIX 001*/, 'forever', 'publish']);
 
-const notestcase = function(testname) {
+const notestcase = function (testname) {
 	describe(testname, () => {
-		it("NO TESTS", function() {
+		it('NO TESTS', function () {
 			assert.equal(true, false);
 		});
 	});
 };
 
-const testcase = function testcase(test_config, cwd, testname, command) {
-	describe(testname, function() {
-		for (const testdata of(test_config || [])) {
-			it(testdata.name, function(done) {
+const testcase = function testcase (test_config, cwd, testname, command) {
+	describe(testname, function () {
+		for (const testdata of (test_config || [])) {
+			it(testdata.name, function (done) {
 				this.timeout(1000 * 60 * 5);
 				testdata.SetUp();
-				co(function*() {
+				co(function * () {
 					let err = null;
 					const ori = console.log;
 					const write_e = process.stderr.write;
 					const write_o = process.stdout.write;
 					try {
-						let buffer = "";
+						let buffer = '';
 						process.stderr.write = () => {};
 						process.stdout.write = () => {};
 						console.log = (data) => {
 							// ori(data);
-							buffer += (data || "").toString();
+							buffer += (data || '').toString();
 						};
 						let res = yield command.action.apply(null, testdata.args);
 						console.log = ori;
@@ -63,7 +63,7 @@ const testcase = function testcase(test_config, cwd, testname, command) {
 		}
 	});
 };
-describe('Integration tests.', function() {
+describe('Integration tests.', function () {
 	for (let idx in test_order_for_commands) {
 		const command = test_order_for_commands[idx];
 		const command_test = configuration[command];

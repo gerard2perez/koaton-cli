@@ -8,8 +8,8 @@ let tests = [];
 let cmdname = 'koaton forever';
 
 tests.push(new TestNode(cmdname, [{
-		H: true
-	}], true, true))
+	H: true
+}], true, true))
 	.SetUp(() => {
 		process.chdir('testingapp');
 		process.env.isproyect = 'true';
@@ -21,48 +21,48 @@ tests.push(new TestNode(cmdname, [{
 	});
 
 tests.push(new TestNode(cmdname, [{
-		list: true
-	}], true, true))
+	list: true
+}], true, true))
 	.Expect('Runs the server', true, (log) => {
-		return log.indexOf("No forever processes running") > -1;
+		return log.indexOf('No forever processes running') > -1;
 	});
 
 tests.push(new TestNode('(no args)', [{}], true))
 	.Expect('Runs the server', true, (log) => {
-		return log.indexOf("testingapp is running ...") > -1;
+		return log.indexOf('testingapp is running ...') > -1;
 	});
 
 tests.push(new TestNode(cmdname, [{
-		list: true
-	}], true, true))
+	list: true
+}], true, true))
 	.Expect('Lest the app tunning', true, (log) => {
-		return log.indexOf("koaton_testingapp") > -1;
+		return log.indexOf('koaton_testingapp') > -1;
 	});
 
 tests.push(new TestNode(cmdname, [{
-	logs: "testingapp"
+	logs: 'testingapp'
 }], true, true));
 
 tests.push(new TestNode(cmdname, [{
-	stop: "all"
+	stop: 'all'
 }], true, true));
 
 tests.push(new TestNode(cmdname, [{
-	stop: "testingapp"
+	stop: 'testingapp'
 }], true, true));
 
 tests.push(new TestNode(cmdname, [{
-	stop: "."
+	stop: '.'
 }], true, true));
 
 tests.push(new TestNode(cmdname, [{
-		list: true
-	}], true, true))
+	list: true
+}], true, true))
 	.Expect('No server running', true, (log) => {
-		return log.indexOf("No forever processes running") > -1;
+		return log.indexOf('No forever processes running') > -1;
 	});
 tests.last.CleanUp(() => {
-	process.chdir('..')
+	process.chdir('..');
 });
 
 export {

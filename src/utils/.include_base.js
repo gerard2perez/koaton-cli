@@ -6,10 +6,10 @@ export default function loadmodules(dir) {
 	try {
 		fs.readdirSync(dir)
 			.filter(item => !(/(^|\/)\.[^\/\.]/g).test(item))
-			.filter(item => item !== "index.js")
-			.filter(item => item !== "help.js")
+			.filter(item => item !== 'index.js')
+			.filter(item => item !== 'help.js')
 			.forEach((file) => {
-				let name = path.basename(file).replace(".js", "");
+				let name = path.basename(file).replace('.js', '');
 				let module = require(path.join(dir, name));
 				mods[name] = module.default ? module.default : module;
 			});

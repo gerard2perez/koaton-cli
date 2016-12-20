@@ -14,8 +14,8 @@ let tests = [];
 let cmdname = 'koaton serve';
 
 tests.push(new TestNode(cmdname, [undefined, {
-		H: true
-	}], true, true))
+	H: true
+}], true, true))
 	.Expect('Renders help', true, (log) => {
 		return log.indexOf(cmdname) > -1;
 	});
@@ -26,9 +26,9 @@ tests.push(new TestNode('(no args)', [{}], true))
 		process.env.isproyect = 'true';
 		global.scfg = new ServerConfiguaration();
 		scfg.env = 'development';
-        setTimeout(()=>{
-            process.kill(0);
-        },1000*60*1)
+        																																								setTimeout(() => {
+            																				process.kill(0);
+        }, 1000 * 60 * 1);
 	});
 
 

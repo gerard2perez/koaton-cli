@@ -1,8 +1,8 @@
 export default class Updater {
-	constructor(target, property, update) {
+	constructor (target, property, update) {
 		Object.defineProperty(this, 'onupdate', {
 			enumerable: true,
-			value: update //? update : () => {}
+			value: update // ? update : () => {}
 		});
 		Object.defineProperty(this, 'target', {
 			enumerable: true,

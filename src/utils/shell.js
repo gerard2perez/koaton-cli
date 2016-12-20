@@ -3,12 +3,11 @@ import * as path from 'upath';
 import * as spawn from 'cross-spawn';
 import spin from '../spinner';
 
-
 const spinner = spin();
 
-export default Promise.promisify(function shell(display, command, ...args) {
+export default Promise.promisify(function shell (display, command, ...args) {
 	let [cwd, cb] = args;
-	// shelllog = "";
+	// shelllog = '';
 	if (cb === undefined) {
 		cb = cwd;
 		cwd = process.cwd();
@@ -18,22 +17,22 @@ export default Promise.promisify(function shell(display, command, ...args) {
 		cb(null, 0);
 		return;
 	}
-	let buffer = "";
+	let buffer = '';
 	let c = null;
-	const output = function(data) {
+	const output = function (data) {
 		// shelllog += data.toString();
 		buffer += data.toString();
 		if (buffer.indexOf('\n') > -1) {
 			let send = buffer.toString().split('\n');
 			spinner.pipe({
-				action: "extra",
-				msg: send[0].substr(0, 150).replace(/\n/igm, "")
+				action: 'extra',
+				msg: send[0].substr(0, 150).replace(/\n/igm, '')
 			});
-			buffer = "";
+			buffer = '';
 		}
 	};
 	const child = spawn(command[0], command.slice(1), {
-		cwd: path.join(cwd, "/"),
+		cwd: path.join(cwd, '/'),
 		shell: true
 	});
 	spinner.start(50, display, undefined, process.stdout.columns).then(() => {
@@ -41,9 +40,9 @@ export default Promise.promisify(function shell(display, command, ...args) {
 	});
 	child.stderr.on('data', output);
 	child.stdout.on('data', output);
-	child.on('close', function(code) {
+	child.on('close', function (code) {
 		c = code;
 		const msg = code === 0 ? __ok.green : __nok.red;
 		spinner.end(`+ ${display}\t${msg}`.green);
 	});
-})
+});

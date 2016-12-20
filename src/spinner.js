@@ -4,75 +4,75 @@ import * as co from 'co';
 const os = require('os').platform();
 
 const spinners = {
-	'aix': "⣾⣽⣻⢿⡿⣟⣯⣷",
-	'darwin': "◐◓◑◒",
-	'freebsd': "▁▃▄▅▆▇█▇▆▅▄▃",
-	'linux': "◐◓◑◒",
-	'openbsd': "▁▃▄▅▆▇█▇▆▅▄▃",
-	'sunos': "⣾⣽⣻⢿⡿⣟⣯⣷",
-	'win32': "|/-\\"
-}
-const spinner = co.wrap(function(...args) {
+	'aix': '⣾⣽⣻⢿⡿⣟⣯⣷',
+	'darwin': '◐◓◑◒',
+	'freebsd': '▁▃▄▅▆▇█▇▆▅▄▃',
+	'linux': '◐◓◑◒',
+	'openbsd': '▁▃▄▅▆▇█▇▆▅▄▃',
+	'sunos': '⣾⣽⣻⢿⡿⣟⣯⣷',
+	'win32': '|/-\\'
+};
+const spinner = co.wrap(function (...args) {
 	let [interval, text, extra, size] = args;
-	extra = extra === undefined ? "" : extra;
+	extra = extra === undefined ? '' : extra;
 	const that = this;
 	const spin = spinners[os];
 	const l = spin.length;
 	let current = -1;
-	that.text = text || "";
-	that.extra = extra || "";
+	that.text = text || '';
+	that.extra = extra || '';
 	that.size = size;
-	return new Promise(function(resolve) {
+	return new Promise(function (resolve) {
 		that.promise = resolve;
 		that.id = setInterval(() => {
 			if (process.stdout.isTTY) {
 				process.stderr.clearLine();
 				process.stderr.cursorTo(0);
 			}
-			current++
+			current++;
 			if (current >= l) {
 				current = 0;
 			}
-			process.stderr.write(spin[current].green.bold + "\t" + that.text + "\t" + that.complent);
+			process.stderr.write(spin[current].green.bold + '\t' + that.text + '\t' + that.complent);
 		}, interval);
 	});
 });
 
-class spin {
-	get printleft() {
+class Spin {
+	get printleft () {
 		return this.size - this.text.length - 8 - 10;
 	}
-	get complent() {
+	get complent () {
 		if (this.extra.length > this.printleft) {
-			return this.extra.substr(0, this.printleft - 2) + ".."
+			return this.extra.substr(0, this.printleft - 2) + '..';
 		}
 		return this.extra;
 	}
-	constructor() {
+	constructor () {
 		this.start = spinner.bind(this);
 	}
-	end(msg) {
+	end (msg) {
 		this.pipe({
-			action: "close",
+			action: 'close',
 			msg: msg
 		});
 	}
-	update(msg) {
+	update (msg) {
 		this.pipe({
-			action: "extra",
+			action: 'extra',
 			msg: msg
 		});
 	}
-	pipe(msg) {
+	pipe (msg) {
 		if (msg !== undefined && msg !== null) {
 			switch (msg.action) {
-				case "text":
+				case 'text':
 					this.text = msg.msg;
 					break;
-				case "extra":
+				case 'extra':
 					this.extra = msg.msg;
 					break;
-				case "close":
+				case 'close':
 					clearInterval(this.id);
 					this.id = null;
 					if (process.stdout.isTTY) {
@@ -87,6 +87,6 @@ class spin {
 		}
 	}
 }
-export default function() {
-	return new spin();
+export default function () {
+	return new Spin();
 }

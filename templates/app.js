@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 var config = require('./config/server');
 var koaton = require('koaton');
 var logger = require('koa-logger');
@@ -12,13 +12,13 @@ koaton.use(i18n(koaton, {
 	directory: './config/locales',
 	locales: ['en'],
 	modes: [
-        'query', //  optional detect querystring - `/?locale=en-US`
-        'subdomain', //  optional detect subdomain   - `zh-CN.koajs.com`
-        'cookie', //  optional detect cookie      - `Cookie: locale=zh-TW`
-        'header', //  optional detect header      - `Accept-Language: zh-CN,zh;q=0.5`
-        'url', //  optional detect url         - `/en`
-        'tld' //  optional detect tld(the last domain) - `koajs.cn`
-    ]
+        																																								'query', //  optional detect querystring - `/?locale=en-US`
+        																																								'subdomain', //  optional detect subdomain   - `zh-CN.koajs.com`
+        																																								'cookie', //  optional detect cookie      - `Cookie: locale=zh-TW`
+        																																								'header', //  optional detect header      - `Accept-Language: zh-CN,zh;q=0.5`
+        																																								'url', //  optional detect url         - `/en`
+        																																								'tld' //  optional detect tld(the last domain) - `koajs.cn`
+    																				]
 }));
 koaton.use(koaton.detectsubdomain);
 koaton.use(koaton.conditional);
@@ -33,10 +33,10 @@ koaton.use(passport.session());
 koaton.use(koaton.oAuth2Server);
 koaton.use(koaton.views);
 koaton.use(koaton.subdomainrouter);
-//============================================
+// ============================================
 io.attach(koaton);
 io.on('join', (ctx, data) => {
-	console.log('join event fired', data)
+	console.log('join event fired', data);
 });
-//============================================
+// ============================================
 koaton.start(config.port);

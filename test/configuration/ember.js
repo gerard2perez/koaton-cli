@@ -8,71 +8,71 @@ let cmdname = 'koaton ember';
 tests.push(new TestNode('(no args)', [undefined, {}], true))
 	.SetUp(() => {
 		process.chdir('testingapp');
-		fs.removeSync(path.join(process.cwd(), "ember", "restapp"));
+		fs.removeSync(path.join(process.cwd(), 'ember', 'restapp'));
 	})
 	.Expect('Ask to render help.', true, (log) => {
 		return log.indexOf('to see help') > -1;
 	});
 
 tests.push(new TestNode(cmdname, [undefined, {
-		H: true
-	}], true, true))
+	H: true
+}], true, true))
 	.Expect('Renders help', true, (log) => {
-		return log.indexOf("koaton ember") > -1;
+		return log.indexOf('koaton ember') > -1;
 	});
 
 tests.push(new TestNode(cmdname, [undefined, {
-		list: true
-	}], true, true))
-	.Expect('List of Ember Apps', "  No Apps Installed", (log) => log);
+	list: true
+}], true, true))
+	.Expect('List of Ember Apps', '  No Apps Installed', (log) => log);
 
 tests.push(new TestNode(cmdname, [undefined, {
-		use: 'ember-cli-crudtable'
-	}], true, true))
+	use: 'ember-cli-crudtable'
+}], true, true))
 	.Expect('Ask to render help.', true, (log) => {
 		return log.indexOf('to see help') > -1;
 	});
 
 tests.push(new TestNode(cmdname, [undefined, {
-		mount: '/default'
-	}], true, true))
+	mount: '/default'
+}], true, true))
 	.Expect('Ask to render help.', true, (log) => {
 		return log.indexOf('to see help') > -1;
 	});
 
 tests.push(new TestNode(cmdname, [undefined, {
-		build: 'development'
-	}], true, true))
+	build: 'development'
+}], true, true))
 	.Expect('Ask to render help.', true, (log) => {
 		return log.indexOf('to see help') > -1;
 	});
 
 tests.push(new TestNode(cmdname, ['restapp', {
-		force: true,
-		mount: '/panel',
-		build: 'development'
-	}], true, true))
-	.Expect('App does not exists.', "  That ember app does not exist.", (log) => log);
+	force: true,
+	mount: '/panel',
+	build: 'development'
+}], true, true))
+	.Expect('App does not exists.', '  That ember app does not exist.', (log) => log);
 
 tests.push(new TestNode(cmdname, ['restapp', {
-		use: 'ember-cli-crudtable'
-	}], true, true))
-	.Expect('App does not exists.', "  That ember app does not exist.", (log) => log);
+	use: 'ember-cli-crudtable'
+}], true, true))
+	.Expect('App does not exists.', '  That ember app does not exist.', (log) => log);
 
 tests.push(new TestNode(cmdname, ['restapp', {
-		mount: '/panel',
-		force: true
-	}], true, true))
+	mount: '/panel',
+	force: true
+}], true, true))
 	.Expect('Application folder is created', true, (_, project) => {
 		try {
-			fs.accessSync(path.join(project, "ember", "restapp"));
+			fs.accessSync(path.join(project, 'ember', 'restapp'));
 		} catch (e) {
 			return e;
 		}
 		return true;
 	})
 	.Expect('Koaton ember config is modified', true, (log, project) => {
-		const config = require(path.join(project, "config", "ember.js")).restapp;
+		const config = require(path.join(project, 'config', 'ember.js')).restapp;
 		return config.mount === '/panel' &&
 			config.directory === 'restapp' &&
 			config.access === 'public' &&
@@ -82,18 +82,18 @@ tests.push(new TestNode(cmdname, ['restapp', {
 	});
 
 tests.push(new TestNode(cmdname, [undefined, {
-		list: true
-	}], true, true))
-	.Expect('List of Ember Apps', true, (log) =>{
-		return log.indexOf("restapp") > -1;
+	list: true
+}], true, true))
+	.Expect('List of Ember Apps', true, (log) => {
+		return log.indexOf('restapp') > -1;
 	});
 
 tests.push(new TestNode(cmdname, ['restapp', {
-		use: 'ember-cli-crudtable'
-	}], true, true))
+	use: 'ember-cli-crudtable'
+}], true, true))
 	.Expect('Installs the ember-component', true, (_, project) => {
 		try {
-			fs.accessSync(path.join(project, "ember", "restapp", "node_modules", "ember-cli-crudtable"));
+			fs.accessSync(path.join(project, 'ember', 'restapp', 'node_modules', 'ember-cli-crudtable'));
 		} catch (e) {
 			return e;
 		}
@@ -109,7 +109,7 @@ tests.push(new TestNode(cmdname, ['restapp', {
 // }], true, true));
 
 tests.last.CleanUp(() => {
-	process.chdir('..')
+	process.chdir('..');
 });
 export {
 	tests as config

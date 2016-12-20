@@ -1,11 +1,11 @@
 module.exports = {
 	mongo: {
-		driver: "mongoose",
-		user: "",
-		database: "{{database}}",
-		password: "",
+		driver: 'mongoose',
+		user: '',
+		database: '{{database}}',
+		password: '',
 		port: 27017,
-		host: "localhost",
+		host: 'localhost',
 		pool: false,
 		ssl: false
 	}

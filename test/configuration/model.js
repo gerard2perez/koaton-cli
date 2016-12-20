@@ -16,38 +16,38 @@ tests.push(new TestNode('(no args)', [undefined, {}], true))
 	.Expect('Ask to render help.', '   The command cannot be run this way.\n\tkoaton adapter -h\n   to see help.', (log) => log);
 
 tests.push(new TestNode(cmdname, [undefined, {
-		H: true
-	}], true, true))
+	H: true
+}], true, true))
 	.Expect('Renders help', true, (log) => {
 		return log.indexOf(cmdname) > -1;
 	});
 
-tests.push(new TestNode(cmdname, ["user", "name lastname age:number email:email", undefined, undefined, undefined, undefined, {
-		force: true
-	}], true, true))
+tests.push(new TestNode(cmdname, ['user', 'name lastname age:number email:email', undefined, undefined, undefined, undefined, {
+	force: true
+}], true, true))
 	.Expect('Updates .koaton', true, (_, project) => {
-		let koaton = fs.readFileSync(path.join(project, ".koaton"), 'utf-8');
-		return koaton.indexOf("name:string lastname:string age:number email:email") > -1;
+		let koaton = fs.readFileSync(path.join(project, '.koaton'), 'utf-8');
+		return koaton.indexOf('name:string lastname:string age:number email:email') > -1;
 	})
 	.Expect('Creates koaton model', true, (_, project) => {
-		let model = ModelManager('user', require(path.join(project, "models", "user.js")));
+		let model = ModelManager('user', require(path.join(project, 'models', 'user.js')));
 		return model.name.toString() === 'string' &&
 			model.lastname.toString() === 'string' &&
 			model.age.toString() === 'number' &&
 			model.email.toString() === 'email';
 	});
 
-tests.push(new TestNode(cmdname, ["user", "name lastname age:number email:email", undefined, undefined, undefined, undefined, {
-		force: true,
-		rest: true
-	}], true, true))
+tests.push(new TestNode(cmdname, ['user', 'name lastname age:number email:email', undefined, undefined, undefined, undefined, {
+	force: true,
+	rest: true
+}], true, true))
 	.Expect('Updates .koaton', true, (_, project) => {
-		let koaton = fs.readFileSync(path.join(project, ".koaton"), 'utf-8');
-		return koaton.indexOf("name:string lastname:string age:number email:email") > -1;
+		let koaton = fs.readFileSync(path.join(project, '.koaton'), 'utf-8');
+		return koaton.indexOf('name:string lastname:string age:number email:email') > -1;
 	})
 	.Expect('Creates koaton model with rest suport', true, (_, project) => {
-		let model = ModelManager('user', require(path.join(project, "models", "user.js")));
-		let REST = require(path.join(project, "controllers", "user.js")).REST;
+		let model = ModelManager('user', require(path.join(project, 'models', 'user.js')));
+		let REST = require(path.join(project, 'controllers', 'user.js')).REST;
 		return model.name.toString() === 'string' &&
 			model.lastname.toString() === 'string' &&
 			model.age.toString() === 'number' &&
@@ -55,21 +55,21 @@ tests.push(new TestNode(cmdname, ["user", "name lastname age:number email:email"
 			REST;
 	});
 
-tests.push(new TestNode(cmdname, ["user", "name lastname age:number email:email", undefined, undefined, undefined, undefined, {
-		force: true,
-		ember: 'restapp',
-		rest: true
-	}], true, true))
+tests.push(new TestNode(cmdname, ['user', 'name lastname age:number email:email', undefined, undefined, undefined, undefined, {
+	force: true,
+	ember: 'restapp',
+	rest: true
+}], true, true))
 	.Expect('Updates .koaton', true, (_, project) => {
-		let koaton = fs.readFileSync(path.join(project, ".koaton"), 'utf-8');
-		return koaton.indexOf("name:string lastname:string age:number email:email") > -1;
+		let koaton = fs.readFileSync(path.join(project, '.koaton'), 'utf-8');
+		return koaton.indexOf('name:string lastname:string age:number email:email') > -1;
 	})
 	.Expect('Creates koaton model with full ember support', true, (_, project) => {
-		let model = ModelManager('user', require(path.join(project, "models", "user.js")));
-		let REST = require(path.join(project, "controllers", "user.js")).REST;
-		let embercontroller = fs.readFileSync(path.join(project, "ember", "restapp", "app", "controllers", "user.js"), 'utf-8');
-		let embermodel = fs.readFileSync(path.join(project, "ember", "restapp", "app", "models", "user.js"), 'utf-8');
-		let emberemplate = fs.accessSync(path.join(project, "ember", "restapp", "app", "templates", "user.hbs"));
+		let model = ModelManager('user', require(path.join(project, 'models', 'user.js')));
+		let REST = require(path.join(project, 'controllers', 'user.js')).REST;
+		let embercontroller = fs.readFileSync(path.join(project, 'ember', 'restapp', 'app', 'controllers', 'user.js'), 'utf-8');
+		let embermodel = fs.readFileSync(path.join(project, 'ember', 'restapp', 'app', 'models', 'user.js'), 'utf-8');
+		let emberemplate = fs.accessSync(path.join(project, 'ember', 'restapp', 'app', 'templates', 'user.hbs'));
 		return model.name.toString() === 'string' &&
 			model.lastname.toString() === 'string' &&
 			model.age.toString() === 'number' &&
@@ -81,7 +81,7 @@ tests.push(new TestNode(cmdname, ["user", "name lastname age:number email:email"
 	});
 
 tests.last.CleanUp(() => {
-	process.chdir('..')
+	process.chdir('..');
 });
 
 export {

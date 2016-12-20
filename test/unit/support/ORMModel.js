@@ -2,31 +2,31 @@
 import * as assert from 'assert';
 import ORMModel from '../../../src/support/ORMModel';
 
-describe('ORMModel', function() {
+describe('ORMModel', function () {
 	let cities = new ORMModel('city', 'name');
 	let address = new ORMModel('aDdress', 'street number:number cp:number', {
-		"city": 'belongsTo cities cityId'
+		'city': 'belongsTo cities cityId'
 	});
 	let users = new ORMModel('UseRs', 'name age:number email:email', {
-		"addresses": "hasMany address",
-		"cities": "hasMany city"
+		'addresses': 'hasMany address',
+		'cities': 'hasMany city'
 	}, {
 		city: cities,
 		address: address
 	});
 
-	it("throw an exception when missing args", function() {
+	it('throw an exception when missing args', function () {
 		try {
 			let nomodel = new ORMModel('admin');
 		} catch (e) {
 			assert.ok(e);
 		}
 	});
-	it('Shoud have a lowercase singular _modelname field', function() {
+	it('Shoud have a lowercase singular _modelname field', function () {
 		assert.equal(users._modelname, 'user');
 		assert.equal(users._modelname.capital, 'User');
 	});
-	it('print a caminte model definition', function() {
+	it('print a caminte model definition', function () {
 		let model = `"use strict";
 module.exports = function(schema,relation) {
 	return {
@@ -44,7 +44,7 @@ module.exports = function(schema,relation) {
 };`;
 		assert.equal(users.toCaminte(), model);
 	});
-	it('print a ember model definition', function() {
+	it('print a ember model definition', function () {
 		let model = `import Model from 'ember-data/model';
 import attr from 'ember-data/attr';
 import { hasMany, belongsTo } from 'ember-data/relationships';
@@ -57,7 +57,7 @@ export default Model.extend({
 });`;
 		assert.equal(users.toEmberModel(), model);
 	});
-	it('print a ember-cli-crudtable model definition', function() {
+	it('print a ember-cli-crudtable model definition', function () {
 		let model = `import Ember from 'ember';
 import crud from 'ember-cli-crudtable/mixins/crud-controller';
 export default Ember.Controller.extend(crud('user'), {
@@ -75,7 +75,7 @@ export default Ember.Controller.extend(crud('user'), {
 		assert.equal(users.toCRUDTable(), model);
 	});
 
-	it('Gets the .koaton representation', function() {
-		assert.equal(JSON.stringify(users.toMeta()), '{"model":"name:string age:number email:email","relations":[{"addresses":"hasMany address addressesId"},{"cities":"hasMany city citiesId"}]}')
+	it('Gets the .koaton representation', function () {
+		assert.equal(JSON.stringify(users.toMeta()), '{"model":"name:string age:number email:email","relations":[{"addresses":"hasMany address addressesId"},{"cities":"hasMany city citiesId"}]}');
 	});
 });

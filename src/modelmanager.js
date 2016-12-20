@@ -1,21 +1,21 @@
-import model from './support/ORMModel';
+import Model from './support/ORMModel';
 import datatypes from './support/DataTypes';
 /**
  * Transform a Koaton model to cli syntax
  * @param {KoatonModelFile} koatonmodel - Content of a KoatonModel.js
  * @return {String} raw cli syntax of the koaton model.
  */
-const modelize = function(koatonmodel) {
+const modelize = function (koatonmodel) {
 	let res = [];
 	res[0] = [];
 	res[1] = koatonmodel.relations;
 	Object.keys(koatonmodel.model).forEach((property) => {
 		res[0].push(`${property}:${koatonmodel.model[property].type.koaton}`);
 	});
-	res[0] = res[0].join(" ");
+	res[0] = res[0].join(' ');
 	return res;
-}
-const clone = function clone(source) {
+};
+const clone = function clone (source) {
 	let dest = [];
 	for (let i in source) {
 		Object.keys(source[i]).forEach((key) => {
@@ -26,15 +26,15 @@ const clone = function clone(source) {
 	}
 
 	return dest;
-}
+};
 const schema = {
-	hasMany(rel) {
+	hasMany (rel) {
 		return `hasMany ${rel.split('.').join(' ')}`;
 	}
-}
+};
 schema.belongsTo = schema.hasMany;
 export default (...args) => {
-	let [name,fields,relations={},models={}] = args;
+	let [name, fields, relations = {}, models = {}] = args;
 	if (typeof fields === 'function') {
 		fields = modelize(fields(datatypes, schema));
 		relations = fields[1];
@@ -42,5 +42,5 @@ export default (...args) => {
 	} else {
 		relations = clone(relations || {});
 	}
-	return new model(name, fields, relations, models);
+	return new Model(name, fields, relations, models);
 };

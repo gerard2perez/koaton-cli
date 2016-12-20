@@ -1,18 +1,17 @@
 export default class CommandLog {
-	constructor(target,property, update) {
+	constructor (target, property, update = () => {}) {
 		Object.defineProperty(this, 'onupdate', {
 			enumerable: false,
-			value: update ? update : () => {}
+			value: update
 		});
 		Object.defineProperty(this, 'target', {
 			enumerable: false,
-			get:function(){
+			get () {
 				return target[property];
 			}
 		});
-
 	}
-	add(cmd) {
+	add (cmd) {
 		if (this.target.indexOf(cmd) === -1) {
 			this.target.push(cmd);
 			this.onupdate();

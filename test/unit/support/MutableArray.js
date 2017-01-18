@@ -16,7 +16,7 @@ describe('MutableArray', function () {
 	});
 	let model1 = new ORMModel('casa', 'address street cp:number', [], []);
 	it('Creates a Mutable array with the specified class', function () {
-		assert.equal(database.mutable.name, 'ORMModel');
+		assert.equal(database.Mutable.name, 'ORMModel');
 	});
 	it('Add a new object', function () {
 		database.add(model1);
@@ -30,7 +30,6 @@ describe('MutableArray', function () {
 		assert.equal(database.has('house'), false, 'model2 (string)');
 	});
 	it('wont add an object if already exits', function () {
-
 		let model1 = new ORMModel('casa', 'address street cp:number', [], []);
 		assert.equal(database.add(model1), database);
 	});

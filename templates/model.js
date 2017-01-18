@@ -1,3 +1,5 @@
-export default function(schema,relation){
+'use strict';
+
+exports.default = function(schema,relation){
 	return {{definition}};
-}
+};

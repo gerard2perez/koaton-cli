@@ -6,7 +6,6 @@ import BundleItem from './BundleItem';
 import CommandLog from './CommandLog';
 import Model from './ORMModel';
 import ModelManager from '../modelmanager';
-// import EmberAppItem from './EmberAppItem';
 
 const ipformat = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
 let id = 0;
@@ -15,9 +14,6 @@ export default class ServerConfiguaration {
 	UpdateKoaton () {
 		fs.writeFileSync(ProyPath('.koaton'), JSON.stringify(this.localkoaton, 2, 2));
 	}
-		// UpdateModule(filepath) {
-		// 	fs.writeFileSync(filepath, ''use strict';\nmodule.exports=' + JSON.stringify(this.emberApps, 4, 4));
-		// }
 	constructor () {
 		this.port = process.env.port;
 		this.env = process.env.NODE_ENV;
@@ -32,8 +28,6 @@ export default class ServerConfiguaration {
 			}, 4, 4));
 		}
 		const localkoaton = JSON.parse(fs.readFileSync(ProyPath('.koaton'), 'utf-8'));
-		// const embercfg = require(ProyPath('config', 'ember'));
-
 		this.id = ++id;
 		Object.defineProperty(this, 'package', {
 			enumerable: false,
@@ -49,12 +43,12 @@ export default class ServerConfiguaration {
 		});
 		Object.defineProperty(this, '_emberapps', {
 			enumerable: false,
-			value: Object.assign({}, requireSafe(ProyPath('config', 'ember'), {}))
+			value: Object.assign({}, requireSafe(ProyPath('config', 'ember'), {}).default)
 		});
 		makeObjIterable(this._emberapps);
 		Object.defineProperty(this, 'localserver', {
 			enumerable: false,
-			value: require(ProyPath('config', 'server'))
+			value: require(ProyPath('config', 'server')).default
 		});
 		this.commands = new CommandLog(this.localkoaton, 'commands', this.UpdateKoaton.bind(this));
 		this.bundles = new MutableArray(BundleItem, this.localkoaton, 'bundles', this.UpdateKoaton.bind(this));
@@ -80,7 +74,7 @@ export default class ServerConfiguaration {
 			this.bundles.add(idx, localkoaton.bundles[idx]);
 		}
 		sync(ProyPath('models', '*.js')).forEach((files) => {
-			this.database.add(ModelManager(path.basename(files).replace('.js', ''), require(files)));
+			this.database.add(ModelManager(path.basename(files).replace('.js', ''), require(files).default));
 		});
 		Object.defineProperty(this.database, 'models', {
 			get: function () {

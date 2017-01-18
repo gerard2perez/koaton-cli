@@ -196,7 +196,7 @@ const getInflections = async function getInflections (appName) {
 		uncontable = (inflections.uncountable || []).map((inflection) => {
 			return `/${inflection}/`;
 		});
-	utils.render(TemplatePath('emberAPPs', 'inflector.js'), ProyPath('ember', appName, 'app', 'initializers', 'inflector.js'), {
+	utils.render(TemplatePath('ember_apps', 'inflector.js'), ProyPath('ember', appName, 'app', 'initializers', 'inflector.js'), {
 		irregular: JSON.stringify(irregular),
 		uncontable: JSON.stringify(uncontable)
 	});
@@ -243,7 +243,7 @@ const postBuildEmber = async function postBuildEmber (application, options) {
 	let text = await utils.read(ProyPath('public', options.directory, 'index.html'), {
 			encoding: 'utf-8'
 		}),
-		indextemplate = await utils.read(TemplatePath('emberAPPs', 'index.handlebars'), 'utf-8'),
+		indextemplate = await utils.read(TemplatePath('ember_apps', 'index.handlebars'), 'utf-8'),
 		meta = new RegExp(`<meta ?name='${emberinternalname}.*' ?content='.*' ?/>`);
 
 	const links = new RegExp("<link rel='stylesheet' href='.*?assets/.*.css.*>", 'gm');
@@ -263,8 +263,8 @@ const postBuildEmber = async function postBuildEmber (application, options) {
 		cssfiles: transformlinks(text, links),
 		jsfiles: transformlinks(text, scripts)
 	});
-	await utils.mkdir(ProyPath('views', 'emberAPPs'), -1);
-	return utils.write(ProyPath('views', 'emberAPPs', `${options.directory}.handlebars`), text, 1);
+	await utils.mkdir(ProyPath('views', 'ember_apps'), -1);
+	return utils.write(ProyPath('views', 'ember_apps', `${options.directory}.handlebars`), text, 1);
 	// }
 };
 export {

@@ -1,8 +1,9 @@
 import * as path from 'path';
 import 'colors';
 import Command from '../Command';
-import { adapters, template } from '../support/Adapters';
+import adapters from '../support/Adapters';
 import utils from '../utils';
+const template = '{"driver": "{{driver}}","user": "{{user}}","database": "{{application}}","password": "{{password}}","port": {{port}},"host": "{{host}}","pool": false,"ssl": false}';
 
 const handleGenerate = async function handleGenerate (driver, options) {
 	if (!options.generate) {
@@ -10,6 +11,15 @@ const handleGenerate = async function handleGenerate (driver, options) {
 		delete require.cache[path.resolve() + '/package.json'];
 		console.log(`${driver}@${require(path.resolve() + '/package.json').dependencies[adapters[driver].package]} installed`);
 	}
+	console.log(utils.compile(template, {
+		adapter: driver,
+		driver: adapters[driver].package,
+		user: options.user || '',
+		password: options.pass || '',
+		host: options.host || 'localhost',
+		port: options.port || adapters[driver].port,
+		application: options.db || path.basename(process.cwd())
+	}));
 	let adapterCFG = JSON.parse(utils.compile(template, {
 		adapter: driver,
 		driver: adapters[driver].package,

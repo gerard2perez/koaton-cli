@@ -1,6 +1,5 @@
-/*global describe, it*/
 import * as assert from 'assert';
-import {adapters, template} from '../../../src/support/Adapters';
+import adapters from '../../../src/support/Adapters';
 
 describe('adapters', function () {
 	it('returns "mongoose", .mongoose', function () {
@@ -34,7 +33,4 @@ describe('adapters', function () {
 	it('is "of" iterable', function () {
 		assert.equal(!!adapters[Symbol.iterator], true);
 	});
-
-
-
 });

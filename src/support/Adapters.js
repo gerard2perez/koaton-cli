@@ -1,7 +1,5 @@
 import ExtendedStrings from './ExtendedStrings';
 
-const template = "{'driver': '{{driver}}','user': '{{user}}','database': '{{application}}','password': '{{password}}','port': {{port}},'host': '{{host}}','pool': false,'ssl': false}";
-
 let adapters = new ExtendedStrings('package');
 
 adapters.add('mongoose', 'port:27017');
@@ -31,5 +29,4 @@ Object.defineProperty(adapters, 'isOrDef', {
 });
 
 Object.freeze(adapters);
-export {template, adapters};
 export default adapters;

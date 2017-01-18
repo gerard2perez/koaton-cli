@@ -4,10 +4,10 @@ import * as co from 'co';
 import commands from '../src/commands';
 import configuration from './configuration';
 
-const test_order_for_commands = [
-	// 'fail',
-	// 'nginx', 'fail'
-].concat(['new', 'adapter', 'ember', 'model', /* 'nginx',*/ 'install', 'build', 'seed', 'semver', 'modulify' /*, 'serve' //TODO enable. FIX 001*/, 'forever', 'publish']);
+const CommandOrder = [
+	'model',
+	'fail'
+].concat(['new', 'adapter', 'ember', 'model', 'nginx', 'install', 'build', 'seed', 'semver', 'modulify' /*, 'serve' //TODO enable. FIX 001*/, 'forever', 'publish']);
 
 const notestcase = function (testname) {
 	describe(testname, () => {
@@ -17,21 +17,21 @@ const notestcase = function (testname) {
 	});
 };
 
-const testcase = function testcase (test_config, cwd, testname, command) {
+const testcase = function testcase (TestConfig, cwd, testname, command) {
 	describe(testname, function () {
-		for (const testdata of (test_config || [])) {
+		for (const testdata of (TestConfig || [])) {
 			it(testdata.name, function (done) {
 				this.timeout(1000 * 60 * 5);
 				testdata.SetUp();
 				co(function * () {
 					let err = null;
 					const ori = console.log;
-					const write_e = process.stderr.write;
-					const write_o = process.stdout.write;
+					const WriteE = process.stderr.write;
+					const WriteO = process.stdout.write;
 					try {
 						let buffer = '';
-						process.stderr.write = () => {};
-						process.stdout.write = () => {};
+						// process.stderr.write = () => {};
+						// process.stdout.write = () => {};
 						console.log = (data) => {
 							// ori(data);
 							buffer += (data || '').toString();
@@ -50,8 +50,8 @@ const testcase = function testcase (test_config, cwd, testname, command) {
 					} finally {
 						testdata.CleanUp();
 						console.log = ori;
-						process.stderr.write = write_e;
-						process.stdout.write = write_o;
+						process.stderr.write = WriteE;
+						process.stdout.write = WriteO;
 					}
 					if (err) {
 						throw err;
@@ -64,11 +64,11 @@ const testcase = function testcase (test_config, cwd, testname, command) {
 	});
 };
 describe('Integration tests.', function () {
-	for (let idx in test_order_for_commands) {
-		const command = test_order_for_commands[idx];
-		const command_test = configuration[command];
-		if (command_test && command_test.config) {
-			testcase(command_test.config, command_test.cwd, command_test.testname, commands[command]);
+	for (let idx in CommandOrder) {
+		const command = CommandOrder[idx];
+		const CommandTest = configuration[command];
+		if (CommandTest && CommandTest.config) {
+			testcase(CommandTest.config, CommandTest.cwd, CommandTest.testname, commands[command]);
 		} else {
 			notestcase(command);
 		}

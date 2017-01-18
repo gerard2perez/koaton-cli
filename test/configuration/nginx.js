@@ -11,8 +11,9 @@ tests.push(new TestNode(cmdname, [{
 	H: true
 }], true, true))
 	.SetUp(() => {
-
-		let log = spawn('nginx', ['-t']);
+		let log = spawn('nginx', ['-t'], {
+			shell: true
+		});
 		log = log.stdout.toString() || log.stderr.toString();
 		let nginxpath = log.match(/.* file (.*)nginx\.conf test/)[1];
 		let conf = fs.readFileSync(nginxpath + 'nginx.conf', 'utf-8');
@@ -20,6 +21,7 @@ tests.push(new TestNode(cmdname, [{
 		fs.outputFileSync(nginxpath + 'nginx.conf', conf);
 
 		process.chdir('testingapp');
+		console.log(require(ProyPath('config', 'bundles')).default);
 		process.env.isproyect = 'true';
 		global.scfg = new ServerConfiguaration();
 		scfg.port = 62626;
@@ -28,7 +30,6 @@ tests.push(new TestNode(cmdname, [{
 	.Expect('Renders help', true, (log) => {
 		return log.indexOf(cmdname) > -1;
 	});
-
 
 tests.push(new TestNode(cmdname, [{
 	generate: true

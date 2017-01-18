@@ -1,6 +1,12 @@
-'use-strict';
-const getuser = require('koaton/lib/auth').getuser;
-module.exports = {
+'use strict';
+
+exports.default = {
+	// Time in Seconds
+	tokenTimeout: {
+		dev: 60 * 1,
+		prod: 60 * 5
+	},
+	keys: ['9184f115438655076a7675827bbfa1d98745217f'],
 	model: 'user',
 	username: 'username',
 	password: 'password',
@@ -10,8 +16,7 @@ module.exports = {
 			identifier: 'local',
 			options: {
 				session: true
-			},
-			secret: getuser
+			}
 		}
 	}
 };

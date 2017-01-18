@@ -8,6 +8,8 @@ let cmdname = 'koaton ember';
 tests.push(new TestNode('(no args)', [undefined, {}], true))
 	.SetUp(() => {
 		process.chdir('testingapp');
+		process.env.isproyect = 'true';
+		require(ProyPath('node_modules', 'koaton/lib/support', 'globals'));
 		fs.removeSync(path.join(process.cwd(), 'ember', 'restapp'));
 	})
 	.Expect('Ask to render help.', true, (log) => {

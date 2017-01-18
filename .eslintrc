@@ -6,6 +6,8 @@ parserOptions:
   ecmaVersion: 2017
 
 globals:
+ describe: true
+ it: true
  ProyPath: true
  scfg: true
  readDir: true
@@ -19,6 +21,7 @@ globals:
  __nok: true
  skipshell: true
  cleanString: true
+ configuration: true
 
 rules:
  one-var: [0, never]

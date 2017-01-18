@@ -57,16 +57,12 @@ export default (new Command(__filename, 'Creates a new ember app with the especi
 			}) &&
 			await buildcmd.postBuildEmber(appName, embercfg));
 		} else {
-			const connections = require(ProyPath('config', 'connections'));
-			const connection = require(ProyPath('config', 'models')).connection;
-			const port = require(ProyPath('config', 'server')).port;
-			const host = connections[connection].host;
 			options.mount = path.join('/', options.mount || '').replace(/\\/igm, '/');
 			res = await newproyect(appName, options);
 			res &= !((await utils.mkdir(ProyPath('ember', appName, 'app', 'adapters'))) &&
 				utils.render(TemplatePath('ember_apps', 'adapter.js'), ProyPath('ember', appName, 'app', 'adapters', 'application.js'), {
-					localhost: host,
-					port: port
+					localhost: configuration.server.host,
+					port: configuration.server.port
 				}));
 			var emberjs = require(ProyPath('config', 'ember.js'));
 			emberjs[appName] = {

@@ -2,7 +2,7 @@ import datatypes from './DataTypes';
 import compile from '../utils/compile';
 import inflector from './inflector';
 
-const compileCaminte = compile.bind(null, '\'use strict\';\nmodule.exports = function(schema,relation) {\n\treturn {\n\t\tmodel: {\n\t\t\t{{model}}\n\t\t},\n\t\textra: {},\n\t\trelations: {\n\t\t\t{{relations}}\n\t\t}\n\t};\n};');
+const compileCaminte = compile.bind(null, "'use strict';\nexports.default = function(schema,relation) {\n\treturn {\n\t\tmodel: {\n\t\t\t{{model}}\n\t\t},\n\t\textra: {},\n\t\trelations: {\n\t\t\t{{relations}}\n\t\t}\n\t};\n};");
 const compileEmber = compile.bind(null, "import Model from 'ember-data/model';\nimport attr from 'ember-data/attr';\nimport { hasMany, belongsTo } from 'ember-data/relationships';\nexport default Model.extend({\n\t{{definition}}\n});");
 const compileCRUDTable = compile.bind(null, "import Ember from 'ember';\nimport crud from 'ember-cli-crudtable/mixins/crud-controller';\nexport default Ember.Controller.extend(crud('{{model}}'), {\n\tactions: {\n\t\t{{actions}}\n\t},\n\tfieldDefinition: {\n\t\t{{definition}}\n\t}\n});");
 export default class ORMModel {
@@ -115,16 +115,16 @@ export default class ORMModel {
 			}
 			entity[key].Type = type;
 			entity = JSON.stringify(entity);
-			definition.push(entity.substr(1, entity.length - 2));
+			definition.push(entity.substr(1, entity.length - 2).replace(/"/igm, '\''));
 		});
 		Object.keys(this._relations).forEach((property) => {
 			let opts = this._relations[property];
-			let display;
-			Object.keys(scfg.database[opts[1]]).some((key) => {
+			let display = property;
+			Object.keys(scfg.database[opts[1]] || {}).some((key) => {
 				display = key;
 				return true;
 			});
-			let rel = `${property}:{Type:'${opts[0]}',Display:'${display}',Source:'_${property}'}`;
+			let rel = `'${property}':{Type:'${opts[0]}',Display:'${display}',Source:'_${property}'}`;
 			definition.push(rel);
 			actions.push(`_${property}(deferred){this.store.findAll('${opts[1]}').then(deferred.resolve,deferred.reject);}`);
 		});

@@ -1,61 +1,26 @@
 'use strict';
-var path = require('path');
-var env = process.env.NODE_ENV || 'development';
-var port = process.env.port || 62626;
-var host = 'http://localhost' + (port != 80 ? ':' + port : '');
 
-var DEBUG = env !== 'production';
-
-module.exports = {
-	token_timeout:{
-		dev:60 * 20,
-		prod:60 * 5
-	},
-	pagination:{
-		limit:50
-	},
-	subdomains:[
-		'www'
-	],
-	// http://koajs.com/#application,
-	host:{
-		dev:'localhost',
-		prod:'127.0.0.1'
-	},
+exports.default = {
 	name: 'koaton',
-	keys: ['9184f115438655076a7675827bbfa1d98745217f'],
-	env: env,
-	port: port,
-	// https://github.com/koajs/static#options
-	static: {
-		directory: path.resolve(__dirname, '../public')
+	database: {
+		relationsMode: 'ids',
+		connection: 'mongo'
 	},
-	// https://github.com/koajs/body-parser#options
-	bodyparser: {},
-	// https://github.com/koajs/generic-session#options
-	session: {
-		maxAge: 1000 * 60 * 60 * 24,
-		key:'{{key}}'
+	pagination: {
+		limit: 50,
+		serchTerm: 'search'
 	},
-	// https://github.com/rkusa/koa-passport
-	auth: {
-		// https://github.com/jaredhanson/passport-facebook
-		facebook: {
-			clientID: 'your-client-id',
-			clientSecret: 'your-secret',
-			callbackURL: host + '/auth/facebook/callback'
-		}
+	subdomains: [
+		'www',
+		'origin'
+	],
+	host: {
+		dev: 'localhost',
+		prod: '127.0.0.1'
 	},
-	// https://github.com/koajs/ejs
-	view: {
-		map: {
-			html: 'handlebars'
-		}
-		// cache: DEBUG ? false : 'memory',
-		// locals: require('./view-locals'),
-		// filters: require('./view-filters'),
-		// layout: 'layouts/main',
-	},
+	env: process.env.NODE_ENV || 'development',
+	port: process.env.port || 62626,
+	bodyParser: {},
 	error: {
 		view: 'error/error',
 		layout: 'layouts/error',
@@ -64,5 +29,18 @@ module.exports = {
 			403: 'error/403',
 			404: 'error/404'
 		}
+	},
+	localization: {
+		queryKey: 'locale',
+		directory: './locales',
+		locales: ['en'],
+		modes: [
+			'query', //  optional detect querystring - `/?locale=en-US`
+			'subdomain', //  optional detect subdomain   - `zh-CN.koajs.com`
+			'cookie', //  optional detect cookie      - `Cookie: locale=zh-TW`
+			'header', //  optional detect header      - `Accept-Language: zh-CN,zh;q=0.5`
+			'url', //  optional detect url         - `/en`
+			'tld' //  optional detect tld(the last domain) - `koajs.cn`
+		]
 	}
 };

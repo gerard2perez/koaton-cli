@@ -9,6 +9,13 @@ const bundletemplates = {
 	}
 };
 
+/**
+ * Represents a Bundle Item used by the template engines to render .css or .js files.
+ * @class BundleItem
+ * @alias module:support/BundleItem.default
+ * @param {string} target Identifier that will be use as name of the bundle.
+ * @param {string|string[]} source File(s) that will be bundled.
+ */
 export default class BundleItem {
 	valueOf () {
 		return this.file;
@@ -53,7 +60,7 @@ export default class BundleItem {
 		}
 		return res;
 	}
-	[Symbol.iterator] () {
+	[ Symbol.iterator] () {
 		let index = -1;
 		return {
 			next: () => ({
@@ -62,5 +69,4 @@ export default class BundleItem {
 			})
 		};
 	}
-
 }

@@ -30,7 +30,7 @@ if you write `koaton` `koaton -h` in your terminal you will get this output.
 --pass	--pass <password>	Password to login in your database default is ''. Use this with -g
 ```
 
-## koaton build <config_file> [options] <a name="build"/>
+## koaton build <configFile> [options] <a name="build"/>
 > Make bundles of your .js .scss .css files and output to public folder.
    Default value is ./config/bundles.js
 
@@ -40,7 +40,7 @@ if you write `koaton` `koaton -h` in your terminal you will get this output.
 -p	--prod	builds for production
 ```
 
-## koaton ember <app_name> [options] <a name="ember"/>
+## koaton ember <appName> [options] <a name="ember"/>
 > Creates a new ember app with the especified named.
 
 *[options]*:
@@ -75,12 +75,12 @@ if you write `koaton` `koaton -h` in your terminal you will get this output.
 -h	-h	Show the help for this command
 ```
 
-## koaton model <name> <fields|linkaction> <[destmodel]> <as> <[relation_property]> <[foreign_key]> [options] <a name="model"/>
-> Creates a new model. fields must be sourrounded by "".
-	Fields syntax:
-		field_name:type	[ mongoose | mysql | postgres | redis | sqlite3 | couchdb | neo4j | riak | firebird | tingodb | rethinkdb | mongo | couch | mariadb ]
-	example:
-		koaton model User "active:integer name email password note:text created:date"
+## koaton model <name> <fields|linkaction> <[destmodel]> <as> <[relationProperty]> <[foreignKey]> [options] <a name="model"/>
+> Creates a new model. fields must be sourrounded by ''.
+Fields syntax:
+field_name:type	[ mongoose | mysql | postgres | redis | sqlite3 | couchdb | neo4j | riak | firebird | tingodb | rethinkdb | mongo | couch | mariadb ]
+example:
+koaton model User 'active:integer name email password note:text created:date'
 		koaton model User hasmany Phone as Phones
 koaton model User hasmany Phone phones phoneId
 
@@ -101,7 +101,7 @@ koaton model User hasmany Phone phones phoneId
 -h	-h	Show the help for this command
 ```
 
-## koaton new <app_name> [options] <a name="new"/>
+## koaton new <AppName> [options] <a name="new"/>
 > Creates a new koaton aplication.
 
 *[options]*:

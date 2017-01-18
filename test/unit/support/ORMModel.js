@@ -14,7 +14,10 @@ describe('ORMModel', function () {
 		city: cities,
 		address: address
 	});
-
+	scfg.database = {
+		city: cities,
+		address: address
+	};
 	it('throw an exception when missing args', function () {
 		try {
 			let nomodel = new ORMModel('admin');
@@ -27,8 +30,8 @@ describe('ORMModel', function () {
 		assert.equal(users._modelname.capital, 'User');
 	});
 	it('print a caminte model definition', function () {
-		let model = `"use strict";
-module.exports = function(schema,relation) {
+		let model = `'use strict';
+exports.default = function(schema,relation) {
 	return {
 		model: {
 			name:{type:schema.String},
@@ -37,8 +40,8 @@ module.exports = function(schema,relation) {
 		},
 		extra: {},
 		relations: {
-			"addresses":relation.hasMany("address.addressesId"),
-			"cities":relation.hasMany("city.citiesId")
+			'addresses':relation.hasMany('address.addressesId'),
+			'cities':relation.hasMany('city.citiesId')
 		}
 	};
 };`;
@@ -52,8 +55,8 @@ export default Model.extend({
 	name:attr('string'),
 	age:attr('number'),
 	email:attr('string'),
-	addresses:hasMany("address"),
-	cities:hasMany("city")
+	addresses:hasMany('address'),
+	cities:hasMany('city')
 });`;
 		assert.equal(users.toEmberModel(), model);
 	});
@@ -66,16 +69,17 @@ export default Ember.Controller.extend(crud('user'), {
 		_cities(deferred){this.store.findAll('city').then(deferred.resolve,deferred.reject);}
 	},
 	fieldDefinition: {
-		"name":{"Type":"text"},
-		"age":{"Type":"number"},
-		"email":{"PlaceHolder":"account@your.domain","Type":"email"},
-		addresses:{Type:"hasMany",Display:"street",Source:"_addresses"},
-		cities:{Type:"hasMany",Display:"name",Source:"_cities"}
+		'name':{'Type':'text'},
+		'age':{'Type':'number'},
+		'email':{'PlaceHolder':'account@your.domain','Type':'email'},
+		'addresses':{Type:'hasMany',Display:'street',Source:'_addresses'},
+		'cities':{Type:'hasMany',Display:'name',Source:'_cities'}
 	}\n});`;
 		assert.equal(users.toCRUDTable(), model);
 	});
 
 	it('Gets the .koaton representation', function () {
-		assert.equal(JSON.stringify(users.toMeta()), '{"model":"name:string age:number email:email","relations":[{"addresses":"hasMany address addressesId"},{"cities":"hasMany city citiesId"}]}');
+		let model = '{"model":"name:string age:number email:email","relations":{"addresses":"hasMany address addressesId","cities":"hasMany city citiesId"}}';
+		assert.equal(JSON.stringify(users.toMeta()), model);
 	});
 });

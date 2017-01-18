@@ -115,7 +115,10 @@ global.TemplatePath = function (...args) {
 if (process.env.isproyect === 'true') {
 	const Server = require('./support/Server').default;
 	global.scfg = new Server();
-	// require(ProyPath('node_modules','koaton/lib/support','globals'));
+	require(ProyPath('node_modules', 'koaton/lib/support', 'globals'));
 } else {
-	global.scfg = {version: '0.0.0'};
+	global.scfg = {
+		version: '0.0.0',
+		database: {}
+	};
 }

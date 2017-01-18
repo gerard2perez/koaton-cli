@@ -18,19 +18,18 @@ const setupInit = async function setupInit () {
 };
 const setupConfig = async function setupConfig (app) {
 	await utils.mkdir(Project('config'));
-	utils.render(TemplatePath('config/models.js'), Project('config/models.js'));
-	utils.render(TemplatePath('config/views.js'), Project('config/views.js'));
-	utils.render(TemplatePath('config/inflections.js'), Project('config/inflections.js'));
-	utils.render(TemplatePath('config/ember.js'), Project('config/ember.js'));
-	utils.render(TemplatePath('config/copy.js'), Project('config/copy.js'));
-	utils.render(TemplatePath('config/server.js'), Project('config/server.js'), {
-		key: `'${(await secret(48)).toString('hex')}'`
-	});
+	utils.render(TemplatePath('config/bundles.js'), Project('config/bundles.js'));
 	utils.render(TemplatePath('config/connections.js'), Project('config/connections.js'), {
 		database: app
 	});
-	utils.render(TemplatePath('config/bundles.js'), Project('config/bundles.js'));
+	utils.render(TemplatePath('config/ember.js'), Project('config/ember.js'));
+	utils.render(TemplatePath('config/inflections.js'), Project('config/inflections.js'));
 	utils.render(TemplatePath('config/security.js'), Project('config/security.js'));
+	utils.render(TemplatePath('config/server.js'), Project('config/server.js'), {
+		key: `'${(await secret(48)).toString('hex')}'`
+	});
+	utils.render(TemplatePath('config/static.js'), Project('config/static.js'));
+	utils.render(TemplatePath('config/views.js'), Project('config/views.js'));
 };
 const setupAssets = async function setupAssets () {
 	await utils.mkdir(Project('assets', 'img'));
@@ -53,9 +52,6 @@ const setupOthers = async function setupOthers () {
 	utils.render(TemplatePath('/views/index.html'), Project('/views/index.html'), {
 		application: application
 	});
-	utils.render(TemplatePath('bower.json'), Project('bower.json'), {
-		application: application
-	});
 };
 const setupDependencies = async function setupDependencies (options, db, eg) {
 	const shell = utils.shell;
@@ -76,9 +72,9 @@ const setupDependencies = async function setupDependencies (options, db, eg) {
 		await shell('Installing engine ' + 'handlebars-layouts'.green, ['npm', 'install', 'handlebars-layouts', '--save', '--loglevel', 'info'], proypath);
 		// }
 	}
-	if (!options.skipBower) {
-		await shell('Installing bower dependencies', ['bower', 'install'], proypath);
-	}
+	// if (!options.skipBower) {
+	// 	await shell('Installing bower dependencies', ['bower', 'install'], proypath);
+	// }
 	pk = requireNoCache(Project('package.json'));
 	utils.write(Project('package.json'), JSON.stringify(pk, null, '\t'), null);
 };
@@ -98,8 +94,9 @@ export default (new Command(__filename, 'Creates a new koaton aplication.'))
 			ArrayToDescription(engines)
 		],
 		['-f', '--force', 'Overrides the existing directory.'],
-		['-n', '--skip-npm', 'Omits npm install'],
-		['-b', '--skip-bower', 'Omits bower install']
+		// ['-b', '--skip-bower', 'Omits bower install'],
+		['-n', '--skip-npm', 'Omits npm install']
+
 	])
 	.Action(async function (AppName, options) {
 		if (!AppName) {
@@ -114,6 +111,7 @@ export default (new Command(__filename, 'Creates a new koaton aplication.'))
 				await setupConfig(AppName);
 				await setupOthers(AppName);
 				await setupDependencies(options, adapters.isOrDef(options.db), engines.isOrDef(options.viewEngine));
+				console.log('reaches');
 				await utils.shell('Initializing git'.green, ['git', 'init'], proypath);
 				welcome.line1(true);
 				console.log('   To run your app first: ');

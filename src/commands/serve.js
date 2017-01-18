@@ -314,7 +314,7 @@ const deleted = function (file) {
 		});
 		return Promise.all(promises);
 	},
-	WatchModels = function WatchModels (Watch) {
+	WatchModels = function WatchModels () {
 		const addmodelfn = function addmodelfn (file) {
 			let model = path.basename(file).replace('.js', '');
 			let Model = ModelManager(model, requireNoCache(file)).toMeta();
@@ -431,7 +431,7 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction us
 				}
 			}));
 			await checkAssetsToBuild(chokidar.watch);
-			WatchModels(chokidar);
+			WatchModels();
 		}
 		await TriggerEvent('pre', 'serve');
 		seedKoatonModules();
@@ -460,6 +460,7 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction us
 			})
 			.once('start', function () {
 				co(async function () {
+					console.log('Start');
 					await TriggerEvent('pre', 'serve');
 					screen.line1(true);
 					let ignoreemberdirs = [];
@@ -534,7 +535,8 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction us
 					sound: 'Basso'
 				});
 			}).on('crash', (e) => {
-				console.log(e);
+				console.log('CRASH', e);
+				nodemon.emit('exit');
 				resolve(1);
 			});
 			const exitHandler = function () {

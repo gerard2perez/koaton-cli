@@ -24,7 +24,7 @@ export default function loadmodules(dir) {
 			};
 		};
 	}catch(e){
-		// do nothing
+		console.log(e);
 	}
 	Object.defineProperty(mods, 'default', {
 		enumerable: false,

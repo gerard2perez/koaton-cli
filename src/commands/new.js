@@ -1,5 +1,5 @@
 import 'colors';
-import { adapters } from '../support/Adapters';
+import adapters from '../support/Adapters';
 import engines from '../support/Engines';
 import welcome from '../welcome';
 import utils from '../utils';

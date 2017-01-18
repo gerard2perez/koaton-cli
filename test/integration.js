@@ -5,7 +5,7 @@ import commands from '../src/commands';
 import configuration from './configuration';
 
 const CommandOrder = [
-	'model',
+	'build',
 	'fail'
 ].concat(['new', 'adapter', 'ember', 'model', 'nginx', 'install', 'build', 'seed', 'semver', 'modulify' /*, 'serve' //TODO enable. FIX 001*/, 'forever', 'publish']);
 
@@ -33,7 +33,7 @@ const testcase = function testcase (TestConfig, cwd, testname, command) {
 						// process.stderr.write = () => {};
 						// process.stdout.write = () => {};
 						console.log = (data) => {
-							// ori(data);
+							ori(data);
 							buffer += (data || '').toString();
 						};
 						let res = yield command.action.apply(null, testdata.args);
@@ -64,10 +64,10 @@ const testcase = function testcase (TestConfig, cwd, testname, command) {
 	});
 };
 describe('Integration tests.', function () {
-	for (let idx in CommandOrder) {
-		const command = CommandOrder[idx];
+	for (const command of CommandOrder) {
 		const CommandTest = configuration[command];
 		if (CommandTest && CommandTest.config) {
+			// console.log(CommandTest, command);
 			testcase(CommandTest.config, CommandTest.cwd, CommandTest.testname, commands[command]);
 		} else {
 			notestcase(command);

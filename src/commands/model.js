@@ -47,13 +47,12 @@ export default (new Command(__filename, description))
 			linkaction = linkactions[fields.toLowerCase()];
 			scfg.database[modelname].relation(relationProperty, targetmodel, emberrel[linkaction], foreignKey);
 		}
-		let model = scfg.database[modelname],
+		let model = scfg.database[modelname] || scfg.database.add(modelname, fields)[modelname],
 			override = await utils.challenge(ProyPath('models', `${modelname.toLowerCase()}.js`), `The model ${modelname.green} already exits,do you want to override it?`, options.force);
-
 		if (override) {
 			utils.write(ProyPath('models', modelname + '.js'), model.toCaminte());
 			if (options.rest) {
-				var restcontroller = "'use strict';\nmodule.exports = {\n\tREST:true\n};";
+				var restcontroller = "'use strict';\nexports.default = {\n\tREST:true\n};";
 				utils.write(ProyPath('controllers', `${modelname.toLowerCase()}.js`), restcontroller);
 			}
 		}

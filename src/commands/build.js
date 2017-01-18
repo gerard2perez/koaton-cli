@@ -207,7 +207,7 @@ const preBuildEmber = async function preBuildEmber (application, options) {
 	options.mount = options.mount.replace(/\\/igm, '/');
 	await utils.mkdir(ProyPath('ember', application, 'app', 'adapters'), -1);
 	await getInflections(application, null);
-	let adapter = require(ProyPath('config', 'ember'))[application].adapter;
+	let adapter = configuration.ember[application].adapter;
 	if (adapter.indexOf('http://') !== 0) {
 		adapter = 'http://' + adapter;
 	}

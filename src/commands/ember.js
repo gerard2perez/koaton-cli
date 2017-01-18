@@ -64,7 +64,7 @@ export default (new Command(__filename, 'Creates a new ember app with the especi
 					localhost: configuration.server.host,
 					port: configuration.server.port
 				}));
-			var emberjs = require(ProyPath('config', 'ember.js'));
+			var emberjs = configuration.ember;
 			emberjs[appName] = {
 				mount: options.mount,
 				directory: appName,
@@ -73,7 +73,7 @@ export default (new Command(__filename, 'Creates a new ember app with the especi
 				subdomain: options.subdomain || 'www',
 				layout: 'main'
 			};
-			utils.write(ProyPath('config', 'ember.js'), `'use strict';\n\nmodule.exports=${JSON.stringify(emberjs, 2, 2)};`, true);
+			utils.write(ProyPath('config', 'ember.js'), `'use strict';\n\nexports.default=${JSON.stringify(emberjs, 2, 2)};`, true);
 			let embercfg = await utils.read(path.join(emberProyectPath, 'config', 'environment.js'), {
 				encoding: 'utf-8'
 			});

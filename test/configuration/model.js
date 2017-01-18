@@ -30,11 +30,11 @@ tests.push(new TestNode(cmdname, ['user', 'name lastname age:number email:email'
 		return koaton.indexOf('name:string lastname:string age:number email:email') > -1;
 	})
 	.Expect('Creates koaton model', true, (_, project) => {
-		let model = ModelManager('user', require(path.join(project, 'models', 'user.js')));
+		let model = ModelManager('user', require(path.join(project, 'models', 'user.js')).default);
 		return model.name.toString() === 'string' &&
-			model.lastname.toString() === 'string' &&
-			model.age.toString() === 'number' &&
-			model.email.toString() === 'email';
+		model.lastname.toString() === 'string' &&
+		model.age.toString() === 'number' &&
+		model.email.toString() === 'email';
 	});
 
 tests.push(new TestNode(cmdname, ['user', 'name lastname age:number email:email', undefined, undefined, undefined, undefined, {
@@ -46,13 +46,13 @@ tests.push(new TestNode(cmdname, ['user', 'name lastname age:number email:email'
 		return koaton.indexOf('name:string lastname:string age:number email:email') > -1;
 	})
 	.Expect('Creates koaton model with rest suport', true, (_, project) => {
-		let model = ModelManager('user', require(path.join(project, 'models', 'user.js')));
-		let REST = require(path.join(project, 'controllers', 'user.js')).REST;
+		let model = ModelManager('user', require(path.join(project, 'models', 'user.js')).default);
+		let REST = require(path.join(project, 'controllers', 'user.js')).default.REST;
 		return model.name.toString() === 'string' &&
-			model.lastname.toString() === 'string' &&
-			model.age.toString() === 'number' &&
-			model.email.toString() === 'email' &&
-			REST;
+		model.lastname.toString() === 'string' &&
+		model.age.toString() === 'number' &&
+		model.email.toString() === 'email' &&
+		REST;
 	});
 
 tests.push(new TestNode(cmdname, ['user', 'name lastname age:number email:email', undefined, undefined, undefined, undefined, {
@@ -65,26 +65,23 @@ tests.push(new TestNode(cmdname, ['user', 'name lastname age:number email:email'
 		return koaton.indexOf('name:string lastname:string age:number email:email') > -1;
 	})
 	.Expect('Creates koaton model with full ember support', true, (_, project) => {
-		let model = ModelManager('user', require(path.join(project, 'models', 'user.js')));
-		let REST = require(path.join(project, 'controllers', 'user.js')).REST;
+		let model = ModelManager('user', require(path.join(project, 'models', 'user.js')).default);
+		let REST = require(path.join(project, 'controllers', 'user.js')).default.REST;
 		let embercontroller = fs.readFileSync(path.join(project, 'ember', 'restapp', 'app', 'controllers', 'user.js'), 'utf-8');
 		let embermodel = fs.readFileSync(path.join(project, 'ember', 'restapp', 'app', 'models', 'user.js'), 'utf-8');
 		let emberemplate = fs.accessSync(path.join(project, 'ember', 'restapp', 'app', 'templates', 'user.hbs'));
 		return model.name.toString() === 'string' &&
-			model.lastname.toString() === 'string' &&
-			model.age.toString() === 'number' &&
-			model.email.toString() === 'email' &&
-			REST &&
-			embermodel === model.toEmberModel(),
-			embercontroller === model.toCRUDTable() &&
-			emberemplate === undefined;
+		model.lastname.toString() === 'string' &&
+		model.age.toString() === 'number' &&
+		model.email.toString() === 'email' &&
+		REST &&
+		embermodel === model.toEmberModel() &&
+		embercontroller === model.toCRUDTable() &&
+		emberemplate === undefined;
 	});
 
 tests.last.CleanUp(() => {
 	process.chdir('..');
 });
 
-export {
-	tests as config,
-	cmdname as testname
-};
+export { tests as config, cmdname as testname };

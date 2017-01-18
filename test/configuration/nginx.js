@@ -45,9 +45,4 @@ tests.push(new TestNode(cmdname, [{
 tests.last.CleanUp(() => {
 	process.chdir('..');
 });
-export {
-	tests as config
-};
-export {
-	cmdname as testname
-};
+export { cmdname as testname, tests as config };

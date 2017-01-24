@@ -1,4 +1,5 @@
 import * as inflecor from 'inflection';
+import * as fs from 'fs-extra';
 
 class TestNode {
 	constructor (name, args, expect, rename) {
@@ -6,7 +7,6 @@ class TestNode {
 			let terms = args.slice(0, args.length - 1);
 			terms.push('');
 			terms = terms.join(' ');
-			console.log();
 			let params = typeof args.last === 'object' ? args.last : {};
 			name = ` ${terms}` + Object.keys(params).map((key) => {
 				let newkey = inflecor.dasherize(inflecor.underscore(key));
@@ -22,6 +22,15 @@ class TestNode {
 		this.expect = expect instanceof Array ? expect : [expect];
 		this.setup = null;
 		this.cleanup = null;
+		return this;
+	}
+	Exists (...path) {
+		this.expect.push((buffer, dir) => {
+			let file = ProyPath(...path);
+			let absdir = file.replace(ProyPath(), '');
+			let message = `File Not Found: ${absdir}`;
+			return [message, true, fs.existsSync(file)];
+		});
 		return this;
 	}
 	Expect (message, expect, fn) {

@@ -1,8 +1,7 @@
-import * as path from 'upath';
 import * as fs from 'fs-extra';
 import TestNode from '../support/TestNode';
 import '../support/array';
-import ServerConfiguaration from '../../src/support/Server';
+// import ServerConfiguaration from '../../src/support/Server';
 
 let tests = [];
 let cmdname = 'koaton seed';
@@ -13,7 +12,8 @@ tests.push(new TestNode(cmdname, [undefined, {
 	.SetUp(() => {
 		process.chdir('testingapp');
 		process.env.isproyect = 'true';
-		global.scfg = new ServerConfiguaration();
+		// global.scfg = new ServerConfiguaration();
+		// require(ProyPath('node_modules', 'koaton/lib/support', 'globals'));
 		scfg.env = 'development';
 		fs.removeSync(ProyPath('seeds', 'user.js'));
 	})

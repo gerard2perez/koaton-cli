@@ -5,6 +5,7 @@ import write from './write';
 
 function encoding (ext) {
 	switch (ext) {
+		case '.ico':
 		case '.png':
 		case '.jpg':
 			return null;

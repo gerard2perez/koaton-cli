@@ -1,21 +1,18 @@
-import {
-	sync as spawn
-} from 'cross-spawn';
-import {
-	sync as glob
-} from 'glob';
+import { sync as spawn } from 'cross-spawn';
+import { sync as glob } from 'glob';
 import * as path from 'upath';
 import * as fs from 'fs-extra';
 import TestNode from '../support/TestNode';
 import '../support/array';
 import ServerConfiguaration from '../../src/support/Server';
+import BundleItem from '../../src/support/BundleItem';
 
 const addtoBundle = (data) => {
-	let bundle = require(path.join(process.cwd(), 'config', 'bundles.js'));
+	let bundle = require(path.join(process.cwd(), 'config', 'bundles')).default;
 	for (const file in data) {
 		bundle[file] = data[file];
 	}
-	fs.writeFileSync(path.join(process.cwd(), 'config', 'bundles.js'), `module.exports =${JSON.stringify(bundle)} ;`, 'utf8');
+	fs.writeFileSync(path.join(process.cwd(), 'config', 'bundles.js'), `exports.default =${JSON.stringify(bundle)} ;`, 'utf8');
 };
 
 let tests = [];
@@ -28,8 +25,9 @@ tests.push(new TestNode(cmdname, [undefined, {
 		return log.indexOf('koaton build') > -1;
 	});
 
-tests.push(new TestNode('(no args)', [undefined, {}], true))
+tests.push(new TestNode('(no args)', [{}], true))
 	.SetUp(() => {
+		fs.removeSync(ProyPath('./.koaton'));
 		global.skipshell = false;
 		process.chdir('testingapp');
 		spawn('git', ['clone', 'https://github.com/gerard2p/koatonstyle.git', 'assets/flatadmin']);
@@ -54,16 +52,24 @@ tests.push(new TestNode('(no args)', [undefined, {}], true))
 			]
 		});
 		process.env.isproyect = 'true';
+		for (const file of Object.keys(require.cache)) {
+			if (file.indexOf('bundles') > -1 || file.indexOf('globals') > -1 || file.indexOf('ember') > -1) {
+				delete require.cache[file];
+			}
+		}
 		global.scfg = new ServerConfiguaration();
+		requireNoCache(ProyPath('node_modules', 'koaton/lib/support', 'globals'));
+		configuration.ember = requireNoCache(ProyPath('config', 'ember')).default;
+		for (const key of Object.keys(configuration.bundles)) {
+			let bundle = new BundleItem(key, configuration.bundles[key]);
+			configuration.bundles[key] = bundle;
+		}
 		scfg.env = 'development';
 	})
-	.Expect('Creates Files', true, () => {
-		return fs.accessSync(ProyPath('public', 'css', '0admin.css')) === undefined &&
-			fs.accessSync(ProyPath('public', 'js', 'admin.js')) === undefined &&
-			fs.accessSync(ProyPath('public', 'js', 'admin.js.map')) === undefined;
-	})
+	.Exists('public', 'css', '0admin.css')
+	.Exists('public', 'js', 'admin.min.js')
+	.Exists('public', 'js', 'admin.js.map')
 	.Expect('Builds Ember Apps', true, () => {
-
 		for (const app of scfg.emberApps) {
 			fs.accessSync(ProyPath('public', app.directory));
 			fs.accessSync(ProyPath('public', app.directory, 'assets'));
@@ -95,9 +101,7 @@ tests.push(new TestNode('(no args)', [undefined, {}], true))
 	});
 
 tests.last.CleanUp(() => {
+	global.skipshell = false;
 	process.chdir('..');
 });
-export {
-	tests as config,
-	cmdname as testname
-};
+export { tests as config, cmdname as testname };

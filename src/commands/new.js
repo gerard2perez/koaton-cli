@@ -15,6 +15,7 @@ const setupInit = async function setupInit () {
 	await utils.mkdir(Project('ember'));
 	utils.render(TemplatePath('app.js'), Project('app.js'));
 	await utils.copy(TemplatePath('./.gitignore'), Project('./.gitignore'));
+	utils.render(TemplatePath('routes.js'), Project('routes.js'));
 };
 const setupConfig = async function setupConfig (app) {
 	await utils.mkdir(Project('config'));
@@ -40,10 +41,9 @@ const setupAssets = async function setupAssets () {
 	await utils.copy(TemplatePath('koaton-char.png'), Project('assets/favicon.ico'));
 };
 const setupOthers = async function setupOthers () {
-	await utils.mkdir(Project('node_modules'));
-	await utils.mkdir(Project('routes'));
-	await utils.copy(TemplatePath('/routes/index.js'), Project('/routes/index.js'));
 	await utils.mkdir(Project('controllers'));
+	await utils.mkdir(Project('locals'));
+	await utils.mkdir(Project('seeds'));
 	await utils.mkdir(Project('models'));
 	await utils.mkdir(Project('public'));
 	await utils.mkdir(Project('public', 'img'));

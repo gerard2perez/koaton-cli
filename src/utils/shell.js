@@ -6,8 +6,9 @@ import spin from '../spinner';
 const spinner = spin();
 
 export default Promise.promisify(function shell (display, command, ...args) {
+	console.log(command.join(' '));
 	let [cwd, cb] = args;
-	// shelllog = '';
+	let shelllog = '';
 	if (cb === undefined) {
 		cb = cwd;
 		cwd = process.cwd();
@@ -20,7 +21,7 @@ export default Promise.promisify(function shell (display, command, ...args) {
 	let buffer = '';
 	let c = null;
 	const output = function (data) {
-		// shelllog += data.toString();
+		shelllog += data.toString();
 		buffer += data.toString();
 		if (buffer.indexOf('\n') > -1) {
 			let send = buffer.toString().split('\n');
@@ -40,6 +41,10 @@ export default Promise.promisify(function shell (display, command, ...args) {
 	});
 	child.stderr.on('data', output);
 	child.stdout.on('data', output);
+	child.on('error', function (err) {
+		c = 1;
+		spinner.end(shelllog);
+	});
 	child.on('close', function (code) {
 		c = code;
 		const msg = code === 0 ? __ok.green : __nok.red;

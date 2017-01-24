@@ -21,7 +21,6 @@ tests.push(new TestNode(cmdname, [{
 		fs.outputFileSync(nginxpath + 'nginx.conf', conf);
 
 		process.chdir('testingapp');
-		console.log(require(ProyPath('config', 'bundles')).default);
 		process.env.isproyect = 'true';
 		global.scfg = new ServerConfiguaration();
 		scfg.port = 62626;

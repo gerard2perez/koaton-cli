@@ -13,13 +13,31 @@ tests.push(new TestNode('(no args)', ['', {}], true))
 		fs.removeSync(targetdir);
 	})
 	.Expect('Ask to render help.', 'The command requires a name to run.\n\tkoaton new -h\nto see help.', (log) => log);
-// tests.push(new TestNode('Must render help',['-h',{}],false));
+	// tests.push(new TestNode('Must render help',['-h',{}],false));
 
 tests.push(new TestNode('koaton new', ['testingapp', {
 	skipNpm: true,
 	skipBower: true,
 	db: 'mysql'
 }], true, true))
+	.Exists('testingapp', 'app.js')
+	.Exists('testingapp', 'routes.js')
+	.Exists('testingapp', 'config', 'bundles.js')
+	.Exists('testingapp', 'config', 'connections.js')
+	.Exists('testingapp', 'config', 'ember.js')
+	.Exists('testingapp', 'config', 'inflections.js')
+	.Exists('testingapp', 'config', 'security.js')
+	.Exists('testingapp', 'config', 'server.js')
+	.Exists('testingapp', 'config', 'static.js')
+	.Exists('testingapp', 'config', 'views.js')
+	.Exists('testingapp', 'controllers')
+	.Exists('testingapp', 'ember')
+	.Exists('testingapp', 'models')
+	.Exists('testingapp', 'locals')
+	.Exists('testingapp', 'public')
+	.Exists('testingapp', 'seeds')
+	.Exists('testingapp', 'views', 'layouts', 'main.handlebars')
+	.Exists('testingapp', 'views', 'index.html')
 	.Expect(() => {
 		let res = true;
 		try {
@@ -72,25 +90,12 @@ tests.push(new TestNode('koaton new', ['testingapp', {
 		return res;
 	});
 tests.push(new TestNode('koaton new', ['testingapp', {
-	force:true
-		// skipNpm: true,
-		// skipBower: true
+	force: true
 }], true, true))
-	.Expect('npm dependencies installed.', true, (_) => {
-		return accessSync(path.join(targetdir, 'node_modules'));
-	})
-	.Expect('bower dependencies installed.', true, (_) => {
-		// return accessSync(path.join(targetdir,'bower_components'));
-		return true; // TODO: Project does not currently have bower dependencies
-	});
+	.Exists('testingapp', 'node_modules');
 tests.last.CleanUp(() => {
 	// fs.removeSync(targetdir);
 });
-// tests.push(new TestNode('testingapp force:true',['testingapp',{force:true}],true));
 
-export {
-	tests as config
-};
-export {
-	cmdname as testname
-};
+export { tests as config };
+export { cmdname as testname };

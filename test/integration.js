@@ -5,9 +5,9 @@ import commands from '../src/commands';
 import configuration from './configuration';
 
 const CommandOrder = [
-	'build',
+	'modulify',
 	'fail'
-].concat(['new', 'adapter', 'ember', 'model', 'nginx', 'install', 'build', 'seed', 'semver', 'modulify' /*, 'serve' //TODO enable. FIX 001*/, 'forever', 'publish']);
+].concat(['new', 'adapter', 'ember', 'model', 'nginx', 'install', 'build', 'seed', 'modulify' /*, 'serve' //TODO enable. FIX 001*/, 'forever', 'publish']);
 
 const notestcase = function (testname) {
 	describe(testname, () => {
@@ -48,6 +48,7 @@ const testcase = function testcase (TestConfig, cwd, testname, command) {
 						ori(e.red);
 						err = e;
 					} finally {
+						require.cache = [];
 						testdata.CleanUp();
 						console.log = ori;
 						process.stderr.write = WriteE;
@@ -70,6 +71,7 @@ describe('Integration tests.', function () {
 			// console.log(CommandTest, command);
 			testcase(CommandTest.config, CommandTest.cwd, CommandTest.testname, commands[command]);
 		} else {
+			console.log(CommandTest);
 			notestcase(command);
 		}
 	}

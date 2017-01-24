@@ -6,11 +6,17 @@ import { canAccess } from './utils';
 
 process.env.isproyect = canAccess('public') &&
 canAccess('app.js') &&
-canAccess('bower.json') &&
 canAccess('package.json') &&
-canAccess('routes') &&
+canAccess('routes.js') &&
 canAccess('config');
 
+global.ProyPath = function (...args) {
+	args.splice(0, 0, process.cwd());
+	return path.normalize(path.join.apply(path, args));
+};
+if (process.env.isproyect === 'true') {
+	require(ProyPath('node_modules', 'koaton/lib/support', 'globals'));
+}
 global.skipshell = false;
 global.__ok = os.platform() === 'win32' ? '√' : '✓';
 global.__nok = os.platform() === 'win32' ? 'X' : '✗';
@@ -88,6 +94,7 @@ global.requireNoCache = function requireNoCache (lib, defaults) {
 	if (library.indexOf('.json') === -1) {
 		library = library.replace('.js', '') + '.js';
 	}
+	// console.log(require.cache[library]);
 	delete require.cache[library];
 	return requireSafe(library, defaults);
 };
@@ -115,7 +122,6 @@ global.TemplatePath = function (...args) {
 if (process.env.isproyect === 'true') {
 	const Server = require('./support/Server').default;
 	global.scfg = new Server();
-	require(ProyPath('node_modules', 'koaton/lib/support', 'globals'));
 } else {
 	global.scfg = {
 		version: '0.0.0',

@@ -74,7 +74,9 @@ tests.push(new TestNode(cmdname, ['restapp', {
 		return true;
 	})
 	.Expect('Koaton ember config is modified', true, (log, project) => {
-		const config = require(path.join(project, 'config', 'ember.js')).restapp;
+		let lib = require.resolve(ProyPath('config', 'ember'));
+		delete require.cache[lib];
+		const config = require(ProyPath('config', 'ember')).default.restapp;
 		return config.mount === '/panel' &&
 			config.directory === 'restapp' &&
 			config.access === 'public' &&

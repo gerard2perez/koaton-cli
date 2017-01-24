@@ -107,14 +107,14 @@ export default class ServerConfiguaration {
 		return this.package.version;
 	}
 	get hostname () {
-		if (this.host.match(ipformat)) {
-			return this.host;
-		} else if (this.host.indexOf('www') === 0) {
-			return this.host;
-		} else if (this.host !== 'localhost') {
-			return 'www.' + this.host;
+		if (configuration.server.host.match(ipformat)) {
+			return configuration.server.host;
+		} else if (configuration.server.host.indexOf('www') === 0) {
+			return configuration.server.host;
+		} else if (configuration.server.host !== 'localhost') {
+			return 'www.' + configuration.server.host;
 		} else {
-			return this.host;
+			return configuration.server.host;
 		}
 	}
 		// get relations_mode() {

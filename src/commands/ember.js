@@ -3,10 +3,12 @@ import * as path from 'upath';
 import * as buildcmd from './build';
 import utils from '../utils';
 import Command from '../Command';
+import * as fs from 'fs-extra';
 
 let emberProyectPath;
 const newproyect = async function newproyect (appName, options) {
 	if (await utils.challenge(emberProyectPath, `destination ${emberProyectPath.yellow} is not empty, continue?`, options.force)) {
+		fs.removeSync(emberProyectPath);
 		await utils.shell(`Installing ${appName.green}`, ['ember', 'new', appName, '-dir', emberProyectPath], process.cwd());
 		await utils.mkdir(path.join('ember', appName, 'app', 'initializers'));
 		await buildcmd.getInflections(appName, true);
@@ -59,13 +61,13 @@ export default (new Command(__filename, 'Creates a new ember app with the especi
 		} else {
 			options.mount = path.join('/', options.mount || '').replace(/\\/igm, '/');
 			res = await newproyect(appName, options);
+			console.log('END NEW PROJET');
 			res &= !((await utils.mkdir(ProyPath('ember', appName, 'app', 'adapters'))) &&
 				utils.render(TemplatePath('ember_apps', 'adapter.js'), ProyPath('ember', appName, 'app', 'adapters', 'application.js'), {
-					localhost: configuration.server.host,
-					port: configuration.server.port
+					adapter: `http:\\\\${configuration.server.host}:${configuration.server.port}`
 				}));
-			var emberjs = configuration.ember;
-			emberjs[appName] = {
+			let emberConf = Object.assign({}, configuration.ember);
+			emberConf[appName] = {
 				mount: options.mount,
 				directory: appName,
 				access: 'public',
@@ -73,7 +75,7 @@ export default (new Command(__filename, 'Creates a new ember app with the especi
 				subdomain: options.subdomain || 'www',
 				layout: 'main'
 			};
-			utils.write(ProyPath('config', 'ember.js'), `'use strict';\n\nexports.default=${JSON.stringify(emberjs, 2, 2)};`, true);
+			utils.write(ProyPath('config', 'ember.js'), `'use strict';\n\nexports.default=${JSON.stringify(emberConf, 2, 2)};`, true);
 			let embercfg = await utils.read(path.join(emberProyectPath, 'config', 'environment.js'), {
 				encoding: 'utf-8'
 			});

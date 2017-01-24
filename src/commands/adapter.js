@@ -45,8 +45,7 @@ const renderdriverlist = function renderdriverlist (installed, available) {
 	for (const driver in installed) {
 		console.log(`      ${driver}@${installed[driver].cyan}`);
 	}
-	console.log();
-	console.log('    Available drivers: ');
+	console.log('\n    Available drivers: ');
 	for (const driver in available) {
 		console.log(`      ${driver}`);
 	}
@@ -83,8 +82,7 @@ export default (new Command(
 		if (!driver && options.list) {
 			renderdriverlist(installed, available);
 		} else if (driver && !adapters[driver]) {
-			console.log('  The driver you especied is not available please check: '.yellow);
-			console.log();
+			console.log('  The driver you especied is not available please check: '.yellow+'\n');
 			renderdriverlist(installed, available);
 		} else if (options.uninstall) {
 			await utils.shell(`Uninstalling ${adapters[driver].green}`, ['npm', 'uninstall', adapters[driver].package], process.cwd());

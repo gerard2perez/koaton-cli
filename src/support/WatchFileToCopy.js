@@ -1,5 +1,11 @@
 import {watch as Watch} from 'chokidar';
-import { hasChanged, getDiferences } from './DetectChangesInArray';
+import * as co from 'co';
+
+const DetectChanges = function () {
+	co(async function () {
+		await require('./CopyStatic').default();
+	});
+};
 
 export default function WatchStatic () {
 	let production = scfg.env === 'production';
@@ -15,7 +21,5 @@ export default function WatchStatic () {
 			pollInterval: 100
 		}
 	});
-	watcher.on('change', (a, b) => {
-		console.log(a, b);
-	})
+	watcher.on('change', DetectChanges);
 }

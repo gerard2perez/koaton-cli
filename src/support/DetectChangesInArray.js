@@ -29,8 +29,8 @@ const hasChanged = function (oldbranch, newbranch) {
 		let [oldbranch, newbranch] = args;
 		let isnew = oldbranch === undefined;
 		let deleted = newbranch === undefined;
-		oldbranch = oldbranch || [];
-		newbranch = newbranch || [];
+		oldbranch = oldbranch || {content: []};
+		newbranch = newbranch || {content: []};
 		let added = findDiferences(newbranch.content, oldbranch.content),
 			removed = findDiferences(oldbranch.content, newbranch.content);
 		return {

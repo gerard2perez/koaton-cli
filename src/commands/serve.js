@@ -1,7 +1,5 @@
 import * as spawn from 'cross-spawn';
 import * as chokidar from 'chokidar';
-import * as nodemon from 'nodemon';
-import notifier from '../support/Notifier';
 import * as Promise from 'bluebird';
 import * as path from 'path';
 import * as fs from 'fs-extra';
@@ -14,9 +12,12 @@ import spin from '../spinner';
 import livereload from '../utils/livereload';
 import CheckBundles from '../support/CheckBundles';
 import WatchFileToCopy from '../support/WatchFileToCopy';
+import CopyStatic from '../support/CopyStatic';
+import deamon from '../deamon';
 
 const Watch = chokidar.watch;
-let watching = [],
+let promises = [],
+	watching = [],
 	building = [],
 	buildcmd = null;
 const deleted = function (file) {
@@ -32,22 +33,31 @@ const deleted = function (file) {
 			livereload.reload(file);
 		});
 	},
-	WactchAndCompressImages = async function WactchAndCompressImages (watcher) {
+	WactchAndCompressImages = function WactchAndCompressImages () {
+		let watcher = new Watch(path.join('assets', 'img'), {
+			persistent: true,
+			ignoreInitial: true,
+			alwaysStat: false,
+			awaitWriteFinish: {
+				stabilityThreshold: 1000,
+				pollInterval: 100
+			}
+		});
 		const spinner = spin();
-
-		spinner.start(50, 'Compressing Images'.green, undefined, process.stdout.columns);
+		spinner.start(50, '    -> Compressing Images'.green, undefined, process.stdout.columns);
 		watching.push(watcher);
-		await buildcmd.compressImages([path.join('assets', 'img', '*.{jpg,png}')], path.join('public', 'img'));
 		watcher
 			.on('change', compress)
 			.on('unlink', deleted)
 			.on('add', compress);
-		spinner.end('Images Compressed ' + '✓'.green);
+		let compres = co.wrap(buildcmd.compressImages);
+		return compres([path.join('assets', 'img', '*.{jpg,png}')], path.join('public', 'img')).then(() => {
+			spinner.end(`    -> Images Compressed ${__ok.green}`);
+		});
 	},
 	serveEmber = function (app, cfg, index) {
 		return Promise.promisify((...args) => {
 			let [app, mount, cb] = args;
-			console.log(args);
 			let appst = {
 				log: false,
 				result: ''
@@ -62,7 +72,6 @@ const deleted = function (file) {
 				} else if (buffer.toString().indexOf('Build successful') > -1) {
 					if (cb) {
 						appst.result = `${app.yellow} → http://${scfg.hostname}:${scfg.port}${mount.cyan}`;
-
 						// let watcher = new chokidar.watch(ProyPath('public', app, '/'), {
 						// 	ignored:[
 						// 		'**/adapters/application.js',
@@ -104,11 +113,11 @@ const deleted = function (file) {
 				}
 			});
 			ember.stderr.on('data', (buffer) => {
+				console.log(buffer.toString());
 				if (cb) {
 					cb(null, `${app.yellow} ${'✗'.red} build failed.`);
 					cb = null;
 				}
-				console.log(buffer.toString());
 			});
 		})(app, cfg.mount);
 	},
@@ -116,7 +125,8 @@ const deleted = function (file) {
 		fs.access(ProyPath('koaton_modules'), fs.RF_OK | fs.W_OK, (err) => {
 			if (!err) {
 				readDir(ProyPath('koaton_modules')).forEach((Module) => {
-					requireNoCache(ProyPath('koaton_modules', Module, 'koaton_prebuild.js'), () => {})();
+					requireNoCache(ProyPath('koaton_modules', Module, 'koaton_prebuild.js'), () => {
+					})();
 				});
 			}
 		});
@@ -127,9 +137,7 @@ const deleted = function (file) {
 			if (!err) {
 				readDir(ProyPath('koaton_modules')).forEach((Module) => {
 					console.log('start post building');
-					promises.push(co(async function () {
-						await Events(`koaton_modules/${Module}/events`, 'post', 'ember_build');
-					}));
+					promises.push(Events(`koaton_modules/${Module}/events`, 'post', 'ember_build'));
 					console.log('end post building');
 				});
 			}
@@ -175,10 +183,11 @@ const deleted = function (file) {
 			});
 		});
 	},
-	TriggerEvent = async function TriggerEvent (event, phase) {
-		await Events('events', event, phase);
-	},
-	buildHosts = async function buildHosts () {
+	TriggerEvent = Events.bind(null, 'events'),
+	//  function TriggerEvent (event, phase) {
+	// 	return Events('events', event, phase);
+	// },
+	buildHosts = function buildHosts () {
 		const os = require('os');
 
 		let subdomains = configuration.server;
@@ -200,7 +209,7 @@ const deleted = function (file) {
 				hostsdlocation = 'C:\\Windows\\System32\\drivers\\etc\\hosts';
 				break;
 			default:
-				console.log('your os is not detected, hosts files won\'t be updated'.red);
+				console.log("your os is not detected, hosts files won't be updated".red);
 				break;
 
 		}
@@ -221,68 +230,30 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction us
 		['-p', '--production', 'Runs with NODE_ENV = production'],
 		['--port', '--port <port>', 'Run on the especified port (port 80 requires sudo).']
 	])
-	.Action(async function (options) {
+	.Action(function (options) {
 		process.env.port = options.port || 62626;
 		options.production = options.production ? 'production' : 'development';
 		process.env.NODE_ENV = options.production;
 		buildcmd = require('./build');
-
-		const embercfg = configuration.ember,
-			env = {
-				welcome: true,
-				NODE_ENV: process.env.NODE_ENV,
-				port: process.env.port
-			};
+		const embercfg = configuration.ember;
 		if (options.production === 'development') {
-			await buildHosts();
+			buildHosts();
 		}
 		screen.start();
 		if (options.production === 'development') {
-			await require('./build').copystatic();
-			await WactchAndCompressImages(new Watch(path.join('assets', 'img'), {
-				persistent: true,
-				ignoreInitial: true,
-				alwaysStat: false,
-				awaitWriteFinish: {
-					stabilityThreshold: 1000,
-					pollInterval: 100
-				}
-			}));
-			await CheckBundles(chokidar.watch);
+			promises.push(CopyStatic());
+			CheckBundles(chokidar.watch);
 			WatchModels();
 			WatchFileToCopy();
+			promises.push(WactchAndCompressImages());
 		}
-		await TriggerEvent('pre', 'serve');
-		seedKoatonModules();
-		return new Promise(function (resolve) {
-			nodemon({
-				ext: '*',
-				quiet: false,
-				delay: 300,
-				ignore: [
-					'commands/',
-					'/views/emberAPPs/*.*',
-					'/node_modules/*.*',
-					'/koaton_modules/*.*',
-					'/ember/*.*',
-					'/assets/*.*',
-					'/models/*.*',
-					'/public/',
-					'/config/bundles.js',
-					'*.tmp',
-					'*.json'
-				],
-				verbose: true,
-				script: 'app.js',
-				env: env,
-				stdout: true
-			})
-			.once('start', function () {
-				co(async function () {
-					await TriggerEvent('pre', 'serve');
-					screen.line1(true);
-					let ignoreemberdirs = [];
-					await TriggerEvent('pre', 'ember_build');
+		promises.push(TriggerEvent('pre', 'serve'));
+		promises.push(seedKoatonModules());
+		return Promise.all(promises).then(() => {
+			return TriggerEvent('pre', 'serve').then(() => {
+				let ignoreemberdirs = [];
+				return TriggerEvent('pre', 'ember_build').then(() => {
+					let index = 0;
 					for (var emberAPP in embercfg) {
 						ignoreemberdirs.push(path.join('public', emberAPP, '/'));
 						if (options.production === 'development' && !options.skipBuild) {
@@ -291,63 +262,65 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction us
 								mount: embercfg[emberAPP].mount,
 								build: 'development',
 								layout: embercfg[emberAPP].layout,
-								title: embercfg[emberAPP].title
+								title: embercfg[emberAPP].title,
+								show: false
 							};
-							console.log(`Building ${emberAPP.green} second plane`);
-							try {
-								await buildcmd.preBuildEmber(emberAPP, configuration);
-								let b = serveEmber(emberAPP, embercfg[emberAPP]);
-								building.push(b);
-								await b;
-								await buildcmd.postBuildEmber(emberAPP, configuration);
-							} catch (e) {
-								console.log(e);
-							}
+							console.log(`    ${'->'.yellow} Building ${emberAPP.green} second plane`);
+							building.push(buildcmd.preBuildEmber(emberAPP, configuration).then(() => {
+								return serveEmber(emberAPP, embercfg[emberAPP], index).then((result) => {
+									if (typeof result === 'object') {
+										return buildcmd.postBuildEmber(emberAPP, configuration).then(() => {
+											result.config = embercfg[emberAPP];
+											return result;
+										});
+									} else {
+										return {
+											config: embercfg[emberAPP],
+											log: false,
+											result: result
+										};
+									}
+								});
+							}));
+							index++;
 						} else {
 							building.push(Promise.resolve({
+								config: embercfg[emberAPP],
 								log: false,
 								result: `${emberAPP.yellow} → ${embercfg[emberAPP].mount.cyan}`
 							}));
 						}
 					}
 					screen.line1(true);
-				}).then(() => {
-					Promise.all(building).then((reports) => {
-						if (reports.length > 0) {
-							console.log('   Ember apps:');
-							console.log('     ' + reports.map((r) => {
-								return r.result;
-							}).join('\n     '));
-						}
-						for (let idx in reports) {
-							reports[idx].log = true;
+					return Promise.all(building).then((reports) => {
+						console.log('    Ember apps:');
+						for (const report of reports) {
+							console.log(`      ${report.result}`);
 						}
 						screen.line1();
-						co(async function () {
-							await TriggerEvent('post', 'ember_build');
-							await koatonModulesPostBuild();
+						return TriggerEvent('post', 'ember_build').then(() => {
+							return koatonModulesPostBuild();
 						});
 					});
-					notifier('Koaton', `Serving http://${scfg.hostname}:${scfg.port}`);
-					setTimeout(function () {
-						livereload.reload();
-					}, 1000);
 				});
-			}).on('restart', function (a, b, c) {
-				console.log('restart', a, b, c);
-				setTimeout(function () {
-					livereload.reload();
-				}, 1000);
-				notifier('Koaton', 'restarting server...', 'Basso');
-			}).on('crash', (e) => {
-				console.log('CRASH', e);
-				nodemon.emit('exit');
-				resolve(1);
+			}).then(() => {
+				return new Promise(function (resolve) {
+					deamon(process.env.istesting ? resolve : null);
+					process.once('SIGINT', function () {
+						resolve(0);
+					});
+				});
 			});
-			const exitHandler = function () {
-				nodemon.emit('exit');
-				resolve(0);
-			};
-			process.once('SIGINT', exitHandler);
+				// }).on('restart', function (a) {
+				// 	console.log(`RESTARTING ${a}`);
+				// 	setTimeout(function () {
+				// 		livereload.reload();
+				// 		notifier('Koaton', 'restarting server...', 'Basso');
+				// 	}, 1000);
+				// }).on('crash', (e) => {
+				// 	console.log('CRASH', e);
+				// 	nodemon.emit('exit');
+				// 	resolve(1);
+				// });
 		});
 	});

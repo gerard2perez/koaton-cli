@@ -22,6 +22,7 @@ globals:
  skipshell: true
  cleanString: true
  configuration: true
+ requireUnCached: true
 
 rules:
  one-var: [0, never]

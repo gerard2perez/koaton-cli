@@ -34,6 +34,7 @@ const Action = async function Action (definition, command, ...args) {
 	try {
 		console.log(`koaton-cli version ${scfg.version}\n`);
 		exitCode = await definition.action.apply(command, args);
+		console.log(`ExitCode ${exitCode}`);
 	} catch (err) {
 		console.log(err.stack);
 		process.exit(1);

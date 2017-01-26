@@ -5,6 +5,7 @@ import * as fs from 'fs-extra';
 import * as uglify from 'uglify-js';
 import * as Concat from 'concat-with-sourcemaps';
 import { sync as glob } from 'glob';
+import * as co from 'co';
 
 import * as Promise from 'bluebird';
 import utils from '../utils';
@@ -13,28 +14,6 @@ import BundleItem from '../support/BundleItem';
 import spin from '../spinner';
 
 const spinner = spin();
-const copystatic = async function copystatic () {
-	const copy = requireNoCache(ProyPath('config', 'static'), {default: {}}).default.copy;
-	let promises = [];
-	for (const bundle of copy) {
-		if (typeof bundle === 'object') {
-			for (const pattern of bundle.src) {
-				for (const file of glob(pattern)) {
-					let filename = file;
-					if (bundle.flatten) {
-						filename = path.basename(file);
-					}
-					promises.push(utils.copy(file, ProyPath('public', bundle.dest, filename)));
-				}
-			}
-		} else {
-			for (const file of glob(bundle)) {
-				promises.push(utils.copy(file, ProyPath('public', file)));
-			}
-		}
-	}
-	await Promise.all(promises);
-};
 const hasFileName = function (file, content) {
 	const basename = path.trimExt(file);
 	const ext = file.replace(basename, '');
@@ -58,7 +37,7 @@ const compressImages = function (files, dest) {
 		]
 	});
 };
-const buildCSS = async function buildBundleCSS (target, bundle, development, onlypaths, logger) {
+const buildcss = async function buildBundleCSS (target, bundle, development, onlypaths, logger) {
 	process.stdout.write(`Building ${target} `);
 	let start = process.hrtime();
 	const ITEM = scfg.bundles[target] || new BundleItem(target, []);
@@ -154,7 +133,7 @@ const buildCSS = async function buildBundleCSS (target, bundle, development, onl
 	console.log(`${(seconds * 1000) + Math.ceil(nanoseconds / 1e6)} ms`);
 	return watchinFiles;
 };
-const buildJS = function buildJS (target, bundle, development, onlypaths, logger) {
+const buildjs = function buildJS (target, bundle, development, onlypaths, logger) {
 	return new Promise(function (resolve) {
 		process.stdout.write(`Building ${target} `);
 		let start = process.hrtime();
@@ -198,7 +177,7 @@ const buildJS = function buildJS (target, bundle, development, onlypaths, logger
 		resolve(AllFiles);
 	});
 };
-const getInflections = async function getInflections (appName) {
+const getinflections = async function getInflections (appName, show = true) {
 	const inflections = require(path.join(process.cwd(), 'config', 'inflections.js')),
 		irregular = (inflections.plural || [])
 		.concat(inflections.singular || [])
@@ -209,14 +188,14 @@ const getInflections = async function getInflections (appName) {
 	utils.render(TemplatePath('ember_apps', 'inflector.js'), ProyPath('ember', appName, 'app', 'initializers', 'inflector.js'), {
 		irregular: JSON.stringify(irregular),
 		uncontable: JSON.stringify(uncontable)
-	});
+	}, show ? 1 : null);
 };
-const preBuildEmber = async function preBuildEmber (application, options) {
+const prebuildember = async function preBuildEmber (application, options) {
 	const emberProyectPath = ProyPath('ember', application);
 	options.mount = path.join('/', options.mount || '', '/');
 	options.mount = options.mount.replace(/\\/igm, '/');
 	await utils.mkdir(ProyPath('ember', application, 'app', 'adapters'), -1);
-	await getInflections(application, null);
+	await getInflections(application, options.show);
 	let adapter = configuration.ember[application].adapter;
 	if (adapter.indexOf('http://') !== 0) {
 		adapter = 'http://' + adapter;
@@ -233,7 +212,7 @@ const preBuildEmber = async function preBuildEmber (application, options) {
 	embercfg = embercfg.replace(/rootURL: ?'.*',/, `rootURL: '${options.mount}',`);
 	return utils.write(path.join(emberProyectPath, 'config', 'environment.js'), embercfg, 0);
 };
-const buildEmber = async function buildEmber (application, options) {
+const buildember = async function buildEmber (application, options) {
 	await utils.mkdir(path.join(process.cwd(), 'public', options.directory));
 	let env = process.env.NODE_ENV;
 	let res = (await utils.shell(
@@ -249,7 +228,7 @@ const buildEmber = async function buildEmber (application, options) {
 	process.env.NODE_ENV = env;
 	return !res;
 };
-const postBuildEmber = async function postBuildEmber (application, options) {
+const postbuildember = async function postBuildEmber (application, options) {
 	const emberinternalname = require(ProyPath('ember', application, 'package.json')).name;
 	let text = await utils.read(ProyPath('public', options.directory, 'index.html'), {
 			encoding: 'utf-8'
@@ -278,8 +257,14 @@ const postBuildEmber = async function postBuildEmber (application, options) {
 	return utils.write(ProyPath('views', 'ember_apps', `${options.directory}.handlebars`), text, 1);
 	// }
 };
+
+const buildCSS = co.wrap(buildcss);
+const buildJS = co.wrap(buildjs);
+const getInflections = co.wrap(getinflections);
+const preBuildEmber = co.wrap(prebuildember);
+const buildEmber = co.wrap(buildember);
+const postBuildEmber = co.wrap(postbuildember);
 export {
-	copystatic,
 	getInflections,
 	compressImages,
 	postBuildEmber,

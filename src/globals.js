@@ -3,6 +3,7 @@ import * as rawpath from 'path';
 import * as path from 'upath';
 import * as fs from 'fs-extra';
 import { canAccess } from './utils';
+import * as co from 'co';
 
 process.env.isproyect = canAccess('public') &&
 canAccess('app.js') &&
@@ -34,6 +35,10 @@ global.makeObjIterable = function makeObjIterable (obj) {
 		};
 	};
 };
+global.requireUnCached = function (lib) {
+	delete require.cache[require.resolve(lib)];
+	return requireSafe(lib);
+};
 global.cleanString = (text) => {
 	return text.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
 };
@@ -52,7 +57,7 @@ global.accessSync = function accessSync (dir) {
 		return false;
 	}
 };
-global.Events = function Events (path, event, phase, forcedir) {
+const Events = function Events (path, event, phase, forcedir) {
 	let Path = ProyPath(path);
 	let m = requireNoCache(ProyPath(path, `${event}_${phase}`));
 	switch (typeof m) {
@@ -82,6 +87,7 @@ global.Events = function Events (path, event, phase, forcedir) {
 			return m.bind(null, Path);
 	}
 };
+global.Events = co.wrap(Events);
 global.requireSafe = function requireSafe (lib, defaults) {
 	try {
 		return require(lib);
@@ -94,7 +100,6 @@ global.requireNoCache = function requireNoCache (lib, defaults) {
 	if (library.indexOf('.json') === -1) {
 		library = library.replace('.js', '') + '.js';
 	}
-	// console.log(require.cache[library]);
 	delete require.cache[library];
 	return requireSafe(library, defaults);
 };

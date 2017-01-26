@@ -3,6 +3,7 @@ import * as fs from 'fs-extra';
 
 class TestNode {
 	constructor (name, args, expect, rename) {
+		this.asyncs = false;
 		if (rename) {
 			let terms = args.slice(0, args.length - 1);
 			terms.push('');

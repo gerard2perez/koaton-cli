@@ -30,9 +30,9 @@ if you write `koaton` `koaton -h` in your terminal you will get this output.
 --pass	--pass <password>	Password to login in your database default is ''. Use this with -g
 ```
 
-## koaton build <configFile> [options] <a name="build"/>
+## koaton build [options] <a name="build"/>
 > Make bundles of your .js .scss .css files and output to public folder.
-   Default value is ./config/bundles.js
+   See ./config/bundles.js
 
 *[options]*:
 ```
@@ -111,7 +111,6 @@ koaton model User hasmany Phone phones phoneId
 -e	--view-engine <engine>	A value from [ handlebars ]
 -f	--force	Overrides the existing directory.
 -n	--skip-npm	Omits npm install
--b	--skip-bower	Omits bower install
 ```
 
 ## koaton nginx [options] <a name="nginx"/>

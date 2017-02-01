@@ -11,15 +11,6 @@ const handleGenerate = async function handleGenerate (driver, options) {
 		delete require.cache[path.resolve() + '/package.json'];
 		console.log(`${driver}@${require(path.resolve() + '/package.json').dependencies[adapters[driver].package]} installed`);
 	}
-	console.log(utils.compile(template, {
-		adapter: driver,
-		driver: adapters[driver].package,
-		user: options.user || '',
-		password: options.pass || '',
-		host: options.host || 'localhost',
-		port: options.port || adapters[driver].port,
-		application: options.db || path.basename(process.cwd())
-	}));
 	let adapterCFG = JSON.parse(utils.compile(template, {
 		adapter: driver,
 		driver: adapters[driver].package,
@@ -82,7 +73,7 @@ export default (new Command(
 		if (!driver && options.list) {
 			renderdriverlist(installed, available);
 		} else if (driver && !adapters[driver]) {
-			console.log('  The driver you especied is not available please check: '.yellow+'\n');
+			console.log('  The driver you especied is not available please check: '.yellow + '\n');
 			renderdriverlist(installed, available);
 		} else if (options.uninstall) {
 			await utils.shell(`Uninstalling ${adapters[driver].green}`, ['npm', 'uninstall', adapters[driver].package], process.cwd());

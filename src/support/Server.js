@@ -73,7 +73,7 @@ export default class ServerConfiguaration {
 		for (const idx in localkoaton.bundles) {
 			this.bundles.add(idx, localkoaton.bundles[idx]);
 		}
-		sync(ProyPath('models', '*.js')).forEach((files) => {
+		sync(ProyPath('koaton_modules/**/models/*.js')).concat(sync(ProyPath('models', '*.js'))).forEach((files) => {
 			this.database.add(ModelManager(path.basename(files).replace('.js', ''), require(files).default));
 		});
 		Object.defineProperty(this.database, 'models', {

@@ -3,15 +3,15 @@ import 'colors';
 import * as co from 'co';
 import * as program from 'commander';
 import './globals';
-import commands from './Commands';
+import commands from './commands';
 import {render as renderH} from './support/help';
-import include from './utils/.include_base';
+import include from './utils/importindex';
 
 process.env.NODE_ENV = process.argv.indexOf('-p') > -1 || process.argv.indexOf('--production') > -1 ? 'production' : 'development';
 process.env.port = parseInt(process.argv[process.argv.indexOf('--port') + 1], 10) || 62626;
 const help = process.argv.slice(2)[0];
 
-const pcmds = include(ProyPath('commands'));
+const AllCommads = makeObjIterable(Object.assign({}, commands, include(ProyPath('commands'))));
 if (!help || help === '-h' || help === '--help') {
 	console.log(renderH());
 	process.exit(0);
@@ -34,15 +34,15 @@ const Action = async function Action (definition, command, ...args) {
 	try {
 		console.log(`koaton-cli version ${scfg.version}\n`);
 		exitCode = await definition.action.apply(command, args);
-		console.log(`ExitCode ${exitCode}`);
 	} catch (err) {
 		console.log(err.stack);
 		process.exit(1);
 	}
 	process.exit((exitCode === 0 || exitCode === undefined) ? 0 : 1);
 };
-for (const definition of Object.assign(commands, pcmds)) {
+for (const definition of AllCommads) {
 	try {
+		// console.log(definition);
 		const arg = definition.args.length > 0 ? `[${definition.args.join('] [')}]` : '';
 		const command = program.command(`${definition.cmd} ${arg}`)
 			.description(definition.description);

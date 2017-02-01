@@ -34,6 +34,7 @@ global.makeObjIterable = function makeObjIterable (obj) {
 			})
 		};
 	};
+	return obj;
 };
 global.requireUnCached = function (lib) {
 	delete require.cache[require.resolve(lib)];
@@ -108,10 +109,7 @@ global.ProyPath = function (...args) {
 	return path.normalize(path.join.apply(path, args));
 };
 global.CLIPath = function CLIPath (...args) {
-	args.splice(0, 0, 'lib');
-	args.splice(0, 0, 'koaton-cli');
-	args.splice(0, 0, 'node_modules');
-	args.splice(0, 0, process.cwd());
+	args.splice(0, 0, __dirname);
 	return path.normalize(path.join.apply(path, args));
 };
 global.LibPath = function (...args) {

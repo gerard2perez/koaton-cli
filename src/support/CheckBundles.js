@@ -102,7 +102,7 @@ const DetectChanges = function () {
 			};
 		}
 	};
-export default async function CheckBundles () {
+async function checkbundles () {
 	spinner.start(50, 'Building Bundles'.green, undefined, process.stdout.columns);
 	await mkdir(ProyPath('public', 'css'), 1);
 	await mkdir(ProyPath('public', 'js'), 1);
@@ -130,3 +130,7 @@ export default async function CheckBundles () {
 	spinner.end('Bundles Built ' + '✓'.green);
 	return true;
 }
+
+const CheckBundles = co.wrap(checkbundles);
+
+export default CheckBundles;

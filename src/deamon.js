@@ -2,34 +2,48 @@ import { watch as Watch } from 'chokidar';
 import notifier from './support/Notifier';
 import livereload from './utils/livereload';
 import * as spawn from 'cross-spawn';
+import * as psTree from 'ps-tree';
 
-let KoatonServer;
-function StartServer () {
-	return spawn('node', ['app.js'], {
-		shell: true,
-		stdio: 'inherit'
-	});
-}
-function LoadServer (resolve) {
-	KoatonServer = spawn('node', ['app.js'], {
+function LoadServer (resolve, reject, EmberPids) {
+	let PIDPromises = [];
+	if (process.env.istesting) {
+		for (const pid of EmberPids) {
+			PIDPromises.push(new Promise((resolve) => {
+				psTree(pid, (err, children) => {
+					let childIPIDs = children.map((p) => parseInt(p.PID, 10));
+					resolve(childIPIDs);
+				});
+			}));
+		}
+	}
+	let KoatonServer = spawn('node', ['app.js'], {
 		shell: true
 	});
 	KoatonServer.stdout.on('data', (buffer) => {
 		process.stdout.write(buffer);
 		let text = buffer.toString();
 		let found = text.indexOf('Enviroment') > -1;
-		console.log(found);
 		if (found) {
 			notifier('Koaton', `Serving http://${scfg.hostname}:${scfg.port}`);
 			livereload.reload();
-			if (resolve) {
-				resolve(0);
+			if (process.env.istesting) {
+				Promise.all(PIDPromises).then((PIDs) => {
+					let pids = [];
+					for (const pidg of PIDs) {
+						pids = pids.concat(pidg);
+					}
+					psTree(KoatonServer.pid, (err, children) => {
+						let childIPIDs = children.map((p) => parseInt(p.PID, 10));
+						resolve(pids.concat(childIPIDs));
+					});
+				});
 			}
 		}
 	});
+	return KoatonServer;
 }
 
-export default function StartKoatonServer (resolve) {
+export default function StartKoatonServer (resolve, reject, EmberPids) {
 	let watcher = new Watch('./**', {
 		awaitWriteFinish: {
 			stabilityThreshold: 500,
@@ -45,7 +59,6 @@ export default function StartKoatonServer (resolve) {
 			'public',
 			'commands',
 			'koaton_modules',
-			'models',
 			'views',
 			'config/bundles.js',
 			'*.tmp',
@@ -53,20 +66,13 @@ export default function StartKoatonServer (resolve) {
 			'*.conf'
 		]
 	});
-	if (resolve) {
-		LoadServer(resolve);
-	} else {
-		return StartServer();
-	}
+	return LoadServer(resolve, reject, EmberPids);
 	// const KoatonServer = require(ProyPath('app.js')).default;
 	// // KoatonServer.once('listening', () => {
 	// // 	notifier('Koaton', `Serving http://${scfg.hostname}:${scfg.port}`);
 	// // 	livereload.reload();
 	// // });
-	// watcher.on('all', (event, path) => {
-	// 	KoatonServer.listen(scfg.port, () => {
-	// 		livereload.reload();
-	// 		notifier('Koaton', 'restarting server...', 'Basso');
-	// 	});
-	// });
+	watcher.on('all', (event, path) => {
+		LoadServer(resolve, reject, EmberPids);
+	});
 }

@@ -6,6 +6,15 @@ import * as path from 'upath';
 import utils from '../utils';
 import Command from '../Command';
 
+let HelperExample = function (base, file) {
+	return base.replace('file', file);
+};
+
+let Helpers = [
+	HelperExample.bind(null, '{{{bundle "file"}}}'),
+	HelperExample.bind(null, '{{"file" | bundle | safe}}')
+];
+
 const UpdateModulesAssetsLinks = function UpdateModulesAssetsLinks (hbs, ext, regex) {
 	let found,
 		res = hbs;
@@ -15,6 +24,18 @@ const UpdateModulesAssetsLinks = function UpdateModulesAssetsLinks (hbs, ext, re
 			let htmltag = ext === 'css' ? `<link rel='stylesheet' href='/${path.join(scfg.name, target.file)}'/>` : `<script src='/${path.join(scfg.name, target.file)}'></script>`;
 			res = res.replace(found[0], htmltag);
 		}
+	}
+	return res;
+};
+const EmbededMainHelper = function (hbs, file) {
+	if (!scfg.bundles[file]) {
+		return hbs;
+	}
+	let res = hbs;
+	for (const HS of Helpers) {
+		res = res.replace(HS(file), scfg.bundles[file].toString())
+			.replace("src='/js", `src='/${scfg.name}/js`)
+			.replace("href='/css", `href='/${scfg.name}/css`);
 	}
 	return res;
 };
@@ -30,8 +51,9 @@ const copytemplates = async function copytemplates (folder) {
 		let hbs = fs.readFileSync(file, 'utf-8');
 		hbs = UpdateModulesAssetsLinks(hbs, 'css', regexCSS);
 		hbs = UpdateModulesAssetsLinks(hbs, 'js', regexJS);
-		if (location.indexOf('layouts') > -1) {
-			filename = `${scfg.name}.${filename}`;
+		if (location.indexOf('layouts') > -1 && filename.indexOf('main.') > -1) {
+			filename = filename.replace('main.', `${scfg.name}.`);
+			hbs = EmbededMainHelper(EmbededMainHelper(hbs, 'main.js'), 'main.css');
 		}
 		utils.write(Dest(location, filename), hbs, 2);
 	}
@@ -41,9 +63,11 @@ const copyall = function copyall (folder) {
 	glob.sync(ProyPath(folder, '**', '*.js')).forEach(function (...args) {
 		let file = path.normalize(args[0]);
 		let filename = path.basename(file);
-		let location = file.replace(filename, '').replace(path.normalize(process.cwd()), '');
-		utils.mkdir(Dest(location), null);
-		promises.push(utils.copy(file, Dest(location, filename), 2));
+		if (filename !== 'pre_modulify.js' && filename !== 'post_modulify.js') {
+			let location = file.replace(filename, '').replace(path.normalize(process.cwd()), '');
+			utils.mkdir(Dest(location), null);
+			promises.push(utils.copy(file, Dest(location, filename), 2));
+		}
 	});
 	return Promise.all(promises);
 };
@@ -85,9 +109,6 @@ export default (new Command(__filename, 'Run the needed commands to'))
 			utils.rmdir(Dest('public', emberAPP, 'crossdomain.xml'));
 			utils.rmdir(Dest('public', emberAPP, 'robots.txt'));
 		});
-
-		utils.rmdir(Dest('events', 'pre_modulify.js'));
-		utils.rmdir(Dest('events', 'post_modulify.js'));
 
 		await Events('events', 'post', 'modulify', Dest());
 	});

@@ -24,17 +24,12 @@ export default class Command {
 	}
 	Action (fn) {
 		let that = this;
-		console.log(fn.constructor.name);
 		this.action = function (...args) {
 			if (args[args.length - 1].H) {
 				console.log(that.Help);
-				return 0;
+				return Promise.resolve(0);
 			}
-			if (fn.constructor.name === 'GeneratorFunction') {
-
-			} else {
-				return fn.apply(this, args);
-			}
+			return fn.apply(this, args);
 		};
 		return this;
 	}

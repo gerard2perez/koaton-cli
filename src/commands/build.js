@@ -38,6 +38,7 @@ const compressImages = function (files, dest) {
 	});
 };
 const buildcss = async function buildBundleCSS (target, bundle, development, onlypaths, logger) {
+	let error = [];
 	process.stdout.write(`Building ${target} `);
 	let start = process.hrtime();
 	const ITEM = scfg.bundles[target] || new BundleItem(target, []);
@@ -103,10 +104,13 @@ const buildcss = async function buildBundleCSS (target, bundle, development, onl
 			}
 		} else if (file.indexOf('.css')) {
 			watchinFiles[index + target] = glob(file);
+			if (watchinFiles[index + target].length === 0) {
+				error.push(`${__nok.red}   Pattern ${file} ${'not found'.red}`);
+			}
 			const concatCSS = new Concat(true, path.join('css', index + target + '.css'), '\n');
 			if (!development || !onlypaths) {
-				for (const url in watchinFiles[index + target]) {
-					concatCSS.add(target, fs.readFileSync(watchinFiles[index + target][url]));
+				for (const url of watchinFiles[index + target]) {
+					concatCSS.add(target, fs.readFileSync(url));
 				}
 			}
 			if (development && !onlypaths) {
@@ -131,9 +135,13 @@ const buildcss = async function buildBundleCSS (target, bundle, development, onl
 	utils.writeuseslog = undefined;
 	let [seconds, nanoseconds] = process.hrtime(start);
 	console.log(`${(seconds * 1000) + Math.ceil(nanoseconds / 1e6)} ms`);
+	if (error.length > 0) {
+		console.log(error.join('\n'));
+	}
 	return watchinFiles;
 };
 const buildjs = function buildJS (target, bundle, development, onlypaths, logger) {
+	let error = [];
 	return new Promise(function (resolve) {
 		process.stdout.write(`Building ${target} `);
 		let start = process.hrtime();
@@ -142,7 +150,11 @@ const buildjs = function buildJS (target, bundle, development, onlypaths, logger
 		utils.writeuseslog = logger;
 		let AllFiles = [];
 		for (const pattern of bundle) {
-			AllFiles = AllFiles.concat(glob(ProyPath(pattern)));
+			let bundle = glob(ProyPath(pattern));
+			if (bundle.length === 0) {
+				error.push(`${__nok.red}   Pattern ${pattern} ${'not found'.red}`);
+			}
+			AllFiles = AllFiles.concat(bundle);
 		}
 		process.stdout.write(`(${AllFiles.length} files) `);
 		if (onlypaths) {
@@ -174,6 +186,9 @@ const buildjs = function buildJS (target, bundle, development, onlypaths, logger
 		scfg.bundles.remove(ITEM).add(ITEM);
 		let [seconds, nanoseconds] = process.hrtime(start);
 		console.log(`${(seconds * 1000) + Math.ceil(nanoseconds / 1e6)} ms`);
+		if (error.length > 0) {
+			console.log(error.join('\n'));
+		}
 		resolve(AllFiles);
 	});
 };
@@ -241,21 +256,22 @@ const postbuildember = async function postBuildEmber (application, options) {
 	const transformlinks = function transformlinks (text, expresion) {
 		return text.match(expresion).join('\n')
 					.replace(/="[^=]*?assets/igm, `="/${options.directory}/assets`);
-					// .replace(new RegExp(application + '/', 'gm'), options.directory + '/')
 	};
 	text = utils.compile(indextemplate, {
 		title: options.title || application,
 		layout: options.layout || 'main',
 		path: options.directory,
 		mount: options.mount,
-		appName: application,
+		app_name: application,
 		meta: text.match(meta)[0],
 		cssfiles: transformlinks(text, links),
 		jsfiles: transformlinks(text, scripts)
 	});
+	for (const file of glob(ProyPath('public', options.directory, '*.*'))) {
+		fs.unlink(file);
+	}
 	await utils.mkdir(ProyPath('views', 'ember_apps'), -1);
 	return utils.write(ProyPath('views', 'ember_apps', `${options.directory}.handlebars`), text, 1);
-	// }
 };
 
 const buildCSS = co.wrap(buildcss);
@@ -303,6 +319,10 @@ export default (new Command(
 					await buildJS(key, configuration.bundles[key], options.prod === 'development');
 				}
 			}
+			for (const postember of glob('events/pre_ember_build.js').concat(glob('koaton_modules/**/pre_ember_build.js'))) {
+				let guest = path.dirname(postember);
+				await require(ProyPath(postember)).default(ProyPath(guest, '..'));
+			}
 			const embercfg = configuration.ember;
 			for (const emberAPP in embercfg) {
 				let configuration = {
@@ -314,6 +334,11 @@ export default (new Command(
 				await preBuildEmber(emberAPP, configuration);
 				await buildEmber(emberAPP, configuration);
 				await postBuildEmber(emberAPP, configuration);
+			}
+
+			for (const postember of glob('events/post_ember_build.js').concat(glob('koaton_modules/**/post_ember_build.js'))) {
+				let guest = path.dirname(postember);
+				await require(ProyPath(postember)).default(ProyPath(guest, '..'));
 			}
 			spinner.start(50, 'Compressing Images', undefined, process.stdout.columns);
 			await compressImages([path.join('assets', 'img', '*.{jpg,png}')], path.join('public', 'img'));

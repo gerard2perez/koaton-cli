@@ -98,6 +98,7 @@
     "mocha": "^3.2.0",
     "npm-run-all": "^3.1.2",
     "nyc": "^10.0.0",
+    "ps-tree": "^1.1.0",
     "semantic-release": "^6.3.2"
   },
   "config": {

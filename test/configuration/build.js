@@ -3,9 +3,9 @@ import { sync as glob } from 'glob';
 import * as path from 'upath';
 import * as fs from 'fs-extra';
 import TestNode from '../support/TestNode';
+import BundleItem from '../../src/support/BundleItem';
 import '../support/array';
 import ServerConfiguaration from '../../src/support/Server';
-import BundleItem from '../../src/support/BundleItem';
 
 const addtoBundle = (data) => {
 	let bundle = require(path.join(process.cwd(), 'config', 'bundles')).default;
@@ -32,6 +32,9 @@ tests.push(new TestNode('(no args)', [{}], true))
 		process.chdir('testingapp');
 		spawn('git', ['clone', 'https://github.com/gerard2p/koatonstyle.git', 'assets/flatadmin']);
 		addtoBundle({
+			'main.css': [
+				'./assets/flatadmin/less/bootstrap.less'
+			],
 			'admin.css': [
 				'./assets/flatadmin/css/**/*.css'
 			],
@@ -57,14 +60,16 @@ tests.push(new TestNode('(no args)', [{}], true))
 				delete require.cache[file];
 			}
 		}
-		global.scfg = new ServerConfiguaration();
 		requireNoCache(ProyPath('node_modules', 'koaton/lib/support', 'globals'));
 		configuration.ember = requireNoCache(ProyPath('config', 'ember')).default;
-		for (const key of Object.keys(configuration.bundles)) {
-			let bundle = new BundleItem(key, configuration.bundles[key]);
-			configuration.bundles[key] = bundle;
-		}
 		scfg.env = 'development';
+		global.scfg = new ServerConfiguaration();
+		for (const key of Object.keys(configuration.bundles)) {
+			if (!configuration.bundles[key].content) {
+				let bundle = new BundleItem(key, configuration.bundles[key]);
+				configuration.bundles[key] = bundle;
+			}
+		}
 	})
 	.Exists('public', 'css', '0admin.css')
 	.Exists('public', 'js', 'admin.min.js')

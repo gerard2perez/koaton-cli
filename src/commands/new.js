@@ -14,7 +14,8 @@ const setupInit = async function setupInit () {
 	await utils.mkdir(Project());
 	await utils.mkdir(Project('ember'));
 	utils.render(TemplatePath('app.js'), Project('app.js'));
-	await utils.copy(TemplatePath('./.gitignore'), Project('./.gitignore'));
+	await utils.copy(TemplatePath('gitignore'), Project('.gitignore'), 2);
+	await utils.copy(TemplatePath('editorconfig'), Project('.editorconfig'));
 	utils.render(TemplatePath('routes.js'), Project('routes.js'));
 };
 const setupConfig = async function setupConfig (app) {
@@ -35,10 +36,9 @@ const setupConfig = async function setupConfig (app) {
 const setupAssets = async function setupAssets () {
 	await utils.mkdir(Project('assets', 'img'));
 	await utils.copy(TemplatePath('/public/img/koaton.png'), Project('assets/img/logo.png'));
-	await utils.copy(TemplatePath('/public/img/koaton2.png'), Project('assets/img/logo2.png'));
 	await utils.mkdir(Project('assets', 'js'));
 	await utils.mkdir(Project('assets', 'css'));
-	await utils.copy(TemplatePath('koaton-char.png'), Project('assets/favicon.ico'));
+	await utils.copy(TemplatePath('/public/koaton.ico'), Project('assets/favicon.ico'));
 };
 const setupOthers = async function setupOthers () {
 	await utils.mkdir(Project('controllers'));
@@ -111,7 +111,6 @@ export default (new Command(__filename, 'Creates a new koaton aplication.'))
 				await setupConfig(AppName);
 				await setupOthers(AppName);
 				await setupDependencies(options, adapters.isOrDef(options.db), engines.isOrDef(options.viewEngine));
-				console.log('reaches');
 				await utils.shell('Initializing git'.green, ['git', 'init'], proypath);
 				welcome.line1(true);
 				console.log('   To run your app first: ');

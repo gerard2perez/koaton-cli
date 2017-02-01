@@ -1,5 +1,5 @@
 import * as livereload from 'gulp-livereload';
-
+/* istanbul ignore next */
 if (process.env.NODE_ENV === 'development') {
 	livereload.listen({
 		port: 62627,

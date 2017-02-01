@@ -1,13 +1,9 @@
-/*globals describe, it, cleanString*/
 import * as assert from 'assert';
 import * as co from 'co';
 import commands from '../src/commands';
 import configuration from './configuration';
 
-const CommandOrder = [
-	'serve',
-	'fail'
-].concat(['new', 'adapter', 'ember', 'model', 'nginx', 'install', 'build', 'seed', 'modulify' /*, 'serve' //TODO enable. FIX 001*/, 'forever', 'publish']);
+const CommandOrder = [].concat(['new', 'adapter', 'ember', 'model', 'nginx', 'install', 'build', 'seed', 'modulify', 'serve']);
 
 const notestcase = function (testname) {
 	describe(testname, () => {
@@ -17,14 +13,13 @@ const notestcase = function (testname) {
 	});
 };
 function takeone (data) {
-	console.log(data.length);
 	if (data.length === 0) {
 		return Promise.resolve(true);
 	}
-	let test = data.splice(0, 1);
-	console.log(test);
-	return test().then((result) => {
-		let [message, mustbe, actual] = result;
+	let test = data.splice(0, 1)[0];
+	let [message, mustbe, Actual] = test();
+	return Actual.then((actual) => {
+		console.log('Actual response', actual);
 		assert.equal(actual, mustbe, message);
 		return takeone(data);
 	});
@@ -42,19 +37,22 @@ const testcase = function testcase (TestConfig, cwd, testname, command) {
 					const WriteO = process.stdout.write;
 					try {
 						let buffer = '';
-						// process.stderr.write = () => {};
-						// process.stdout.write = () => {};
-						// console.log = (data) => {
-						// 	ori(data);
-						// 	buffer += (data || '').toString();
-						// };
+						process.stderr.write = () => {
+						};
+						process.stdout.write = () => {
+						};
+						console.log = (data) => {
+							// ori(data);
+							buffer += (data || '').toString();
+						};
 						if (testdata.asyncs) {
 							let res = command.action.apply(null, testdata.args);
 							testdata.expect.splice(0, 1);
-							return res.then((ds) => {
-								console.log('Mother of GOD GOOD');
-								return takeone(testdata.expect).then((res) => {
-								// 	done(null, res);
+							return res.then((childIPIDs) => {
+								return takeone(testdata.expect).then(() => {
+									for (const pid of childIPIDs) {
+										process.kill(pid);
+									}
 								});
 							}, () => {
 								console.log('Mother of GOD WRONG');
@@ -93,7 +91,6 @@ describe('Integration tests.', function () {
 	for (const command of CommandOrder) {
 		const CommandTest = configuration[command];
 		if (CommandTest && CommandTest.config) {
-			// console.log(CommandTest, command);
 			testcase(CommandTest.config, CommandTest.cwd, CommandTest.testname, commands[command], CommandTest.asyncs);
 		} else {
 			console.log(CommandTest);

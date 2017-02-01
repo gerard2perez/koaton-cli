@@ -6,7 +6,6 @@ import spin from '../spinner';
 const spinner = spin();
 
 export default Promise.promisify(function shell (display, command, ...args) {
-	console.log(command.join(' '));
 	let [cwd, cb] = args;
 	let shelllog = '';
 	if (cb === undefined) {

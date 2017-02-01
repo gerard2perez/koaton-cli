@@ -20,5 +20,5 @@ export default function copy (...args) {
 	return Promise.promisify(readFile)(from, {
 		encoding: encoding(extname(from))
 	})
-		.then(data => write(to, data, mode)).catch(() => { return null; });
+		.then(data => write(to, data, mode));
 }

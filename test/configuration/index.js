@@ -1,3 +1,3 @@
-import read from '../../src/utils/.include_base';
+import read from '../../src/utils/importindex';
 
 module.exports = read(__dirname);

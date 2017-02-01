@@ -2,6 +2,7 @@ import * as path from 'upath';
 import * as fs from 'fs-extra';
 import TestNode from '../support/TestNode';
 import '../support/array';
+import {sync as spawn} from 'cross-spawn';
 // import requireNoCache from '../support/custom_require';
 
 const targetdir = path.join(process.cwd(), 'testingapp');
@@ -21,6 +22,8 @@ tests.push(new TestNode('koaton new', ['testingapp', {
 	db: 'mysql'
 }], true, true))
 	.Exists('testingapp', 'app.js')
+	.Exists('testingapp', '.editorconfig')
+	.Exists('testingapp', '.gitignore')
 	.Exists('testingapp', 'routes.js')
 	.Exists('testingapp', 'config', 'bundles.js')
 	.Exists('testingapp', 'config', 'connections.js')
@@ -92,6 +95,9 @@ tests.push(new TestNode('koaton new', ['testingapp', {
 tests.push(new TestNode('koaton new', ['testingapp', {
 	force: true
 }], true, true))
+	.SetUp(() => {
+		spawn('npm', ['i', 'passport-local']);
+	})
 	.Exists('testingapp', 'node_modules');
 tests.last.CleanUp(() => {
 	// fs.removeSync(targetdir);

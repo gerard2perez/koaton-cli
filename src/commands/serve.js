@@ -1,11 +1,10 @@
 import * as spawn from 'cross-spawn';
-import * as chokidar from 'chokidar';
+import { watch as Watch } from 'chokidar';
 import * as Promise from 'bluebird';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as co from 'co';
 import screen from '../welcome';
-import * as ModelManager from '../modelmanager';
 import Command from '../Command';
 import utils from '../utils';
 import spin from '../spinner';
@@ -15,7 +14,6 @@ import WatchFileToCopy from '../support/WatchFileToCopy';
 import CopyStatic from '../support/CopyStatic';
 import deamon from '../deamon';
 
-const Watch = chokidar.watch;
 let promises = [],
 	watching = [],
 	building = [],
@@ -64,6 +62,7 @@ const deleted = function (file) {
 			};
 			const ember = spawn('ember', ['serve', '-lr', 'false', '--output-path', path.join('..', '..', 'public', cfg.directory), '--port', 4200 + index], {
 				cwd: ProyPath('ember', app),
+				// detached: true,
 				shell: true
 			});
 			ember.stdout.on('data', (buffer) => {
@@ -72,41 +71,7 @@ const deleted = function (file) {
 				} else if (buffer.toString().indexOf('Build successful') > -1) {
 					if (cb) {
 						appst.result = `${app.yellow} → http://${scfg.hostname}:${scfg.port}${mount.cyan}`;
-						// let watcher = new chokidar.watch(ProyPath('public', app, '/'), {
-						// 	ignored:[
-						// 		'**/adapters/application.js',
-						//
-						// 	],
-						// 	persistent: true,
-						// 	ignoreInitial: true,
-						// 	alwaysStat: false,
-						// 	awaitWriteFinish: {
-						// 		stabilityThreshold: 2000,
-						// 		pollInterval: 100
-						// 	}
-						// });
-						// setTimeout(function(){
-						// 	console.log('w',watcher.getWatched());
-						// },1000);
-						// //watcher.unwatch('new-file*');
-						// const rebuild = function() {
-						// 	co(async function(){
-						// 		await TriggerEvent('post', 'ember_build');
-						// 		await koatonModulesPostBuild();
-						// 	});
-						// 	livereload.reload();
-						// 	notifier.notify({
-						// 		title: 'Koaton',
-						// 		message: `EmberApp ${app} changed ...`,
-						// 		icon: path.join(__dirname, 'koaton.png'),
-						// 		sound: 'Basso'
-						// 	});
-						// }
-						// watcher
-						// 	.on('change', rebuild)
-						// 	.on('unlink', rebuild)
-						// 	.on('add', rebuild)
-						// 	.on('unlinkDir', rebuild);
+						appst.pid = ember.pid;
 						cb(null, appst);
 						cb = null;
 					}
@@ -144,60 +109,19 @@ const deleted = function (file) {
 		});
 		return Promise.all(promises);
 	},
-	WatchModels = function WatchModels () {
-		const addmodelfn = function addmodelfn (file) {
-			let model = path.basename(file).replace('.js', '');
-			let Model = ModelManager(model, requireNoCache(file)).toMeta();
-			scfg.database.models[model] = Model.model;
-			if (Model.relations.length > 0) {
-				scfg.database.relations[model] = Model.relations;
-			}
-		};
-		let watchmodels = new Watch(ProyPath('models', '**'), {
-			persistent: true,
-			ignoreInitial: true,
-			alwaysStat: false,
-			awaitWriteFinish: {
-				stabilityThreshold: 250,
-				pollInterval: 100
-			}
-		});
-		watchmodels.on('add', addmodelfn).on('change', addmodelfn).on('unlink', (file) => {
-			let model = path.basename(file).replace('.js', '');
-			delete scfg.database.models[model];
-			delete scfg.database.relations[model];
-			let deletions = [];
-			const check = function check (rel) {
-				if (scfg.database.relations[idx][rel].indexOf(` ${model} `) > -1) {
-					deletions.push({
-						idx: idx,
-						rel: rel
-					});
-				}
-			};
-			for (var idx in scfg.database.relations) {
-				Object.keys(scfg.database.relations[idx]).forEach(check);
-			}
-			deletions.forEach((obj) => {
-				delete scfg.database.relations[obj.idx][obj.rel];
-			});
-		});
-	},
 	TriggerEvent = Events.bind(null, 'events'),
-	//  function TriggerEvent (event, phase) {
-	// 	return Events('events', event, phase);
-	// },
 	buildHosts = function buildHosts () {
 		const os = require('os');
 
 		let subdomains = configuration.server;
 		let hostname = subdomains.hostname;
 		subdomains = subdomains.subdomains;
-
+		/* istanbul ignore else */
 		if (subdomains.indexOf('www') === -1) {
 			subdomains.push('www');
 		}
 		let hostsdlocation = '';
+		/* istanbul ignore next */
 		switch (os.platform()) {
 			case 'darwin':
 				hostsdlocation = '/private/etc/hosts';
@@ -242,8 +166,7 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction us
 		screen.start();
 		if (options.production === 'development') {
 			promises.push(CopyStatic());
-			CheckBundles(chokidar.watch);
-			WatchModels();
+			CheckBundles();
 			WatchFileToCopy();
 			promises.push(WactchAndCompressImages());
 		}
@@ -299,28 +222,20 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction us
 						}
 						screen.line1();
 						return TriggerEvent('post', 'ember_build').then(() => {
-							return koatonModulesPostBuild();
+							return koatonModulesPostBuild().then(() => {
+								return reports.map((r) => r.pid);
+							});
 						});
 					});
 				});
-			}).then(() => {
-				return new Promise(function (resolve) {
-					deamon(process.env.istesting ? resolve : null);
+			}).then((EmberPids) => {
+				return new Promise(function (resolve, reject) {
+					let server = deamon(resolve, reject, EmberPids);
 					process.once('SIGINT', function () {
+						server.kill();
 						resolve(0);
 					});
 				});
 			});
-				// }).on('restart', function (a) {
-				// 	console.log(`RESTARTING ${a}`);
-				// 	setTimeout(function () {
-				// 		livereload.reload();
-				// 		notifier('Koaton', 'restarting server...', 'Basso');
-				// 	}, 1000);
-				// }).on('crash', (e) => {
-				// 	console.log('CRASH', e);
-				// 	nodemon.emit('exit');
-				// 	resolve(1);
-				// });
 		});
 	});

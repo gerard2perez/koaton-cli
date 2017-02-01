@@ -10,6 +10,9 @@ function LoadServer (resolve, reject, EmberPids) {
 		for (const pid of EmberPids) {
 			PIDPromises.push(new Promise((resolve) => {
 				psTree(pid, (err, children) => {
+					if (err) {
+						reject(err);
+					}
 					let childIPIDs = children.map((p) => parseInt(p.PID, 10));
 					resolve(childIPIDs);
 				});
@@ -33,6 +36,9 @@ function LoadServer (resolve, reject, EmberPids) {
 						pids = pids.concat(pidg);
 					}
 					psTree(KoatonServer.pid, (err, children) => {
+						if (err) {
+							reject(err);
+						}
 						let childIPIDs = children.map((p) => parseInt(p.PID, 10));
 						resolve(pids.concat(childIPIDs));
 					});
@@ -66,13 +72,10 @@ export default function StartKoatonServer (resolve, reject, EmberPids) {
 			'*.conf'
 		]
 	});
-	return LoadServer(resolve, reject, EmberPids);
-	// const KoatonServer = require(ProyPath('app.js')).default;
-	// // KoatonServer.once('listening', () => {
-	// // 	notifier('Koaton', `Serving http://${scfg.hostname}:${scfg.port}`);
-	// // 	livereload.reload();
-	// // });
+	let server = LoadServer(resolve, reject, EmberPids);
 	watcher.on('all', (event, path) => {
-		LoadServer(resolve, reject, EmberPids);
+		process.kill(server.pid);
+		server = LoadServer(resolve, reject, EmberPids);
 	});
+	return server;
 }

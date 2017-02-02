@@ -4,7 +4,7 @@
   "description": "Koaton is a CLI tool that provides a nice starting point for full stack JavaScript Web development with Koa, Ember, and Node.js along with CaminateJS and WebSockets.",
   "main": "./koaton",
   "scripts": {
-    "precommit": "npm run eslint & npm-check --skip-unused & npm run make-help",
+    "precommit": "npm run eslint & npm-check --skip-unused",
     "codeclimate_cov": "codeclimate-test-reporter < coverage/lcov.info",
     "export:live": "npm run export & chokidar src -c \"cls && npm run export\"",
     "eslint:live": "npm run eslint & chokidar src -c \"cls && npm run eslint\"",

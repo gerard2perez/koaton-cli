@@ -11,7 +11,7 @@ if you write `koaton` `koaton -h` in your terminal you will get this output.
 * [seed](#seed)
 * [serve](#serve)
 
-## koaton adapter < driver > [options] <a name="adapter"/>
+## koaton adapter **driver** [options] <a name="adapter"/>
 > Install the especified driver adapter.
 
 *[options]*:
@@ -37,7 +37,7 @@ if you write `koaton` `koaton -h` in your terminal you will get this output.
 -p	--prod	builds for production
 ```
 
-## koaton ember < appName > [options] <a name="ember"/>
+## koaton ember **appName** [options] <a name="ember"/>
 > Creates a new ember app with the especified named.
 
 *[options]*:
@@ -60,7 +60,7 @@ if you write `koaton` `koaton -h` in your terminal you will get this output.
 -h	-h	Show the help for this command
 ```
 
-## koaton model < name > < fields|linkaction > < [destmodel] > < as > < [relationProperty] > < [foreignKey] > [options] <a name="model"/>
+## koaton model **name** **fields|linkaction** **[destmodel]** **as** **[relationProperty]** **[foreignKey]** [options] <a name="model"/>
 > Creates a new model. fields must be sourrounded by ''.
 Fields syntax:
 field_name:type	[ mongoose | mysql | postgres | redis | sqlite3 | couchdb | neo4j | riak | firebird | tingodb | rethinkdb | mongo | couch | mariadb ]
@@ -86,7 +86,7 @@ koaton model User hasmany Phone phones phoneId
 -h	-h	Show the help for this command
 ```
 
-## koaton new < AppName > [options] <a name="new"/>
+## koaton new **AppName** [options] <a name="new"/>
 > Creates a new koaton aplication.
 
 *[options]*:
@@ -107,7 +107,7 @@ koaton model User hasmany Phone phones phoneId
 -g	--generate	create a .conf file for the project
 ```
 
-## koaton seed < model > [options] <a name="seed"/>
+## koaton seed **model** [options] <a name="seed"/>
 > Creates or run seed in your project.
 
 *[options]*:

@@ -3,18 +3,15 @@ if you write `koaton` `koaton -h` in your terminal you will get this output.
 * [adapter](#adapter)
 * [build](#build)
 * [ember](#ember)
-* [forever](#forever)
 * [install](#install)
 * [model](#model)
 * [modulify](#modulify)
 * [new](#new)
 * [nginx](#nginx)
-* [publish](#publish)
 * [seed](#seed)
-* [semver](#semver)
 * [serve](#serve)
 
-## koaton adapter <driver> [options] <a name="adapter"/>
+## koaton adapter < driver > [options] <a name="adapter"/>
 > Install the especified driver adapter.
 
 *[options]*:
@@ -40,7 +37,7 @@ if you write `koaton` `koaton -h` in your terminal you will get this output.
 -p	--prod	builds for production
 ```
 
-## koaton ember <appName> [options] <a name="ember"/>
+## koaton ember < appName > [options] <a name="ember"/>
 > Creates a new ember app with the especified named.
 
 *[options]*:
@@ -55,18 +52,6 @@ if you write `koaton` `koaton -h` in your terminal you will get this output.
 --port	--port <port>	port to build
 ```
 
-## koaton forever [options] <a name="forever"/>
-> Runs your awsome Koaton on production mode with forever.
-
-*[options]*:
-```
--h	-h	Show the help for this command
--l	--list	Lists all Koaton running applicactions.
--o	--logs <app>	Shows the logs for the selected app.
--s	--stop <app>	Stops all the forever running servers.
---port	--port <port>	(Default: 62626) Run on the especified port (port 80 requires sudo).
-```
-
 ## koaton install [options] <a name="install"/>
 > SetUps a recent clonned proyect. (root/Administrator permission needed to work with nginx)
 
@@ -75,7 +60,7 @@ if you write `koaton` `koaton -h` in your terminal you will get this output.
 -h	-h	Show the help for this command
 ```
 
-## koaton model <name> <fields|linkaction> <[destmodel]> <as> <[relationProperty]> <[foreignKey]> [options] <a name="model"/>
+## koaton model < name > < fields|linkaction > < [destmodel] > < as > < [relationProperty] > < [foreignKey] > [options] <a name="model"/>
 > Creates a new model. fields must be sourrounded by ''.
 Fields syntax:
 field_name:type	[ mongoose | mysql | postgres | redis | sqlite3 | couchdb | neo4j | riak | firebird | tingodb | rethinkdb | mongo | couch | mariadb ]
@@ -101,7 +86,7 @@ koaton model User hasmany Phone phones phoneId
 -h	-h	Show the help for this command
 ```
 
-## koaton new <AppName> [options] <a name="new"/>
+## koaton new < AppName > [options] <a name="new"/>
 > Creates a new koaton aplication.
 
 *[options]*:
@@ -122,32 +107,13 @@ koaton model User hasmany Phone phones phoneId
 -g	--generate	create a .conf file for the project
 ```
 
-## koaton publish [options] <a name="publish"/>
-> Take the actions needed to commit and publish a new version of your app.
-
-*[options]*:
-```
--h	-h	Show the help for this command
--t	--tag <tag>	[latest | alpha | beta] Optional taganame to publish on npm
--v	--semver <version>	[major | minor | patch] Select if you want to increse your pakage version
--m	--message <message>	This is the message that would be added to the commit
-```
-
-## koaton seed <model> [options] <a name="seed"/>
+## koaton seed < model > [options] <a name="seed"/>
 > Creates or run seed in your project.
 
 *[options]*:
 ```
 -h	-h	Show the help for this command
 -g	--generate	Generete a seed file for the specified model.
-```
-
-## koaton semver <mode> [options] <a name="semver"/>
-> mode can be major, minor, patch
-
-*[options]*:
-```
--h	-h	Show the help for this command
 ```
 
 ## koaton serve [options] <a name="serve"/>

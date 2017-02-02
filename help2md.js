@@ -12,7 +12,7 @@ for (const command of commands) {
 }
 log();
 for (const command of commands) {
-	const args = command.args.length > 0 ? `<${command.args.join('> <')}>` : '';
+	const args = command.args.length > 0 ? `< ${command.args.join(' > < ')} >` : '';
 	const opts = command.options.length > 0 ? '[options]' : '';
 	log(`## koaton ${command.cmd} ${args} ${opts} <a name="${command.cmd}"/>`.replace(/ +/g, ' '));
 	if (command.description) {

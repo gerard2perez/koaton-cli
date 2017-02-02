@@ -1,4 +1,4 @@
-import * as livereload from 'gulp-livereload';
+import * as livereload from 'gulp-refresh';
 /* istanbul ignore next */
 if (process.env.NODE_ENV === 'development') {
 	livereload.listen({

@@ -1,4 +1,3 @@
-/*global describe, it*/
 import * as assert from 'assert';
 import DataTypes from '../../../src/support/DataTypes';
 
@@ -43,5 +42,4 @@ describe('DataTypes', function () {
 	it('is "of" iterable', function () {
 		assert.equal(!!DataTypes[Symbol.iterator], true);
 	});
-
 });

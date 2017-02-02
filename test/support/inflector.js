@@ -1,4 +1,3 @@
-/*global describe, it*/
 import * as assert from 'assert';
 import * as fs from 'fs-extra';
 
@@ -34,5 +33,4 @@ describe('Inflector', function () {
 		assert.equal('oil', inflector.singularize('oil'), 'singular');
 		assert.equal('oil', inflector.pluralize('oil'), 'plural');
 	});
-
 });

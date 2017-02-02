@@ -4,9 +4,9 @@ import * as co from 'co';
 import * as utils from '../../../src/utils';
 import f from '../../support/fakelog';
 
-describe('challenge', function() {
-	it('returns true', function(done) {
-		co(async function() {
+describe('challenge', function () {
+	it('returns true', function (done) {
+		co(async function () {
 			f.init();
 			let res = await utils.challenge('./test', 'wanna do something', true);
 			f.init(true);
@@ -14,17 +14,17 @@ describe('challenge', function() {
 			done();
 		});
 	});
-	it('returns true', function(done) {
+	it('returns true', function (done) {
 		this.timeout = 10000;
-		co(async function() {
+		co(async function () {
 			f.init();
-			setTimeout(()=>{
+			setTimeout(() => {
 				f.init(true);
-				assert.equal(f.log(),"wanna do something [y/n]: ");
-				done(null,3);
-			},5);
+				assert.equal(f.log(), 'wanna do something [y/n]: ');
+				done(null, 3);
+			}, 5);
 			let res = await utils.challenge('./test', 'wanna do something', false);
 			assert.ok(res);
 		});
 	});
-})
+});

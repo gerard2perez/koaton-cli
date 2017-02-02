@@ -1,5 +1,3 @@
-/*global describe, it*/
-import * as co from 'co';
 import * as assert from 'assert';
 import * as fs from 'fs-extra';
 import * as utils from '../../../src/utils';

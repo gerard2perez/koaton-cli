@@ -1,9 +1,8 @@
-/*global describe, it*/
 import * as assert from 'assert';
 import CommandLog from '../../../src/support/CommandLog';
 
 describe('CommandLog', function () {
-	let liveupdate = {changelog:[]};
+	let liveupdate = {changelog: []};
 	let list = new CommandLog(liveupdate, 'changelog');
 
 	it('adds a command', function () {
@@ -26,5 +25,4 @@ describe('CommandLog', function () {
 		assert.equal(liveupdate.changelog.length, 2);
 		assert.equal(added, 1);
 	});
-
 });

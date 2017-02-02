@@ -2,7 +2,6 @@ import TestNode from '../support/TestNode';
 import ServerConfiguaration from '../../src/support/Server';
 import '../support/array';
 
-
 let tests = [];
 let cmdname = 'koaton install';
 tests.push(new TestNode('(no args)', [undefined, {}], true))

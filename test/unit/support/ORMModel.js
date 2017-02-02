@@ -1,4 +1,3 @@
-/*global describe, it*/
 import * as assert from 'assert';
 import ORMModel from '../../../src/support/ORMModel';
 
@@ -21,6 +20,7 @@ describe('ORMModel', function () {
 	it('throw an exception when missing args', function () {
 		try {
 			let nomodel = new ORMModel('admin');
+			assert.ok(!nomodel);
 		} catch (e) {
 			assert.ok(e);
 		}

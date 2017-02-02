@@ -12,10 +12,8 @@ export default {
 			buffer = [];
 			process.stdout.write = function (...args) {
 				buffer = buffer.concat(args);
-				// buffer = buffer.map(str => str.reset);
 				log(args);
 			};
-
 		}
 	}
 };

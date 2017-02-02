@@ -1,15 +1,14 @@
 import * as os from 'os';
 import * as rawpath from 'path';
 import * as path from 'upath';
-import * as fs from 'fs-extra';
-import { canAccess } from './utils';
+import { existsSync, readdirSync } from 'fs-extra';
 import * as co from 'co';
 
-process.env.isproyect = canAccess('public') &&
-canAccess('app.js') &&
-canAccess('package.json') &&
-canAccess('routes.js') &&
-canAccess('config');
+process.env.isproyect = existsSync('public') &&
+existsSync('app.js') &&
+existsSync('package.json') &&
+existsSync('routes.js') &&
+existsSync('config');
 
 global.ProyPath = function (...args) {
 	args.splice(0, 0, process.cwd());
@@ -45,17 +44,9 @@ global.cleanString = (text) => {
 };
 global.readDir = function (...args) {
 	try {
-		return fs.readdirSync(path.join.apply(path, args));
+		return readdirSync(path.join.apply(path, args));
 	} catch (e) {
 		return [];
-	}
-};
-global.accessSync = function accessSync (dir) {
-	try {
-		fs.accessSync(dir);
-		return true;
-	} catch (e) {
-		return false;
 	}
 };
 const Events = function Events (path, event, phase, forcedir) {

@@ -12,9 +12,7 @@ export default {
 			buffer = [];
 			console.log = function (...args) {
 				buffer = buffer.concat(args);
-				// log(args);
 			};
-
 		}
 	}
 };

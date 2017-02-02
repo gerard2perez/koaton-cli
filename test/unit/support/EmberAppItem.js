@@ -1,4 +1,3 @@
-/*global describe, it*/
 import * as assert from 'assert';
 import EmberAppItem from '../../../src/support/EmberAppItem';
 
@@ -15,7 +14,7 @@ describe('EmberAppItem', function () {
 	});
 
 	it('creates EmberApp with config', function () {
-		App = new EmberAppItem('test', {mount:'/panel'});
+		App = new EmberAppItem('test', {mount: '/panel'});
 		assert.equal(App.name, 'test');
 		assert.equal(App.mount, '/panel');
 		assert.equal(App.directory, '/emberapp');

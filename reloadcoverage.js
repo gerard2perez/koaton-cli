@@ -1,5 +1,5 @@
 const chokidar = require('chokidar');
-const livereload = require('gulp-livereload');
+const livereload = require('gulp-refresh');
 const fs = require('fs-extra');
 const glob = require('glob');
 

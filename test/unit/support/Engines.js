@@ -1,4 +1,3 @@
-/*global describe, it*/
 import * as assert from 'assert';
 import Engines from '../../../src/support/Engines';
 
@@ -18,6 +17,4 @@ describe('Engines', function () {
 	it('is "of" iterable', function () {
 		assert.equal(!!Engines[Symbol.iterator], true);
 	});
-
-
 });

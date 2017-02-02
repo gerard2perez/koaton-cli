@@ -40,7 +40,7 @@ export default Promise.promisify(function shell (display, command, ...args) {
 	});
 	child.stderr.on('data', output);
 	child.stdout.on('data', output);
-	child.on('error', function (err) {
+	child.on('error', function () {
 		c = 1;
 		spinner.end(shelllog);
 	});

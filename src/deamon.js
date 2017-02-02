@@ -74,8 +74,9 @@ export default function StartKoatonServer (resolve, reject, EmberPids) {
 	});
 	let server = LoadServer(resolve, reject, EmberPids);
 	watcher.on('all', (event, path) => {
-		process.kill(server.pid);
-		server = LoadServer(resolve, reject, EmberPids);
+		console.log(`Killing ${server.pid}`);
+		server.kill();
+		// server = LoadServer(resolve, reject, EmberPids);
 	});
 	return server;
 }

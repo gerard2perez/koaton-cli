@@ -3,6 +3,12 @@
 	"version": "1.0.0",
 	"description": "",
 	"main": "app.js",
+  "scripts": {
+    "convert": "koaton-exporter **/*.es6 ./ -e js",
+    "assets":"node ./node_modules/koaton/scripts/build.js",
+    "prestart": "npm run assets",
+    "start": "node app.js"
+  },
 	"keywords": [
     "Koa",
     "MVC",

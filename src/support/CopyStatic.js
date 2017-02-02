@@ -7,6 +7,7 @@ export default function copystatic () {
 	const config = requireNoCache(ProyPath('config', 'static'), {default: {}}).default.copy;
 	let promises = [];
 	for (const bundle of config) {
+		let compiled = false;
 		if (typeof bundle === 'object') {
 			for (const pattern of bundle.src) {
 				for (const file of glob(pattern)) {
@@ -15,14 +16,23 @@ export default function copystatic () {
 						filename = path.basename(file);
 					}
 					fs.ensureDirSync(ProyPath('public', bundle.dest));
-					promises.push(copy(file, ProyPath('public', bundle.dest, filename)));
+					compiled = true;
+					promises.push(copy(file, ProyPath('public', bundle.dest, filename)).catch(() => {
+						console.log(`error: ${file}.`);
+					}));
 				}
 			}
 		} else {
 			for (const file of glob(bundle)) {
+				compiled = true;
 				fs.ensureDirSync(ProyPath('public', path.dirname(file)));
-				promises.push(copy(file, ProyPath('public', file)));
+				promises.push(copy(file, ProyPath('public', file)).catch(() => {
+					console.log(`error: ${file}.`);
+				}));
 			}
+		}
+		if (!compiled) {
+			console.log(`Pattern: ${bundle.src} produce no result`);
 		}
 	}
 	return Promise.all(promises).then(() => {

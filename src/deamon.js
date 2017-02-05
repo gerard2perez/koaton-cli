@@ -19,9 +19,7 @@ function LoadServer (resolve, reject, EmberPids) {
 			}));
 		}
 	}
-	let KoatonServer = spawn('node', ['app.js'], {
-		shell: true
-	});
+	let KoatonServer = spawn('node', ['app.js'], { shell: false });
 	KoatonServer.stdout.on('data', (buffer) => {
 		process.stdout.write(buffer);
 		let text = buffer.toString();
@@ -74,9 +72,8 @@ export default function StartKoatonServer (resolve, reject, EmberPids) {
 	});
 	let server = LoadServer(resolve, reject, EmberPids);
 	watcher.on('all', (event, path) => {
-		console.log(`Killing ${server.pid}`);
 		server.kill();
-		// server = LoadServer(resolve, reject, EmberPids);
+		server = LoadServer(resolve, reject, EmberPids);
 	});
 	return server;
 }

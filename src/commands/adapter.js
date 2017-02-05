@@ -1,6 +1,6 @@
 import * as path from 'path';
 import 'colors';
-import Command from '../Command';
+import Command from 'cmd-line/lib/Command';
 import adapters from '../support/Adapters';
 import utils from '../utils';
 const template = '{"driver": "{{driver}}","user": "{{user}}","database": "{{application}}","password": "{{password}}","port": {{port}},"host": "{{host}}","pool": false,"ssl": false}';

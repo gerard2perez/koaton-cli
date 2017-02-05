@@ -46,7 +46,6 @@ export default Promise.promisify(function shell (display, command, ...args) {
 	});
 	child.on('close', function (code) {
 		c = code;
-		const msg = code === 0 ? __ok.green : __nok.red;
-		spinner.end(`+ ${display}\t${msg}`.green);
+		spinner.end(`   ${code === 0 ? __ok.green : __nok.red} ${display}`);
 	});
 });

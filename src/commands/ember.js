@@ -2,7 +2,7 @@ import 'colors';
 import * as path from 'upath';
 import * as buildcmd from './build';
 import utils from '../utils';
-import Command from '../Command';
+import Command from 'cmd-line/lib/Command';
 import * as fs from 'fs-extra';
 
 let emberProyectPath;

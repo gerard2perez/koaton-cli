@@ -4,7 +4,7 @@ import * as fs from 'fs-extra';
 import * as glob from 'glob';
 import * as path from 'upath';
 import utils from '../utils';
-import Command from '../Command';
+import Command from 'cmd-line/lib/Command';
 
 let HelperExample = function (base, file) {
 	return base.replace('file', file);

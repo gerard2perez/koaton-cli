@@ -3,7 +3,7 @@ import adapters from '../support/Adapters';
 import engines from '../support/Engines';
 import welcome from '../welcome';
 import utils from '../utils';
-import Command from '../Command';
+import Command from 'cmd-line/lib/Command';
 import secret from '../secret';
 
 let proypath = '';

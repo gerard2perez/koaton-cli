@@ -1,18 +1,20 @@
 import 'colors';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import datatypes from '../support/Adapters';
+import datatypes from '../support/DataTypes';
 import utils from '../utils';
-import Command from '../Command';
+import Command from 'cmd-line/lib/Command';
 import inflector from '../support/inflector';
 
 let description = `Creates a new model. fields must be sourrounded by ''.
-${'Fields syntax'.yellow}:
-${'field_name'}:${'type'.cyan}	${'[ '.yellow + Object.keys(datatypes).map((c) => {
+       ${'Fields syntax'.yellow}:
+         ${'field_name'}:${'type'.cyan}	${'[ '.yellow + Object.keys(datatypes).map((c) => {
 	return c.toLowerCase().cyan;
 }).join(' | '.yellow) + ' ]'.yellow}
-${'example:'.yellow}
-koaton model User 'active:integer name email password note:text created:date'\n\t\tkoaton model User hasmany Phone as Phones\nkoaton model User hasmany Phone phones phoneId
+       ${'example:'.yellow}
+         koaton model User 'active:integer name email password note:text created:date'
+         koaton model User hasmany Phone as Phones
+         koaton model User hasmany Phone phones phoneId
 `;
 const emberrel = [
 		'',
@@ -25,7 +27,7 @@ const emberrel = [
 		belongsto: 2
 	};
 export default (new Command(__filename, description))
-	.Args('name', 'fields|linkaction', '[destmodel]', 'as', '[relationProperty]', '[foreignKey]')
+	.Args('name', 'fields|linkaction', '?destmodel', '?as', '?relationProperty', '?foreignKey')
 	.Options([
 		['-e', '--ember <app>', 'Generates the model also for the app especified.'],
 		['-f', '--force', 'Deletes the model if exists.'],

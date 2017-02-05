@@ -101,7 +101,7 @@ export default class ServerConfiguaration {
 		return this.dev ? this.localserver.tokenTimeout.dev : this.localserver.tokenTimeout.prod;
 	}
 	get host () {
-		return this.dev ? this.localserver.host.dev : this.localserver.host.prod;
+		return configuration.server.host;
 	}
 	get version () {
 		return this.package.version;

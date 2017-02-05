@@ -1,5 +1,5 @@
 const engines = ['atpl', 'doT', 'dust', 'dustjs-linkedin', 'eco', 'ect', 'ejs', 'haml', 'haml-coffee', 'hamlet', 'handlebars', 'hogan', 'htmling', 'jade', 'jazz', 'jqtpl', 'JUST', 'liquor', 'lodash', 'mote', 'mustache', 'nunjucks', 'QEJS', 'ractive', 'react', 'slm', 'swig', 'templayed', 'twig', 'liquid', 'toffee', 'underscore', 'vash', 'walrus', 'whiskers'];
-const testedEngines = ['handlebars'];
+const testedEngines = ['handlebars', 'nunjucks'];
 
 let avaliablengines = {};
 for (let engine in engines) {

@@ -1,6 +1,6 @@
 import 'colors';
 import * as fs from 'fs-extra';
-import Command from '../Command';
+import Command from 'cmd-line/lib/Command';
 import utils from '../utils';
 import inflector from '../support/inflector';
 

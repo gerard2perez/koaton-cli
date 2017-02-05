@@ -104,8 +104,8 @@ const DetectChanges = function () {
 	};
 async function checkbundles () {
 	spinner.start(50, 'Building Bundles'.green, undefined, process.stdout.columns);
-	await mkdir(ProyPath('public', 'css'), 1);
-	await mkdir(ProyPath('public', 'js'), 1);
+	await mkdir(ProyPath('public', 'css'), null);
+	await mkdir(ProyPath('public', 'js'), null);
 	production = scfg.env === 'production';
 	const bWatcher = new Watch(ProyPath('config', 'bundles.js'), {
 		persistent: true,
@@ -127,7 +127,7 @@ async function checkbundles () {
 			element.Watcher.on('change', rebuild);
 		}
 	}
-	spinner.end('Bundles Built ' + '✓'.green);
+	spinner.end(`   ${__ok.green} Bundles Built`);
 	return true;
 }
 

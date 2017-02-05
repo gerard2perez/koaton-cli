@@ -2,7 +2,7 @@ import * as path from 'upath';
 import 'colors';
 import * as fs from 'fs-extra';
 import utils from '../utils';
-import Command from '../Command';
+import Command from 'cmd-line/lib/Command';
 
 let nginxpath;
 async function getnginxpath () {

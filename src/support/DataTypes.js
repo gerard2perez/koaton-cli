@@ -1,6 +1,7 @@
 import ExtendedStrings from './ExtendedStrings';
 
 let datatypes = new ExtendedStrings('koaton');
+datatypes.add('point', 'ember:string caminte:Point crud:String');
 datatypes.add('number', 'ember:number caminte:Number crud:number');
 datatypes.add('integer', 'ember:number caminte:Integer crud:number');
 datatypes.add('float', 'ember:number caminte:Float crud:number');

@@ -30,9 +30,7 @@ const prebuildember = async function preBuildEmber (application, options) {
 	}
 	let raw = fs.readFileSync(ProyPath('ember', application, 'app', 'adapters', 'application.js'), 'utf-8');
 	var exp = (/host: (.*),?/i).exec(raw);
-	if (raw.indexOf('K:custom-adapter') === -1) {
-		fs.writeFileSync(ProyPath('ember', application, 'app', 'adapters', 'application.js'), raw.replace(exp[1], `'${adapter}'`));
-	}
+	write(ProyPath('ember', application, 'app', 'adapters', 'application.js'), raw.replace(exp[1], `'${adapter}'`));
 	let embercfg = await read(join(emberProyectPath, 'config', 'environment.js'), {
 		encoding: 'utf-8'
 	});
@@ -94,5 +92,6 @@ const postBuildEmber = co.wrap(postbuildember);
 export {
 	postBuildEmber,
 	preBuildEmber,
-	buildEmber
+	buildEmber,
+	getInflections
 };

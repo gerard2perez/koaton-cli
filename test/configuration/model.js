@@ -13,16 +13,16 @@ tests.push(new TestNode('(no args)', [undefined, {}], true))
 		process.env.isproyect = 'true';
 		global.scfg = new ServerConfiguaration();
 	})
-	.Expect('Ask to render help.', '   The command cannot be run this way.\n\tkoaton adapter -h\n   to see help.', (log) => log);
+	.Expect('Ask to render help.', '   The command cannot be run this way.\n\tkoaton model -h\n   to see help.', (log) => log);
 
-tests.push(new TestNode(cmdname, [undefined, {
+tests.push(new TestNode(cmdname, [{
 	H: true
 }], true, true))
 	.Expect('Renders help', true, (log) => {
 		return log.indexOf(cmdname) > -1;
 	});
 
-tests.push(new TestNode(cmdname, ['user', 'name lastname age:number email:email', undefined, undefined, undefined, undefined, {
+tests.push(new TestNode(cmdname, ['user', 'name lastname age:number email:email', {
 	force: true
 }], true, true))
 	.Expect('Updates .koaton', true, (_, project) => {
@@ -37,7 +37,7 @@ tests.push(new TestNode(cmdname, ['user', 'name lastname age:number email:email'
 		model.email.toString() === 'email';
 	});
 
-tests.push(new TestNode(cmdname, ['user', 'name lastname age:number email:email', undefined, undefined, undefined, undefined, {
+tests.push(new TestNode(cmdname, ['user', 'name lastname age:number email:email', {
 	force: true,
 	rest: true
 }], true, true))
@@ -55,7 +55,7 @@ tests.push(new TestNode(cmdname, ['user', 'name lastname age:number email:email'
 		REST;
 	});
 
-tests.push(new TestNode(cmdname, ['user', 'name lastname age:number email:email', undefined, undefined, undefined, undefined, {
+tests.push(new TestNode(cmdname, ['user', 'name lastname age:number email:email', {
 	force: true,
 	ember: 'restapp',
 	rest: true

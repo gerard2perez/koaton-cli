@@ -9,4 +9,5 @@ require('babel-register')({
 	]
 });
 require('./src');
+
 // require('./lib');

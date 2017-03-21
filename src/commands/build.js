@@ -92,7 +92,7 @@ const buildcss = async function buildBundleCSS (target, bundle, development, onl
 				concat.add(basename, content.css, concat.map);
 			}
 		} else if (file.indexOf('.css')) {
-			watchinFiles[index + target] = glob(file);
+			watchinFiles[index + target] = glob(ProyPath(file));
 			if (watchinFiles[index + target].length === 0) {
 				error.push(`${__nok.red}   Pattern ${file} ${'not found'.red}`);
 			}
@@ -204,9 +204,14 @@ async function buildNginx () {
 		hostname: scfg.host,
 		port: scfg.port
 	});
-	for (const idx in configuration.server.subdomains) {
+	let childsubdomains = glob('koaton_modules/**/config/server.js').map((c) => {
+		return require(ProyPath(c)).default.subdomains;
+	});
+	childsubdomains.push(configuration.server.subdomains);
+	let allsubdomains = [].concat.apply([], childsubdomains).filter((f, i, a) => a.indexOf(f) === i);
+	for (const idx in allsubdomains) {
 		nginxConf += utils.compile(serverTemplate, {
-			subdomain: configuration.server.subdomains[idx],
+			subdomain: allsubdomains[idx],
 			hostname: scfg.host,
 			port: scfg.port
 		});

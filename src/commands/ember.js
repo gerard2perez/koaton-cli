@@ -1,6 +1,6 @@
 import 'colors';
 import * as path from 'upath';
-import * as buildcmd from './build';
+import * as buildcmd from '../functions/emberBuilder';
 import utils from '../utils';
 import Command from 'cmd-line/lib/Command';
 import * as fs from 'fs-extra';
@@ -19,7 +19,7 @@ const newproyect = async function newproyect (appName, options) {
 };
 
 export default (new Command(__filename, 'Creates a new ember app with the especified named.'))
-.Args('appName')
+.Args('?appName')
 	.Options([
 		['-l', '--list', 'Shows all the ember apps of the project'],
 		['-f', '--force', 'Overrides the current app.'],
@@ -61,7 +61,6 @@ export default (new Command(__filename, 'Creates a new ember app with the especi
 		} else {
 			options.mount = path.join('/', options.mount || '').replace(/\\/igm, '/');
 			res = await newproyect(appName, options);
-			console.log('END NEW PROJET');
 			res &= !((await utils.mkdir(ProyPath('ember', appName, 'app', 'adapters'))) &&
 				utils.render(TemplatePath('ember_apps', 'adapter.js'), ProyPath('ember', appName, 'app', 'adapters', 'application.js'), {
 					adapter: `http:\\\\${configuration.server.host}:${configuration.server.port}`

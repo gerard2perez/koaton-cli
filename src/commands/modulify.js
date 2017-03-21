@@ -78,7 +78,7 @@ const Dest = function Dest (...args) {
 };
 export default (new Command(__filename, 'Run the needed commands to'))
 	.Action(async function () {
-		await Events('events', 'pre', 'modulify');
+		await Events('pre', 'modulify');
 		fs.emptyDirSync(Dest());
 
 		await utils.mkdir(Dest('commands'));
@@ -109,6 +109,6 @@ export default (new Command(__filename, 'Run the needed commands to'))
 			utils.rmdir(Dest('public', emberAPP, 'crossdomain.xml'));
 			utils.rmdir(Dest('public', emberAPP, 'robots.txt'));
 		});
-
-		await Events('events', 'post', 'modulify', Dest());
+		//
+		await Events('post', 'modulify', Dest());
 	});

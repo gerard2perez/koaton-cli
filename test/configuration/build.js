@@ -18,15 +18,9 @@ const addtoBundle = (data) => {
 let tests = [];
 let cmdname = 'koaton build';
 
-tests.push(new TestNode(cmdname, [undefined, {
-	H: true
-}], true, true))
-	.Expect('Renders help', true, (log) => {
-		return log.indexOf('koaton build') > -1;
-	});
-
 tests.push(new TestNode('(no args)', [{}], true))
 	.SetUp(() => {
+		process.env.NODE_ENV = 'development';
 		fs.removeSync(ProyPath('./.koaton'));
 		global.skipshell = false;
 		process.chdir('testingapp');

@@ -50,37 +50,6 @@ global.readDir = function (...args) {
 		return [];
 	}
 };
-// const Events = function Events (path, event, phase, forcedir) {
-// 	let Path = ProyPath(path);
-// 	let m = requireNoCache(ProyPath(path, `${event}_${phase}`));
-// 	switch (typeof m) {
-// 		case 'undefined':
-// 		case undefined:
-// 		case 'string':
-// 		case 'number':
-// 		case 'object':
-// 			return async function () {
-// 				// do nothing.
-// 			};
-// 		case 'function':
-// 			return async function eventfn () {
-// 				/*eslint no-prototype-builtins:0*/
-// 				try {
-// 					if (m.prototype === undefined || m.prototype.hasOwnProperty('constructor')) {
-// 						m(forcedir || Path);
-// 					} else {
-// 						await m(forcedir || Path);
-// 					}
-// 				} catch (e) {
-// 					console.log(e.stack);
-// 				}
-// 			};
-//
-// 		default:
-// 			return m.bind(null, Path);
-// 	}
-// };
-// global.Events = co.wrap(Events);
 global.Events = (phase, event) => {
 	let promises = [];
 	for (const file of glob(`events/${phase}_${event}.js`).concat(glob(`koaton_modules/**/events/${phase}_${event}.js`))) {

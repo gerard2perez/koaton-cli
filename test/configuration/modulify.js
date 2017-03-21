@@ -5,9 +5,7 @@ import ServerConfiguaration from '../../src/support/Server';
 let tests = [];
 let cmdname = 'koaton modulify';
 
-tests.push(new TestNode(cmdname, [{
-	H: true
-}], true, true))
+tests.push(new TestNode('(no args)', [{}], true))
 	.SetUp(() => {
 		process.chdir('testingapp');
 		process.env.isproyect = 'true';
@@ -15,9 +13,6 @@ tests.push(new TestNode(cmdname, [{
 		requireNoCache(ProyPath('node_modules', 'koaton/lib/support', 'globals'));
 		global.skipshell = true;
 	})
-	.Expect('Renders help', true, log => log.indexOf(cmdname) > -1);
-
-tests.push(new TestNode('(no args)', [{}], true))
 	.Expect('Command Executed', true, () => true)
 	.Exists('koaton_module_package', 'testingapp', 'commands')
 	.Exists('koaton_module_package', 'testingapp', 'routes.js')
@@ -38,7 +33,4 @@ tests.push(new TestNode('(no args)', [{}], true))
 tests.last.CleanUp(() => {
 	process.chdir('..');
 });
-export {
-	tests as config,
-	cmdname as testname
-};
+export { tests as config, cmdname as testname };

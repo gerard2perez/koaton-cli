@@ -6,6 +6,9 @@ import relpath from './relpath';
 
 export default function writeSync (...args) {
 	let [file, content, mode] = args;
+	if (content.indexOf('koaton:static') > -1) {
+		return file;
+	}
 	file = path.normalize(file);
 	try {
 		fs.writeFileSync(file, content);

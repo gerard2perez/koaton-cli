@@ -167,7 +167,29 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 					building.push(preBuildEmber(emberAPP, configuration).then(() => {
 						return serveEmber(emberAPP, embercfg[emberAPP], index).then((result) => {
 							if (typeof result === 'object') {
-								return postBuildEmber(emberAPP, configuration).then(() => {
+								return postBuildEmber(emberAPP, configuration).then((file) => {
+									console.log('IM GONA WATHC', ProyPath('public', configuration.directory, 'index.html'));
+									let watcher = new Watch(ProyPath('public', configuration.directory, 'index.html'), {
+										persistent: true,
+										ignoreInitial: true,
+										alwaysStat: false,
+										awaitWriteFinish: {
+											stabilityThreshold: 1000,
+											pollInterval: 100
+										}
+									});
+									watching.push(watcher);
+									let rebuildview = function () {
+										console.log('rebuildview');
+										postBuildEmber(emberAPP, configuration).then((f) => {
+											console.log(f);
+											livereload.reload();
+										});
+									};
+									watcher
+										.on('change', rebuildview);
+										// .on('unlink', deleted)
+										// .on('add', compress);
 									result.config = embercfg[emberAPP];
 									return result;
 								});
@@ -193,6 +215,7 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 			return Promise.all(building).then((reports) => {
 				console.log('    Ember apps:');
 				for (const report of reports) {
+					report.log = true;
 					console.log(`      ${report.result}`);
 				}
 				screen.line1();

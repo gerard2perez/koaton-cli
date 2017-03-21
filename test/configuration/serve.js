@@ -92,8 +92,10 @@ function wait (time = 100) {
 tests.push(new TestNode('(no args)', [{}], true))
 	.SetUp(() => {
 		process.chdir('testingapp');
+		process.env.NODE_ENV = 'development';
 		process.env.isproyect = 'true';
 		requireUnCached(ProyPath('node_modules', 'koaton/lib/support', 'globals'));
+		requireUnCached(CLIPath('support', 'CheckBundles'));
 		global.scfg = new ServerConfiguaration();
 		scfg.env = 'development';
 		process.env.istesting = true;

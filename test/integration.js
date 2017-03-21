@@ -1,9 +1,12 @@
 import * as assert from 'assert';
 import * as co from 'co';
-import commands from '../src/commands';
+import importindex from '../src/utils/importindex';
 import configuration from './configuration';
 
-const CommandOrder = [].concat(['new', 'adapter', 'ember', 'model', 'nginx', 'install', 'build', 'seed', 'modulify', 'serve']);
+const commands = importindex(ProyPath('/src/commands')).default;
+const CommandOrder = [].concat(['new', 'adapter', 'ember', 'model', 'nginx', 'install', 'build', 'seed', 'modulify'
+// , 'serve'
+]);
 
 const notestcase = function (testname) {
 	describe(testname, () => {
@@ -54,8 +57,8 @@ const testcase = function testcase (TestConfig, cwd, testname, command) {
 										process.kill(pid);
 									}
 								});
-							}, () => {
-								console.log('Mother of GOD WRONG');
+							}, (err) => {
+								console.log(err);
 							});
 						} else {
 							let res = await command.action.apply(null, testdata.args);
@@ -80,9 +83,7 @@ const testcase = function testcase (TestConfig, cwd, testname, command) {
 					if (err) {
 						throw err;
 					}
-				// done();
 				}).then(done, done).catch(done);
-			//
 			});
 		}
 	});

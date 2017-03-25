@@ -69,7 +69,12 @@ const postbuildember = async function postBuildEmber (application, options) {
 					.replace(/="[^=]*?assets/igm, `="/${options.directory}/assets`);
 	};
 	const title = (/<title>(.*)<\/title>/gm).exec(text)[1];
+	let attributes = (/<.*?body(.*)>/g).exec(text)[1];
+	if (attributes) {
+		attributes = `{{#content "bodyatrributes"}}\n\t\t${attributes}\n\t{{/content}}\n`;
+	}
 	text = compile(indextemplate, {
+		bodyatrributes: attributes || '',
 		title: title,
 		layout: options.layout || 'main',
 		path: options.directory,

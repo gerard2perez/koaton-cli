@@ -73,7 +73,13 @@ const postbuildember = async function postBuildEmber (application, options) {
 	if (attributes) {
 		attributes = `{{#content "bodyatrributes"}}\n\t\t${attributes}\n\t{{/content}}\n`;
 	}
+	let body = (/<.*body.*>((.|\r|\n)*)<\/body>/m).exec(text)[1];
+	body.match(scripts).forEach(script => {
+		body = body.replace(script, '');
+	});
+	body = body.trim();
 	text = compile(indextemplate, {
+		body: body,
 		bodyatrributes: attributes || '',
 		title: title,
 		layout: options.layout || 'main',

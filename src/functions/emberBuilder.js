@@ -68,8 +68,9 @@ const postbuildember = async function postBuildEmber (application, options) {
 		return text.match(expresion).join('\n')
 					.replace(/="[^=]*?assets/igm, `="/${options.directory}/assets`);
 	};
+	const title = (/<title>(.*)<\/title>/gm).exec(text)[1];
 	text = compile(indextemplate, {
-		title: options.title || application,
+		title: title,
 		layout: options.layout || 'main',
 		path: options.directory,
 		mount: options.mount,

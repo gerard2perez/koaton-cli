@@ -39,7 +39,7 @@ export default (new Command(__filename, 'helps bind the server to nginx'))
 			});
 		}
 		utils.write(path.join(process.cwd(), `${require(path.join(process.cwd(), 'package.json')).name}.conf`), nginxConf);
-		if (options.copy) {
+		if (options.install) {
 			await copyconf(`${scfg.name}.conf`);
 		}
 	});

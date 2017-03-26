@@ -1,5 +1,7 @@
 import * as spawn from 'cross-spawn';
-import { watch as Watch } from 'chokidar';
+import {
+	watch as Watch
+} from 'chokidar';
 import * as Promise from 'bluebird';
 import * as path from 'path';
 import * as fs from 'fs-extra';
@@ -12,7 +14,10 @@ import WatchFileToCopy from '../support/WatchFileToCopy';
 import CopyStatic from '../support/CopyStatic';
 import deamon from '../deamon';
 import imagecompressor from '../functions/imagecompressor';
-import { postBuildEmber, preBuildEmber } from '../functions/emberBuilder';
+import {
+	postBuildEmber,
+	preBuildEmber
+} from '../functions/emberBuilder';
 
 let watching = [],
 	building = [];
@@ -123,10 +128,10 @@ const deleted = function (file) {
 	};
 export default (new Command(__filename, 'Runs your awsome Koaton applicaction especially for development'))
 	.Options([
-		['-n', '--nginx', 'Copy the project .conf in nginx'],
-		['-s', '--skip-build', ''],
-		['-p', '--production', 'Runs with NODE_ENV = production'],
-		['--port', '--port <port>', 'Run on the especified port (port 80 requires sudo).']
+			['-n', '--nginx', 'Copy the project .conf in nginx'],
+			['-s', '--skip-build', ''],
+			['-p', '--production', 'Runs with NODE_ENV = production'],
+			['--port', '--port <port>', 'Run on the especified port (port 80 requires sudo).']
 	])
 	.Action(async function (options) {
 		process.env.port = options.port || 62626;
@@ -168,8 +173,7 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 						return serveEmber(emberAPP, embercfg[emberAPP], index).then((result) => {
 							if (typeof result === 'object') {
 								return postBuildEmber(emberAPP, configuration).then((file) => {
-									console.log('IM GONA WATHC', ProyPath('public', configuration.directory, 'index.html'));
-									let watcher = new Watch(ProyPath('public', configuration.directory, 'index.html'), {
+									let watcher = new Watch(ProyPath('public', configuration.directory, '**/*'), {
 										persistent: true,
 										ignoreInitial: true,
 										alwaysStat: false,
@@ -186,10 +190,17 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 											livereload.reload();
 										});
 									};
+									let fileSelector = function (file) {
+										if (file.indexOf('index.html') > -1) {
+											rebuildview();
+										} else if (file.indexOf('.css')) {
+											if (file.indexOf('.map') === -1) {
+												livereload.reload(path.basename(file));
+											}
+										}
+									};
 									watcher
-										.on('change', rebuildview);
-										// .on('unlink', deleted)
-										// .on('add', compress);
+										.on('change', fileSelector);
 									result.config = embercfg[emberAPP];
 									return result;
 								});

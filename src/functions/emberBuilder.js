@@ -77,11 +77,10 @@ const postbuildember = async function postBuildEmber (application, options) {
 	body.match(scripts).forEach(script => {
 		body = body.replace(script, '');
 	});
-	body = body.trim();
 	text = compile(indextemplate, {
-		body: body,
+		body: body.trim(),
 		bodyatrributes: attributes || '',
-		title: title,
+		title: title.trim(),
 		layout: options.layout || 'main',
 		path: options.directory,
 		mount: options.mount,

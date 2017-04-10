@@ -5,7 +5,9 @@ import configuration from './configuration';
 
 const commands = importindex(ProyPath('/src/commands')).default;
 const CommandOrder = [].concat([
-	'new', 'adapter', 'ember', 'model', 'nginx', 'install', 'build', 'seed', 'modulify'
+	'new', 'adapter', 'ember', 'model',
+	// 'nginx',
+	'install', 'build', 'seed', 'modulify'
 	// 'serve'
 ]);
 

@@ -30,6 +30,9 @@ const clone = function clone (source) {
 const schema = {
 	hasMany (rel) {
 		return `hasMany ${rel.split('.').join(' ')}`;
+	},
+	manyToMany (rel) {
+		return `manyToMany ${rel.targetModel}`;
 	}
 };
 schema.belongsTo = schema.hasMany;

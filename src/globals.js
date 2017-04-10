@@ -12,6 +12,7 @@ existsSync('routes.js') &&
 existsSync('config');
 
 global.ProyPath = function (...args) {
+	console.log(456, process.cwd());
 	args.splice(0, 0, process.cwd());
 	return path.normalize(path.join.apply(path, args));
 };
@@ -71,10 +72,6 @@ global.requireNoCache = function requireNoCache (lib, defaults) {
 	}
 	delete require.cache[library];
 	return requireSafe(library, defaults);
-};
-global.ProyPath = function (...args) {
-	args.splice(0, 0, process.cwd());
-	return path.normalize(path.join.apply(path, args));
 };
 global.CLIPath = function CLIPath (...args) {
 	args.splice(0, 0, __dirname);

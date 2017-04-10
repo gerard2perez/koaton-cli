@@ -1,7 +1,5 @@
 import * as spawn from 'cross-spawn';
-import {
-	watch as Watch
-} from 'chokidar';
+import { watch as Watch } from 'chokidar';
 import * as Promise from 'bluebird';
 import * as path from 'path';
 import * as fs from 'fs-extra';
@@ -184,9 +182,7 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 									});
 									watching.push(watcher);
 									let rebuildview = function () {
-										console.log('rebuildview');
 										postBuildEmber(emberAPP, configuration).then((f) => {
-											console.log(f);
 											livereload.reload();
 										});
 									};
@@ -194,6 +190,10 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 										if (file.indexOf('index.html') > -1) {
 											rebuildview();
 										} else if (file.indexOf('.css')) {
+											if (file.indexOf('.map') === -1) {
+												livereload.reload(path.basename(file));
+											}
+										} else if (file.indexOf('.js')) {
 											if (file.indexOf('.map') === -1) {
 												livereload.reload(path.basename(file));
 											}

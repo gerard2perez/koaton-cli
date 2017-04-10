@@ -14,7 +14,7 @@ import Command from 'cmd-line/lib/Command';
 import BundleItem from '../support/BundleItem';
 // import spin from '../spinner';
 import * as nginx from '../functions/nginx';
-import buildImages from '../functions/imageCompressor';
+import buildImages from '../functions/imagecompressor';
 
 // const spinner = spin();
 const hasFileName = function (file, content) {

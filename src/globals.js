@@ -12,7 +12,6 @@ existsSync('routes.js') &&
 existsSync('config');
 
 global.ProyPath = function (...args) {
-	console.log(456, process.cwd());
 	args.splice(0, 0, process.cwd());
 	return path.normalize(path.join.apply(path, args));
 };

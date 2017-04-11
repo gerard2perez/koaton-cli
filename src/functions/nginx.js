@@ -7,7 +7,7 @@ async function getnginxpath () {
 		let cmd = 'nginx -t';
 		/* istanbul ignore next */
 		if (process.env.TRAVIS) {
-			return join(process.cwd(), 'etc');
+			return join(process.cwd(), 'etc', '/');
 		}
 		let log = await exec(cmd);
 		log = log.stdout || log.stderr;

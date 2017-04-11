@@ -1,4 +1,5 @@
 import exec from '../utils/exec';
+import {join} from 'upath';
 
 let nginxpath;
 async function getnginxpath () {
@@ -6,7 +7,7 @@ async function getnginxpath () {
 		let cmd = 'nginx -t';
 		/* istanbul ignore next */
 		if (process.env.TRAVIS) {
-			cmd += '-c `pwd`/etc/nginx.conf -p `pwd`/etc/';
+			return join(process.cwd(), 'etc');
 		}
 		let log = await exec(cmd);
 		log = log.stdout || log.stderr;

@@ -1,4 +1,4 @@
-import * as inflecor from 'inflection';
+import * as inflector from 'inflection';
 import * as fs from 'fs-extra';
 
 class TestNode {
@@ -10,7 +10,7 @@ class TestNode {
 			terms = terms.join(' ');
 			let params = typeof args.last === 'object' ? args.last : {};
 			name = ` ${terms}` + Object.keys(params).map((key) => {
-				let newkey = inflecor.dasherize(inflecor.underscore(key));
+				let newkey = inflector.dasherize(inflector.underscore(key));
 				if (typeof params[key] === 'boolean') {
 					return '--' + newkey;
 				} else {

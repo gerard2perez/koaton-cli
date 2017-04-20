@@ -21,6 +21,10 @@ export default (new Command(__filename, 'makes a relation betwen two models\n   
 		['-r', '--rest', 'Makes the model REST enabled.']
 	])
 	.Action(async function (sourcemodel, linkmode, targetmodel, options) {
+		if (!sourcemodel || !targetmodel) {
+			console.log('   The command cannot be run this way.\n\tkoaton relation -h\n   to see help.'.yellow);
+			return 0;
+		}
 		let mode = linkmodes[linkmode.toLowerCase()];
 		if (!mode) {
 			console.log(`Invalid mode selected: ${linkmode.red}\nAvaliable options ${'hasMany, belongsTo'.cyan}.`);

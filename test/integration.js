@@ -5,9 +5,11 @@ import configuration from './configuration';
 
 const commands = importindex(ProyPath('/src/commands')).default;
 const CommandOrder = [].concat([
-	'new', 'adapter', 'ember', 'model',
+	// 'new', 'adapter', 'ember',
+	'model',
+	'relation'
 	// 'nginx',
-	'install', 'build', 'seed', 'modulify'
+	// 'install', 'build', 'seed', 'modulify'
 	// 'serve'
 ]);
 
@@ -43,15 +45,16 @@ const testcase = function testcase (TestConfig, cwd, testname, command) {
 					const WriteO = process.stdout.write;
 					try {
 						let buffer = '';
-						process.stderr.write = () => {
-						};
-						process.stdout.write = () => {
-						};
+						// process.stderr.write = () => {
+						// };
+						// process.stdout.write = () => {
+						// };
 						console.log = (data) => {
-							// ori(data);
+							ori(data);
 							buffer += (data || '').toString();
 						};
 						if (testdata.asyncs) {
+							ori(testdata.args);
 							let res = command.action.apply(null, testdata.args);
 							testdata.expect.splice(0, 1);
 							return res.then((childIPIDs) => {

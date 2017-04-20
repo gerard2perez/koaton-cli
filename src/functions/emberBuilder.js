@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import {join} from 'path';
 
 const getinflections = async function getInflections (appName, show = true) {
-	const inflections = require(join(process.cwd(), 'config', 'inflections.js')),
+	const inflections = require(join(process.cwd(), 'config', 'inflections.js')).default,
 		irregular = (inflections.plural || [])
 		.concat(inflections.singular || [])
 		.concat(inflections.irregular || []),

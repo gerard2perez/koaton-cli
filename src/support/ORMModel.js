@@ -68,6 +68,7 @@ export default class ORMModel {
 				return res.join(' ');
 			}
 		});
+		console.log('+-0-', this._relations);
 	}
 	toCaminte () {
 		let definition = [];

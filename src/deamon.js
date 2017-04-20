@@ -4,7 +4,7 @@ import livereload from './utils/livereload';
 import * as spawn from 'cross-spawn';
 import * as psTree from 'ps-tree';
 
-function LoadServer (resolve, reject, EmberPids) {
+function LoadServer (resolve, reject, EmberPids, nginx) {
 	let PIDPromises = [];
 	if (process.env.istesting) {
 		for (const pid of EmberPids) {
@@ -25,7 +25,7 @@ function LoadServer (resolve, reject, EmberPids) {
 		let text = buffer.toString();
 		let found = text.indexOf('Enviroment') > -1;
 		if (found) {
-			notifier('Koaton', `Serving http://${scfg.hostname}:${scfg.port}`);
+			notifier('Koaton', `Serving http://${scfg.hostname}${nginx ? '' : ':' + scfg.port}`);
 			livereload.reload();
 			if (process.env.istesting) {
 				Promise.all(PIDPromises).then((PIDs) => {
@@ -47,7 +47,7 @@ function LoadServer (resolve, reject, EmberPids) {
 	return KoatonServer;
 }
 
-export default function StartKoatonServer (resolve, reject, EmberPids) {
+export default function StartKoatonServer (resolve, reject, EmberPids, nginx = false) {
 	let watcher = new Watch('./**', {
 		awaitWriteFinish: {
 			stabilityThreshold: 500,
@@ -70,10 +70,10 @@ export default function StartKoatonServer (resolve, reject, EmberPids) {
 			'*.conf'
 		]
 	});
-	let server = LoadServer(resolve, reject, EmberPids);
+	let server = LoadServer(resolve, reject, EmberPids, nginx);
 	watcher.on('all', (event, path) => {
 		server.kill();
-		server = LoadServer(resolve, reject, EmberPids);
+		server = LoadServer(resolve, reject, EmberPids, nginx);
 	});
 	return server;
 }

@@ -7,7 +7,7 @@ export function initialize(/* container, application */) {
 	  inflector.irregular(inflection[0],inflection[1]);
   });
   uncontable.forEach(function(inflection){
-	  inflector.uncontable(inflection);
+	  inflector.uncountable(inflection);
   });
 }
 export default {

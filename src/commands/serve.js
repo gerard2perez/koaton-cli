@@ -12,13 +12,11 @@ import WatchFileToCopy from '../support/WatchFileToCopy';
 import CopyStatic from '../support/CopyStatic';
 import deamon from '../deamon';
 import imagecompressor from '../functions/imagecompressor';
-import {
-	postBuildEmber,
-	preBuildEmber
-} from '../functions/emberBuilder';
+import { postBuildEmber, preBuildEmber } from '../functions/emberBuilder';
 
 let watching = [],
 	building = [];
+let nginxbuilt = false;
 const deleted = function (file) {
 		try {
 			fs.unlinkSync(file.replace('assets', 'public'));
@@ -66,7 +64,7 @@ const deleted = function (file) {
 					console.log(buffer.toString());
 				} else if (buffer.toString().indexOf('Build successful') > -1) {
 					if (cb) {
-						appst.result = `${app.yellow} → http://${scfg.hostname}:${scfg.port}${mount.cyan}`;
+						appst.result = `${app.yellow} → http://${scfg.hostname}${nginxbuilt ? '' : ':' + scfg.port}${mount.cyan}`;
 						appst.pid = ember.pid;
 						cb(null, appst);
 						cb = null;
@@ -143,7 +141,8 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 		if (options.nginx) {
 			const getnginxpath = require('../functions/nginx').getnginxpath;
 			await utils.copy(ProyPath(`${scfg.name}.conf`), path.join(await getnginxpath(), 'enabled_sites', `${scfg.name}.conf`), 1);
-			await utils.shell('Restarting Nginx', ['nginx', '-s', 'reload'], process.cwd());
+			nginxbuilt = await utils.shell('Restarting Nginx', ['nginx', '-s', 'reload'], process.cwd());
+			nginxbuilt = nginxbuilt === 0;
 		}
 		if (options.production === 'development') {
 			await CopyStatic();
@@ -237,7 +236,7 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 		}).then((EmberPids) => {
 			return Events('pre', 'serve').then(() => {
 				return new Promise(function (resolve, reject) {
-					let server = deamon(resolve, reject, EmberPids);
+					let server = deamon(resolve, reject, EmberPids, nginxbuilt);
 					process.once('SIGINT', function () {
 						server.kill();
 						resolve(0);

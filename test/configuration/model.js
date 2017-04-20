@@ -79,7 +79,33 @@ tests.push(new TestNode(cmdname, ['user', 'name lastname age:number email:email'
 		embercontroller === model.toCRUDTable() &&
 		emberemplate === undefined;
 	});
+tests.push(new TestNode(cmdname, ['post', 'date:date tags content', {
+	force: true,
+	rest: true
+}], true, true))
+.Expect('Creates koaton model', true, (_, project) => {
+	let model = ModelManager('post', require(path.join(project, 'models', 'post.js')).default);
+	return model.date.toString() === 'date' &&
+	model.tags.toString() === 'string' &&
+	model.content.toString() === 'string';
+});
+tests.push(new TestNode(cmdname, ['category', 'name', {
+	force: true,
+	rest: true
+}], true, true))
+.Expect('Creates koaton model', true, (_, project) => {
+	let model = ModelManager('category', require(path.join(project, 'models', 'category.js')).default);
+	return model.name.toString() === 'string';
+});
 
+tests.push(new TestNode(cmdname, ['onlyone', 'name', {
+	force: true,
+	rest: true
+}], true, true))
+.Expect('Creates koaton model', true, (_, project) => {
+	let model = ModelManager('onlyone', require(path.join(project, 'models', 'onlyone.js')).default);
+	return model.name.toString() === 'string';
+});
 tests.last.CleanUp(() => {
 	process.chdir('..');
 });

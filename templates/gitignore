@@ -1,4 +1,5 @@
 node_modules/
+koaton_modules/
 bower_components/
 /ember/
 .DS_Store

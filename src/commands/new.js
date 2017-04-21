@@ -42,7 +42,7 @@ const setupAssets = async function setupAssets () {
 };
 const setupOthers = async function setupOthers () {
 	await utils.mkdir(Project('controllers'));
-	await utils.mkdir(Project('locals'));
+	await utils.mkdir(Project('locales'));
 	await utils.mkdir(Project('seeds'));
 	await utils.mkdir(Project('models'));
 	await utils.mkdir(Project('public'));

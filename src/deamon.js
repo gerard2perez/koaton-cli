@@ -64,6 +64,7 @@ export default function StartKoatonServer (resolve, reject, EmberPids, nginx = f
 			'commands',
 			'koaton_modules',
 			'views',
+			'downloads',
 			'config/bundles.js',
 			'*.tmp',
 			'*.json',

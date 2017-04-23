@@ -26,33 +26,27 @@ tests.push(new TestNode(cmdname, ['user', 'hasOne', 'onlyone', {
 	force: true
 }], true, true))
 	.Expect('Creates koaton relation on user model', true, (_, project) => {
-		let model1 = ModelManager('user', requireNoCache(path.join(project, 'models', 'user.js')).default);
-		let model2 = ModelManager('onlyone', requireNoCache(path.join(project, 'models', 'onlyone.js')).default);
-		console.log(model1.toMeta());
-		console.log(model2.toMeta());
-		return false;
+		let model = ModelManager('user', requireNoCache(path.join(project, 'models', 'user.js')).default).toMeta();
+		return model.relations.onlyone === 'belongsTo onlyone onlyoneId';
+	})
+	.Expect('Onlyone is not modified', true, (_, project) => {
+		let model = ModelManager('onlyone', requireNoCache(path.join(project, 'models', 'onlyone.js')).default).toMeta();
+		return Object.keys(model.relations).length === 1 && model.relations.user !== undefined;
+		// return model.relations.onlyone === 'belongsTo onlyone onlyoneId';
 	});
 tests.push(new TestNode(cmdname, ['user', 'hasMany', 'post', {
 	force: true
 }], true, true))
-	.Expect('Creates koaton relation on user model', true, (_, project) => {
-		let model = ModelManager('user', requireNoCache(path.join(project, 'models', 'user.js')).default);
-		// console.log(model.toCaminte());
-		// console.log(model.toEmberModel());
-		// console.log(model.toCRUDTable());
-		// console.log(model.toMeta());
-		return false;
-		// return model.name.toString() === 'string' &&
-		// model.lastname.toString() === 'string' &&
-		// model.age.toString() === 'number' &&
-		// model.email.toString() === 'email';
+	.Expect('user model has many posts', true, (_, project) => {
+		let model = ModelManager('user', requireNoCache(path.join(project, 'models', 'user.js')).default).toMeta();
+		return model.relations.onlyone === 'belongsTo onlyone onlyoneId' && model.relations.posts === 'hasMany post postId';
 	});
-tests.push(new TestNode(cmdname, ['user', 'hasMany', 'post', {
+tests.push(new TestNode(cmdname, ['user', 'belongsTo', 'onlyone', {
 	force: true
 }], true, true))
-	.Expect('Creates koaton relation on user model', true, (_, project) => {
-		let model = ModelManager('user', requireNoCache(path.join(project, 'models', 'user.js')).default);
-		return false;
+	.Expect('add a single relation to onlyone -> user', true, (_, project) => {
+		let model = ModelManager('onlyone', requireNoCache(path.join(project, 'models', 'onlyone.js')).default).toMeta();
+		return model.relations.user === 'belongsTo user userId';
 	});
 
 tests.last.CleanUp(() => {

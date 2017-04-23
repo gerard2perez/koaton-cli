@@ -70,6 +70,7 @@ const postbuildember = async function postBuildEmber (application, options) {
 	};
 	const title = (/<title>(.*)<\/title>/gm).exec(text)[1];
 	let attributes = (/<.*?body(.*)>/g).exec(text)[1];
+	/* istanbul ignore else */
 	if (attributes) {
 		attributes = `{{#content "bodyatrributes"}}\n\t\t${attributes}\n\t{{/content}}\n`;
 	}
@@ -79,9 +80,9 @@ const postbuildember = async function postBuildEmber (application, options) {
 	});
 	text = compile(indextemplate, {
 		body: body.trim(),
-		bodyatrributes: attributes || '',
+		bodyatrributes: attributes || /* istanbul ignore next */'',
 		title: title.trim(),
-		layout: options.layout || 'main',
+		layout: options.layout || /* istanbul ignore next */'main',
 		path: options.directory,
 		mount: options.mount,
 		app_name: application,

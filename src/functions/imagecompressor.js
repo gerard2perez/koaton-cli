@@ -21,7 +21,7 @@ export default function buildImages () {
 	const spinner = spin();
 	spinner.start(50, 'Compressing Images', undefined, process.stdout.columns);
 	let subforlders = glob(ProyPath('assets', 'img', '**', '/')); // .map((f) => path.join(f, '*.{jpg,png}'));
-	let all = [];
+	let all = [0];
 	for (const folder of subforlders) {
 		all.push(compressImages([join(folder, '*.{jpg,png}')], join('public', folder.replace(ProyPath('assets'), ''))));
 	}

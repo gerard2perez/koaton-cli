@@ -11,12 +11,12 @@ exports.default = {
 	username: 'username',
 	password: 'password',
 	strategies: {
-		local: {
+		/* local: {
 			package: 'passport-local',
 			identifier: 'local',
 			options: {
 				session: true
 			}
-		}
+		}*/
 	}
 };

@@ -4,7 +4,8 @@ import persistmodel from '../functions/persistmodel';
 
 let linkmodes = {
 	'hasmany': 'hasmany',
-	'belongsto': 'belongsto'
+	'belongsto': 'belongsto',
+	'hasone': 'hasone'
 };
 let emberrel = {
 	'hasmany': 'hasMany',
@@ -29,6 +30,17 @@ export default (new Command(__filename, 'makes a relation betwen two models\n   
 		if (!mode) {
 			console.log(`Invalid mode selected: ${linkmode.red}\nAvaliable options ${'hasMany, belongsTo'.cyan}.`);
 			return 501;
+		}
+		switch (mode) {
+			case 'belongsto':
+				let tmp = sourcemodel;
+				sourcemodel = targetmodel;
+				targetmodel = tmp;
+				mode = 'belongsto';
+				break;
+			case 'hasone':
+				mode = 'belongsto';
+				break;
 		}
 		let relationProperty = options.relationProperty || mode === linkmodes.hasmany ? inflector.pluralize(targetmodel) : targetmodel;
 		let foreignKey = options.foreignKey || inflector.singularize(targetmodel) + 'Id';

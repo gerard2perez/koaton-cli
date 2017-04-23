@@ -27,6 +27,7 @@ const hasFileName = function (file, content) {
 };
 
 const buildcss = async function buildBundleCSS (target, bundle, development, onlypaths, logger) {
+	console.log('-------------------------------------------------------', ProyPath());
 	let error = [];
 	process.stdout.write(`Building ${target} `);
 	let start = process.hrtime();
@@ -51,6 +52,11 @@ const buildcss = async function buildBundleCSS (target, bundle, development, onl
 		let file = path.normalize(bundle.content[index]),
 			basename = path.basename(file);
 		if (file.indexOf('.less') > -1) {
+			console.log();
+			console.log();
+			console.log(123, file);
+			console.log(ProyPath(file));
+			console.log('-------------------------------------------------------', ProyPath());
 			let content = await less.render(fs.readFileSync(file, 'utf-8'), {
 				plugins: [cleanCSSPlugin],
 				filename: file,
@@ -257,17 +263,6 @@ async function buildBundles () {
 		}
 	}
 }
-// async function buildImages () {
-// 	spinner.start(50, 'Compressing Images', undefined, process.stdout.columns);
-// 	let subforlders = glob(ProyPath('assets', 'img', '**', '/')); // .map((f) => path.join(f, '*.{jpg,png}'));
-// 	let all = [];
-// 	for (const folder of subforlders) {
-// 		all.push(imageCompressor([path.join(folder, '*.{jpg,png}')], path.join('public', folder.replace(ProyPath('assets'), ''))));
-// 	}
-// 	return Promise.all(all).then((res) => {
-// 		spinner.end(`   ${__ok.green} (${res.reduce((a, b) => a + b)}) Images Compressed`);
-// 	});
-// }
 export default (new Command(
 	__filename,
 	'Bulds whatever your system needs to build. (bundles, nginxConf, emberapps)'))

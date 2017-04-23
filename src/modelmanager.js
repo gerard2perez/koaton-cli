@@ -28,6 +28,9 @@ const clone = function clone (source) {
 	return dest;
 };
 const schema = {
+	belongsTo (rel) {
+		return `belongsTo ${rel.split('.').join(' ')}`;
+	},
 	hasMany (rel) {
 		return `hasMany ${rel.split('.').join(' ')}`;
 	},
@@ -35,7 +38,6 @@ const schema = {
 		return `manyToMany ${rel.targetModel}`;
 	}
 };
-schema.belongsTo = schema.hasMany;
 export default (...args) => {
 	let [name, fields, relations = {}, models = {}] = args;
 	if (typeof fields === 'function') {

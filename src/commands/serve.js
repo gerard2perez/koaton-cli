@@ -80,18 +80,17 @@ const deleted = function (file) {
 			});
 		})(app, cfg.mount);
 	},
+	/* istanbul ignore next */
 	buildHosts = function buildHosts () {
 		const os = require('os');
 
 		let subdomains = configuration.server;
 		let hostname = subdomains.host;
 		subdomains = subdomains.subdomains;
-		/* istanbul ignore else */
 		if (subdomains.indexOf('www') === -1) {
 			subdomains.push('www');
 		}
 		let hostsdlocation = '';
-		/* istanbul ignore next */
 		switch (os.platform()) {
 			case 'darwin':
 				hostsdlocation = '/private/etc/hosts';
@@ -107,6 +106,7 @@ const deleted = function (file) {
 				break;
 
 		}
+		/* istanbul ignore else */
 		if (hostsdlocation !== '') {
 			let changed = false;
 			let hostsd = fs.readFileSync(hostsdlocation, 'utf-8');
@@ -130,20 +130,23 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 			['--port', '--port <port>', 'Run on the especified port (port 80 requires sudo).']
 	])
 	.Action(async function (options) {
-		process.env.port = options.port || 62626;
+		process.env.port = options.port || configuration.server.port;
 		options.production = options.production ? 'production' : 'development';
 		process.env.NODE_ENV = options.production;
 		const embercfg = configuration.ember;
+		/* istanbul ignore else */
 		if (options.production === 'development') {
 			buildHosts();
 		}
 		screen.start();
+		/* istanbul ignore else */
 		if (options.nginx) {
 			const getnginxpath = require('../functions/nginx').getnginxpath;
 			await utils.copy(ProyPath(`${scfg.name}.conf`), path.join(await getnginxpath(), 'enabled_sites', `${scfg.name}.conf`), 1);
 			nginxbuilt = await utils.shell('Restarting Nginx', ['nginx', '-s', 'reload'], process.cwd());
 			nginxbuilt = nginxbuilt === 0;
 		}
+		/* istanbul ignore else */
 		if (options.production === 'development') {
 			await CopyStatic();
 			await CheckBundles();
@@ -237,6 +240,7 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 			return Events('pre', 'serve').then(() => {
 				return new Promise(function (resolve, reject) {
 					let server = deamon(resolve, reject, EmberPids, nginxbuilt);
+					/* istanbul ignore next */
 					process.once('SIGINT', function () {
 						server.kill();
 						resolve(0);

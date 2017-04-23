@@ -119,7 +119,6 @@
       "src/welcome.js",
       "src/deamon.js",
       "src/utils/deamon.js",
-      "src/commands/serve.js",
       "src/commands/relation.js",
       "src/commands/nginx.js",
       "src/functions/nginx.js"

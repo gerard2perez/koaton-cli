@@ -15,7 +15,7 @@ function fail () {
 	failed++;
 }
 
-export default function copystatic () {
+export default async function copystatic () {
 	const config = requireNoCache(ProyPath('config', 'static'), {default: {}}).default.copy;
 	let promises = [];
 	for (const bundle of config) {
@@ -43,7 +43,10 @@ export default function copystatic () {
 			console.log(`Pattern: ${bundle.src} produce no result`);
 		}
 	}
+	// TODO: I just don't know why this get reset, but this is a temporal fix.
+	const oripath = process.cwd();
 	return Promise.all(promises).then(() => {
+		process.chdir(oripath);
 		console.log(`   ${__ok.green} Static Files [${success.toString().green} files copied. ${failed.toString().red} files failed.]`);
 		// console.log(`    -> Static Files Copied ${__ok.green}`);
 	});

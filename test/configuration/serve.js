@@ -72,9 +72,9 @@ let tests = [];
 let cmdname = 'koaton serve';
 function touch (...args) {
 	fs.closeSync(fs.openSync(ProyPath(...args), 'a'));
-	return wait(300);
+	return wait(3000);
 }
-function wait (time = 100) {
+function wait ( time = 100 ) {
 	return new Promise((resolve) => {
 		setTimeout(() => {
 			console.log('resolve wait promise');
@@ -103,6 +103,10 @@ tests.push(new TestNode('(no args)', [{}], true))
 			path.join(process.cwd(), '..', 'templates', 'public', 'img', 'koaton.png'),
 			path.join(process.cwd(), 'assets', 'img', 'showcase.png')
 		);
+		fs.copySync(
+			path.join(process.cwd(), '..', 'test', 'templates', 'ember_index.html'),
+			path.join(process.cwd(), 'ember', 'restapp', 'app', 'index.html')
+		);
 		fs.emptyDir(path.join(process.cwd(), 'public', 'img'));
 		fs.writeFileSync(path.join(process.cwd(), 'config', 'static.js'), defaultstatiFile);
 	})
@@ -111,6 +115,22 @@ tests.push(new TestNode('(no args)', [{}], true))
 		return touch('config', 'static.js');
 	});
 tests.last.asyncs = true;
+// tests.push(new TestNode(cmdname, [{
+// 	// nginx: true,
+// 	// skipBuild: true,
+// 	// port: 5000
+// }], true))
+// 	.SetUp(() => {
+// 		process.env.NODE_ENV = 'development';
+// 		process.env.isproyect = 'true';
+// 		scfg.env = 'development';
+// 		process.env.istesting = true;
+// 	})
+// 	.Expect('Touches a static.js', true, function () {
+// 		fs.writeFileSync(path.join(process.cwd(), 'config', 'static.js'), staticfile);
+// 		return touch('config', 'static.js');
+// 	});
+// tests.last.asyncs = true;
 tests.last.CleanUp(() => {
 	process.chdir('..');
 });

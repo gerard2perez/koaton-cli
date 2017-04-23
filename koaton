@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 process.env.NODE_ENV = process.argv.indexOf('-p') > -1 || process.argv.indexOf('--production') > -1 ? 'production' : 'development';
 process.env.port = parseInt(process.argv[process.argv.indexOf('--port') + 1], 10) || 62626;
-require('babel-register')({
-	babelrc: false,
-	plugins: [
-		'babel-plugin-transform-koaton-es6-modules',
-		'babel-plugin-transform-koa2-async-to-generator'
-	]
-});
-require('./src');
+// require('babel-register')({
+// 	babelrc: false,
+// 	plugins: [
+// 		'babel-plugin-transform-koaton-es6-modules',
+// 		'babel-plugin-transform-koa2-async-to-generator'
+// 	]
+// });
+// require('./src');
 
-// require('./lib');
+require('./lib');

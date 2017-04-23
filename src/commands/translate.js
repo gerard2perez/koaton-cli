@@ -30,6 +30,7 @@ export default (new Command(__filename, 'Translate your localization files'))
 			return 0;
 		}
 		const GET = require('../functions/get').default;
+		/* istanbul ignore next */
 		async function translate (text, from, to) {
 			let r;
 			r = JSON.parse(await GET(`http://api.mymemory.translated.net/get?q=${encodeURI(text)}&langpair=${from}|${to}`, null, null));
@@ -48,11 +49,7 @@ export default (new Command(__filename, 'Translate your localization files'))
 		let translation = fs.readJSONSync(ProyPath(configuration.server.localization.directory, `${from}.js`));
 		let newLang = {};
 		for (const key of Object.keys(translation)) {
-			try {
-				newLang[key] = await translate(translation[key], from, to);
-			} catch (ex) {
-				console.log(ex);
-			}
+			newLang[key] = await translate(translation[key], from, to);
 		}
 		fs.writeFileSync(ProyPath(configuration.server.localization.directory, `${to}.js`), JSON.stringify(newLang, 4, 4));
 	});

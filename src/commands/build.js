@@ -52,11 +52,6 @@ const buildcss = async function buildBundleCSS (target, bundle, development, onl
 		let file = path.normalize(bundle.content[index]),
 			basename = path.basename(file);
 		if (file.indexOf('.less') > -1) {
-			console.log();
-			console.log();
-			console.log(123, file);
-			console.log(ProyPath(file));
-			console.log('-------------------------------------------------------', ProyPath());
 			let content = await less.render(fs.readFileSync(file, 'utf-8'), {
 				plugins: [cleanCSSPlugin],
 				filename: file,

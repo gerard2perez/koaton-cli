@@ -9,7 +9,9 @@ export default function loadmodules (dir) {
 			let module = require(path.join(dir, name));
 			mods[name] = module.default ? module.default : module;
 		} catch (ex) {
+			/* istanbul ignore next */
 			console.log(ex);
+			/* istanbul ignore next */
 			process.exit(1);
 		}
 	}

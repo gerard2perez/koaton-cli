@@ -1,9 +1,9 @@
-import * as path from 'upath';
-import * as fs from 'fs-extra';
+import * as path from 'path';
 import TestNode from '../support/TestNode';
 import '../support/array';
 import ModelManager from '../../src/modelmanager';
 import ServerConfiguaration from '../../src/support/Server';
+import requireNoCache from '../support/custom_require';
 
 let tests = [];
 let cmdname = 'koaton relation';
@@ -26,13 +26,12 @@ tests.push(new TestNode(cmdname, ['user', 'hasOne', 'onlyone', {
 	force: true
 }], true, true))
 	.Expect('Creates koaton relation on user model', true, (_, project) => {
-		let model = ModelManager('user', requireNoCache(path.join(project, 'models', 'user.js')).default).toMeta();
+		let model = ModelManager('user', requireNoCache(path.join('models', 'user.js')).default).toMeta();
 		return model.relations.onlyone === 'belongsTo onlyone onlyoneId';
 	})
 	.Expect('Onlyone is not modified', true, (_, project) => {
-		let model = ModelManager('onlyone', requireNoCache(path.join(project, 'models', 'onlyone.js')).default).toMeta();
-		return Object.keys(model.relations).length === 1 && model.relations.user !== undefined;
-		// return model.relations.onlyone === 'belongsTo onlyone onlyoneId';
+		let model = ModelManager('onlyone', requireNoCache(path.join('models', 'onlyone.js')).default).toMeta();
+		return Object.keys(model.relations).length === 0 && model.relations.user === undefined;
 	});
 tests.push(new TestNode(cmdname, ['user', 'hasMany', 'post', {
 	force: true

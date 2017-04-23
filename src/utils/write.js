@@ -6,6 +6,7 @@ import relpath from './relpath';
 
 export default function writeSync (...args) {
 	let [file, content, mode] = args;
+	/* istanbul ignore next */
 	if (content.indexOf('koaton:static') > -1) {
 		return file;
 	}

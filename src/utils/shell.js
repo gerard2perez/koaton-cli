@@ -8,6 +8,7 @@ const spinner = spin();
 export default Promise.promisify(function shell (display, command, ...args) {
 	let [cwd, cb] = args;
 	let shelllog = '';
+	/* istanbul ignore next */
 	if (cb === undefined) {
 		cb = cwd;
 		cwd = process.cwd();
@@ -40,6 +41,7 @@ export default Promise.promisify(function shell (display, command, ...args) {
 	});
 	child.stderr.on('data', output);
 	child.stdout.on('data', output);
+	/* istanbul ignore next */
 	child.on('error', function () {
 		c = 1;
 		spinner.end(shelllog);

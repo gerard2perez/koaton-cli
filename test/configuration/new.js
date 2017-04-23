@@ -36,7 +36,7 @@ tests.push(new TestNode('koaton new', ['testingapp', {
 	.Exists('testingapp', 'controllers')
 	.Exists('testingapp', 'ember')
 	.Exists('testingapp', 'models')
-	.Exists('testingapp', 'locals')
+	.Exists('testingapp', 'locales')
 	.Exists('testingapp', 'public')
 	.Exists('testingapp', 'seeds')
 	.Exists('testingapp', 'views', 'layouts', 'main.handlebars')

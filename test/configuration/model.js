@@ -11,7 +11,18 @@ tests.push(new TestNode('(no args)', [undefined, {}], true))
 	.SetUp(() => {
 		process.chdir('testingapp');
 		process.env.isproyect = 'true';
+		fs.removeSync(ProyPath('models', 'category.js'));
+		fs.removeSync(ProyPath('models', 'onlyone.js'));
+		fs.removeSync(ProyPath('models', 'post.js'));
+		fs.removeSync(ProyPath('models', 'user.js'));
+		fs.removeSync(ProyPath('.koaton'));
 		global.scfg = new ServerConfiguaration();
+		// scfg.database = {};
+		for (const lib of Object.keys(require.cache)) {
+			if (lib.indexOf('user.js') > -1) {
+				delete require.cache[lib];
+			}
+		}
 	})
 	.Expect('Ask to render help.', '   The command cannot be run this way.\n\tkoaton model -h\n   to see help.', (log) => log);
 

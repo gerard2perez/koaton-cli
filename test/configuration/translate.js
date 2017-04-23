@@ -2,7 +2,7 @@ import * as fs from 'fs-extra';
 import TestNode from '../support/TestNode';
 import ServerConfiguaration from '../../src/support/Server';
 import '../support/array';
-import langs from '../../src/support/languages';
+import langs from '../../src/support/Languages';
 
 let tests = [];
 let cmdname = 'koaton translate';

@@ -1,7 +1,7 @@
 import 'colors';
 import Command from 'cmd-line/lib/Command';
 import * as fs from 'fs-extra';
-import lang from '../support/languages';
+import lang from '../support/Languages';
 
 export default (new Command(__filename, 'Translate your localization files'))
 	.Args('?to', '?from')

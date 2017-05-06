@@ -11,7 +11,7 @@ import CheckBundles from '../support/CheckBundles';
 import WatchFileToCopy from '../support/WatchFileToCopy';
 import CopyStatic from '../support/CopyStatic';
 import deamon from '../deamon';
-import imagecompressor from '../functions/imagecompressor';
+import { imagecompressor, buildAllImages } from '../functions/imagecompressor';
 import { postBuildEmber, preBuildEmber } from '../functions/emberBuilder';
 
 let watching = [],
@@ -26,6 +26,7 @@ const deleted = function (file) {
 		livereload.reload(file);
 	},
 	compress = function (file) {
+		console.log(file);
 		imagecompressor([file], file.replace(path.basename(file), '').replace('assets', 'public')).then(() => {
 			livereload.reload(file);
 		});
@@ -45,7 +46,7 @@ const deleted = function (file) {
 			.on('change', compress)
 			.on('unlink', deleted)
 			.on('add', compress);
-		return imagecompressor();
+		return buildAllImages();
 	},
 	serveEmber = function (app, cfg, index) {
 		return Promise.promisify((...args) => {

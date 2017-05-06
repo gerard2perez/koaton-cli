@@ -2,7 +2,8 @@ import { sync as glob } from 'glob';
 import spin from '../spinner';
 import {join} from 'path';
 
-function compressImages (files, dest) {
+export function imagecompressor (files, dest) {
+	console.log(files);
 	const imagemin = require('imagemin'),
 		imageminMozjpeg = require('imagemin-mozjpeg'),
 		imageminPngquant = require('imagemin-pngquant');
@@ -17,13 +18,13 @@ function compressImages (files, dest) {
 	}).then((files) => files.length);
 }
 
-export default function buildImages () {
+export function buildAllImages () {
 	const spinner = spin();
 	spinner.start(50, 'Compressing Images', undefined, process.stdout.columns);
 	let subforlders = glob(ProyPath('assets', 'img', '**', '/')); // .map((f) => path.join(f, '*.{jpg,png}'));
 	let all = [0];
 	for (const folder of subforlders) {
-		all.push(compressImages([join(folder, '*.{jpg,png}')], join('public', folder.replace(ProyPath('assets'), ''))));
+		all.push(imagecompressor([join(folder, '*.{jpg,png}')], join('public', folder.replace(ProyPath('assets'), ''))));
 	}
 	return Promise.all(all).then((res) => {
 		spinner.end(`   ${__ok.green} (${res.reduce((a, b) => a + b)}) Images Compressed`);

@@ -48,7 +48,8 @@ export default (new Command(__filename, 'Translate your localization files'))
 		}
 		let translation = fs.readJSONSync(ProyPath(configuration.server.localization.directory, `${from}.js`));
 		let newLang = {};
-		for (const key of Object.keys(translation)) {
+		let keys = Object.keys(translation);
+		for (const key of keys) {
 			newLang[key] = await translate(translation[key], from, to);
 		}
 		fs.writeFileSync(ProyPath(configuration.server.localization.directory, `${to}.js`), JSON.stringify(newLang, 4, 4));

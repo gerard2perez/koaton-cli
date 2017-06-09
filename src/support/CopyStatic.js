@@ -22,13 +22,21 @@ export default async function copystatic () {
 		let compiled = false;
 		if (typeof bundle === 'object') {
 			for (const pattern of bundle.src) {
+				let originalnodes = pattern.split('/');
 				for (const file of glob(pattern)) {
 					let filename = file;
+					filename = path.basename(file);
 					if (bundle.flatten) {
-						filename = path.basename(file);
+						fs.ensureDirSync(ProyPath('public', bundle.dest));
+					} else {
+						let targetnodes = file.split('/');
+						let filtered = originalnodes.filter(n => targetnodes.indexOf(n) > -1).join('/');
+						filtered = path.dirname(file).replace(filtered, '');
+						fs.ensureDirSync(ProyPath('public', bundle.dest, filtered));
+						filename = path.join(filtered, filename);
 					}
-					fs.ensureDirSync(ProyPath('public', bundle.dest));
 					compiled = true;
+					// console.log(ProyPath('public', bundle.dest, filename));
 					promises.push(copy(file, ProyPath('public', bundle.dest, filename)).then(done, fail).catch(fail));
 				}
 			}

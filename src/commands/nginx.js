@@ -33,6 +33,7 @@ export default (new Command(__filename, 'helps bind the server to nginx'))
 		const subdomains = require(`${process.cwd()}/config/server`).subdomains;
 		for (const idx in subdomains) {
 			nginxConf += utils.compile(serverTemplate, {
+				client_max_body_size: configuration.server.client_max_body_size || '1MB',
 				subdomain: subdomains[idx],
 				hostname: scfg.host,
 				port: scfg.port

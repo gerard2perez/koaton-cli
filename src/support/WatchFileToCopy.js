@@ -2,6 +2,7 @@ import {watch as Watch} from 'chokidar';
 import * as co from 'co';
 
 const DetectChanges = function () {
+	console.log(arguments);
 	co(async function () {
 		await require('./CopyStatic').default();
 	});

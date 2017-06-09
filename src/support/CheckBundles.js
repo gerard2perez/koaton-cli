@@ -38,6 +38,7 @@ const DetectChanges = function () {
 					} else if (differences.isnew) {
 						await getMapping(newconf[branch]);
 						console.log(`Watching ${branch}`);
+						console.log(differences.added);
 					} else {
 						BundleMappings[branch].Watcher.unWatch(differences.removed);
 						BundleMappings[branch].Watcher.add(differences.added);

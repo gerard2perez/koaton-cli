@@ -3,7 +3,6 @@ import spin from '../spinner';
 import {join} from 'path';
 
 export function imagecompressor (files, dest) {
-	console.log(files);
 	const imagemin = require('imagemin'),
 		imageminMozjpeg = require('imagemin-mozjpeg'),
 		imageminPngquant = require('imagemin-pngquant');

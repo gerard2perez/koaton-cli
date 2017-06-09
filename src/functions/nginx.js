@@ -10,7 +10,7 @@ async function getnginxpath () {
 			return join(process.cwd(), '..', 'etc', '/');
 		}
 		let log = await exec(cmd);
-		log = log.stdout || log.stderr;
+		log = log.stdout || log.stderr || log.toString();
 		if (log === undefined) {
 			throw new Error('Err! are you sure nginx is running and well configured.'.red);
 		}

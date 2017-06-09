@@ -44,6 +44,13 @@ function LoadServer (resolve, reject, EmberPids, nginx) {
 			}
 		}
 	});
+	KoatonServer.stderr.on('data', (data) => {
+		console.log(`stderr: ${data}`);
+	});
+
+	KoatonServer.on('close', (code) => {
+		console.log(`child process exited with code ${code}`);
+	});
 	return KoatonServer;
 }
 

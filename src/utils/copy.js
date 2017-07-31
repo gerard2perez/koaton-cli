@@ -1,4 +1,3 @@
-import * as Promise from 'bluebird';
 import { readFile } from 'fs-extra';
 import { extname } from 'upath';
 import write from './write';
@@ -17,8 +16,8 @@ function encoding (ext) {
 
 export default function copy (...args) {
 	let [from, to, mode] = args;
-	return Promise.promisify(readFile)(from, {
+	return readFile(from, {
 		encoding: encoding(extname(from))
 	})
-		.then(data => write(to, data, mode));
+	.then(data => write(to, data, mode));
 }

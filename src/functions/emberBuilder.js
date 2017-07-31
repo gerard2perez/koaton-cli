@@ -25,8 +25,9 @@ const prebuildember = async function preBuildEmber (application, options) {
 	await mkdir(ProyPath('ember', application, 'app', 'adapters'), -1);
 	await getInflections(application, options.show);
 	let adapter = configuration.ember[application].adapter;
+	let protocol = configuration.server.https ? 'https' : 'http';
 	if (adapter.indexOf('http://') !== 0) {
-		adapter = 'http://' + adapter;
+		adapter = adapter || `${protocol}:\\\\${configuration.server.host}:${configuration.server.port}`;
 	}
 	let raw = fs.readFileSync(ProyPath('ember', application, 'app', 'adapters', 'application.js'), 'utf-8');
 	var exp = (/host: (.*),?/i).exec(raw);

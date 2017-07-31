@@ -1,7 +1,9 @@
-'use strict';
-
 exports.default = (subdomains) => {
-	let {www} = subdomains;
-	www.get('/')
-		.get('/login');
+	let { www } = subdomains;
+	www.get('/', async function (ctx) {
+			await ctx.render('index.html');
+		})
+		.get('/login', async function (ctx) {
+			await ctx.render('login.html');
+		});
 };

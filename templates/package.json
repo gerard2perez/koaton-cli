@@ -18,7 +18,7 @@
 	"author": "",
 	"license": "",
 	"dependencies": {
-		"koaton":"^1.4.0"
+		"koaton":"^2.0.2"
 	},
   "config": {
      "commitizen": {
@@ -26,13 +26,13 @@
      }
    },
 	"devDependencies": {
-	    "commitizen": "^2.8.6",
-	    "cz-conventional-changelog": "^1.2.0",
-	    "eslint": "^3.12.2",
-	    "eslint-config-happiness": "^5.3.1",
-	    "eslint-plugin-promise": "^3.4.0",
-	    "eslint-plugin-standard": "^2.0.1",
-	    "koaton-exporter": "^1.2.0",
-	    "semantic-release": "^6.3.2"
+	    "commitizen": "^2.9.6",
+	    "cz-conventional-changelog": "^2.0.0",
+	    "eslint": "^4.3.0",
+	    "eslint-config-happiness": "^10.2.1",
+	    "eslint-plugin-promise": "^3.5.0",
+	    "eslint-plugin-standard": "^3.0.1",
+	    "koaton-exporter": "^1.3.0",
+	    "semantic-release": "^6.3.6"
 	  }
 }

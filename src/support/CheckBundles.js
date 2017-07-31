@@ -14,6 +14,7 @@ import { hasChanged, getDiferences } from './DetectChangesInArray';
 const spinner = spin();
 let BundleMappings = {}, production;
 const DetectChanges = function () {
+		console.log(arguments);
 		co(async function () {
 			const newconf = requireNoCache(ProyPath('config', 'bundles.js')).default;
 			for (const bundle of Object.keys(newconf)) {

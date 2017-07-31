@@ -24,19 +24,29 @@ export default (new Command(__filename, 'helps bind the server to nginx'))
 			console.log(`   ${'updated'.cyan}: nginx.conf`);
 			await utils.mkdir(nginxpath + 'enabled_sites');
 		}
+		let ssl = '';
+		if (configuration.server.https) {
+			ssl = `\n\tlisten 443 ssl;\n\tssl on;\n\tssl_certificate ${configuration.server.https.cert};\n\tssl_certificate_key ${configuration.server.https.key};\n\tssl_protocols TLSv1 TLSv1.1 TLSv1.2;\n\tssl_prefer_server_ciphers on;`;
+			if (configuration.server.https.dhparam) {
+				ssl += `\n\tssl_dhparam ${configuration.server.https.dhparam};`;
+			}
+		}
 		let serverTemplate = await utils.read(TemplatePath('subdomain.conf'), 'utf-8');
 		let nginxConf = await utils.read(TemplatePath('server.conf'), 'utf-8');
 		nginxConf = utils.compile(nginxConf, {
 			hostname: scfg.host,
-			port: scfg.port
+			port: scfg.port,
+			protocol: configuration.server.https ? 'https' : 'http'
 		});
-		const subdomains = require(`${process.cwd()}/config/server`).subdomains;
+		const subdomains = configuration.server.subdomains;
 		for (const idx in subdomains) {
 			nginxConf += utils.compile(serverTemplate, {
-				client_max_body_size: configuration.server.client_max_body_size || '1MB',
+				ssl: ssl,
+				client_max_body_size: configuration.server.client_max_body_size || '1m',
 				subdomain: subdomains[idx],
 				hostname: scfg.host,
-				port: scfg.port
+				port: scfg.port,
+				protocol: configuration.server.https ? 'https' : 'http'
 			});
 		}
 		utils.write(path.join(process.cwd(), `${require(path.join(process.cwd(), 'package.json')).name}.conf`), nginxConf);

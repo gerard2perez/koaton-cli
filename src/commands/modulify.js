@@ -1,5 +1,4 @@
 import 'colors';
-import * as Promise from 'bluebird';
 import * as fs from 'fs-extra';
 import * as glob from 'glob';
 import * as path from 'upath';

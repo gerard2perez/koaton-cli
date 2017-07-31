@@ -1,11 +1,10 @@
 import * as spawn from 'cross-spawn';
 import { watch as Watch } from 'chokidar';
-import * as Promise from 'bluebird';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import screen from '../welcome';
 import Command from 'cmd-line/lib/Command';
-import utils from '../utils';
+import { write, copy, shell } from '../utils';
 import livereload from '../utils/livereload';
 import CheckBundles from '../support/CheckBundles';
 import WatchFileToCopy from '../support/WatchFileToCopy';
@@ -49,8 +48,8 @@ const deleted = function (file) {
 		return buildAllImages();
 	},
 	serveEmber = function (app, cfg, index) {
-		return Promise.promisify((...args) => {
-			let [app, mount, cb] = args;
+		return new Promise(function (resolve) {
+			let mount = cfg.mount;
 			let appst = {
 				log: false,
 				result: ''
@@ -64,22 +63,16 @@ const deleted = function (file) {
 				if (appst.log) {
 					console.log(buffer.toString());
 				} else if (buffer.toString().indexOf('Build successful') > -1) {
-					if (cb) {
-						appst.result = `${app.yellow} → http://${scfg.hostname}${nginxbuilt ? '' : ':' + scfg.port}${mount.cyan}`;
-						appst.pid = ember.pid;
-						cb(null, appst);
-						cb = null;
-					}
+					appst.result = `${app.yellow} → http://${scfg.hostname}${nginxbuilt ? '' : ':' + scfg.port}${mount.cyan}`;
+					appst.pid = ember.pid;
+					resolve(appst);
 				}
 			});
 			ember.stderr.on('data', (buffer) => {
 				console.log(buffer.toString());
-				if (cb) {
-					cb(null, `${app.yellow} ${'✗'.red} build failed.`);
-					cb = null;
-				}
+				resolve(`${app.yellow} ${'✗'.red} build failed.`);
 			});
-		})(app, cfg.mount);
+		});
 	},
 	/* istanbul ignore next */
 	buildHosts = function buildHosts () {
@@ -119,7 +112,7 @@ const deleted = function (file) {
 				}
 			}
 			if (changed) {
-				utils.write(hostsdlocation, hostsd.replace(/\n+/igm, '\n'), true);
+				write(hostsdlocation, hostsd.replace(/\n+/igm, '\n'), true);
 			}
 		}
 	};
@@ -143,8 +136,8 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 		/* istanbul ignore else */
 		if (options.nginx) {
 			const getnginxpath = require('../functions/nginx').getnginxpath;
-			await utils.copy(ProyPath(`${scfg.name}.conf`), path.join(await getnginxpath(), 'enabled_sites', `${scfg.name}.conf`), 1);
-			nginxbuilt = await utils.shell('Restarting Nginx', ['nginx', '-s', 'reload'], process.cwd());
+			await copy(ProyPath(`${scfg.name}.conf`), path.join(await getnginxpath(), 'enabled_sites', `${scfg.name}.conf`), 1);
+			nginxbuilt = await shell('Restarting Nginx', ['nginx', '-s', 'reload'], process.cwd());
 			nginxbuilt = nginxbuilt === 0;
 		}
 		/* istanbul ignore else */

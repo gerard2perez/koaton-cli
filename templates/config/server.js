@@ -2,6 +2,20 @@
 
 exports.default = {
 	name: 'koaton',
+	client_max_body_size: '1M',
+	bodyParser: {
+		formLimit: '1mb'
+	},
+	hhtps: {
+		dev: {
+			key: undefined,
+			cert: undefined
+		},
+		prod: {
+			key: undefined,
+			cert: undefined
+		}
+	},
 	database: {
 		relationsMode: 'ids',
 		connection: 'mongo'
@@ -22,12 +36,10 @@ exports.default = {
 	port: process.env.port || 62626,
 	bodyParser: {},
 	error: {
-		view: 'error/error',
-		layout: 'layouts/error',
-		custom: {
-			401: 'error/401',
-			403: 'error/403',
-			404: 'error/404'
+		layout: 'error.handlebars',
+		data: {
+			support_email: 'gerard2perez@outlook.com',
+			description: 'Oops! - looks like something went completely wrong.'
 		}
 	},
 	localization: {

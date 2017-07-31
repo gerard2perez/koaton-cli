@@ -5,6 +5,7 @@ import * as spawn from 'cross-spawn';
 import * as psTree from 'ps-tree';
 
 function LoadServer (resolve, reject, EmberPids, nginx) {
+	console.log(nginx);
 	let PIDPromises = [];
 	if (process.env.istesting) {
 		for (const pid of EmberPids) {

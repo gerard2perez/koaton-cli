@@ -61,9 +61,11 @@ export default (new Command(__filename, 'Creates a new ember app with the especi
 		} else {
 			options.mount = path.join('/', options.mount || '').replace(/\\/igm, '/');
 			res = await newproyect(appName, options);
+			let protocol = configuration.server.https ? 'https' : 'http';
+			const emberconfiguration = require(ProyPath('config', 'ember'))[appName];
 			res &= !((await utils.mkdir(ProyPath('ember', appName, 'app', 'adapters'))) &&
 				utils.render(TemplatePath('ember_apps', 'adapter.js'), ProyPath('ember', appName, 'app', 'adapters', 'application.js'), {
-					adapter: `http:\\\\${configuration.server.host}:${configuration.server.port}`
+					adapter: emberconfiguration.adapter || `${protocol}:\\\\${configuration.server.host}:${configuration.server.port}`
 				}));
 			let emberConf = Object.assign({}, configuration.ember);
 			emberConf[appName] = {

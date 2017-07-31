@@ -8,13 +8,12 @@ import { sync as glob } from 'glob';
 import * as co from 'co';
 import copystatic from '../support/CopyStatic';
 import {postBuildEmber, preBuildEmber, buildEmber} from '../functions/emberBuilder';
-import * as Promise from 'bluebird';
 import utils from '../utils';
 import Command from 'cmd-line/lib/Command';
 import BundleItem from '../support/BundleItem';
 // import spin from '../spinner';
 import * as nginx from '../functions/nginx';
-import buildImages from '../functions/imagecompressor';
+import { buildAllImages } from '../functions/imagecompressor';
 
 // const spinner = spin();
 const hasFileName = function (file, content) {
@@ -26,7 +25,7 @@ const hasFileName = function (file, content) {
 	return basename + '_' + hash + ext;
 };
 
-const buildcss = async function buildBundleCSS (target, bundle, development, onlypaths, logger) {
+async function buildCSS (target, bundle, development, onlypaths, logger) {
 	console.log('-------------------------------------------------------', ProyPath());
 	let error = [];
 	process.stdout.write(`Building ${target} `);
@@ -36,7 +35,7 @@ const buildcss = async function buildBundleCSS (target, bundle, development, onl
 
 	utils.writeuseslog = logger;
 	const less = require('less'),
-		sass = Promise.promisify(require('node-sass').render),
+		sass = require('node-sass').renderSync,
 		CssImporter = require('node-sass-css-importer')(),
 		LessPluginCleanCSS = require('less-plugin-clean-css');
 
@@ -45,6 +44,7 @@ const buildcss = async function buildBundleCSS (target, bundle, development, onl
 			advanced: true
 		}),
 		watchinFiles = {};
+	let urlocurrencies = [];
 	for (let index in bundle.content) {
 		if (!development) {
 			utils.rmdir(path.join('public', 'css', index + target));
@@ -63,6 +63,7 @@ const buildcss = async function buildBundleCSS (target, bundle, development, onl
 					sourceMapRootpath: '/' + basename
 				}
 			});
+			urlocurrencies = urlocurrencies.concat(content.css.toString().match(/url\(.*\)[ |;]/igm));
 			if (development) {
 				watchinFiles[index + target] = content.imports;
 				watchinFiles[index + target].push(file);
@@ -83,6 +84,7 @@ const buildcss = async function buildBundleCSS (target, bundle, development, onl
 				file: file,
 				importer: [CssImporter]
 			});
+			urlocurrencies = urlocurrencies.concat(content.css.toString().match(/url\(.*\)[ |;]/igm));
 			if (development) {
 				watchinFiles[index + target] = content.stats.includedFiles;
 				if (!onlypaths) {
@@ -103,6 +105,8 @@ const buildcss = async function buildBundleCSS (target, bundle, development, onl
 					concatCSS.add(target, fs.readFileSync(url));
 				}
 			}
+			// console.log(concatCSS.content.toString().match(/url\(.*\)[ |;]/igm) );
+			urlocurrencies = urlocurrencies.concat(concatCSS.content.toString().match(/url\(.*\)[ |;]/igm));
 			if (development && !onlypaths) {
 				utils.write(ProyPath('public', 'css', index + target), concatCSS.content, 'utf-8', true);
 				ITEM.add(`/css/${index + target}`);
@@ -112,14 +116,17 @@ const buildcss = async function buildBundleCSS (target, bundle, development, onl
 		}
 		scfg.bundles.remove(ITEM).add(ITEM);
 	}
+	// console.log(urlocurrencies.filter(u => {
+	// 	return u && (u.indexOf('.png') > -1 || u.indexOf('.jpg') > -1 || u.indexOf('.jpeg') > -1);
+	// }));
 	if (!onlypaths) {
 		if (!development) {
 			const file = hasFileName(target, concat.content.toString());
 			utils.write(
 				path.join('public', 'css', file),
 				concat.content.toString(), 'utf-8', true);
-
 			ITEM.clear().add(`/css/${file}`);
+			scfg.bundles.remove(ITEM).add(ITEM);
 		}
 	}
 	utils.writeuseslog = undefined;
@@ -129,7 +136,7 @@ const buildcss = async function buildBundleCSS (target, bundle, development, onl
 		console.log(error.join('\n'));
 	}
 	return watchinFiles;
-};
+}
 const buildjs = function buildJS (target, bundle, development, onlypaths, logger) {
 	let error = [];
 	return new Promise(function (resolve) {
@@ -183,13 +190,9 @@ const buildjs = function buildJS (target, bundle, development, onlypaths, logger
 	});
 };
 
-const buildCSS = co.wrap(buildcss);
 const buildJS = co.wrap(buildjs);
 
-export {
-	buildCSS,
-	buildJS
-};
+export { buildCSS, buildJS };
 async function buildNginx () {
 	let nginxpath = await nginx.getnginxpath();
 	let conf = fs.readFileSync(nginxpath + 'nginx.conf', 'utf-8');
@@ -280,7 +283,7 @@ export default (new Command(
 			await buildApps();
 		}
 		if (options.images || options.all) {
-			await buildImages();
+			await buildAllImages();
 		}
 		if (options.static || options.all) {
 			await copystatic();

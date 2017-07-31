@@ -16,7 +16,7 @@ global.ProyPath = function (...args) {
 	return path.normalize(path.join.apply(path, args));
 };
 if (process.env.isproyect === 'true') {
-	require(ProyPath('node_modules', 'koaton/lib/support', 'globals'));
+	require(ProyPath('node_modules', 'koaton/support', 'globals'));
 }
 global.skipshell = false;
 global.__ok = os.platform() === 'win32' ? '√' : '✓';

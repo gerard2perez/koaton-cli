@@ -10,7 +10,7 @@ import utils from '../utils';
 import Command from 'cmd-line/lib/Command';
 import BundleItem from '../support/BundleItem';
 // import spin from '../spinner';
-import * as nginx from '../functions/nginx';
+import { buildNginx } from '../utils/nginx';
 import { buildAllImages } from '../functions/imagecompressor';
 import EmberBuilder from '../support/EmberBuilder';
 
@@ -199,49 +199,6 @@ async function buildJS (target, bundle, development, onlypaths, logger) {
 };
 
 export { buildCSS, buildJS };
-async function buildNginx () {
-	let nginxpath = await nginx.getnginxpath();
-	let conf = fs.readFileSync(nginxpath + 'nginx.conf', 'utf-8');
-	if (conf.indexOf('include enabled_sites/*') === -1) {
-		conf = conf.replace(/http ?\{/igm, 'http {\n\tinclude enabled_sites/*.conf;');
-		fs.writeFileSync(nginxpath + 'nginx.conf', conf);
-		console.log(`   ${'updated'.cyan}: nginx.conf`);
-		await utils.mkdir(nginxpath + 'enabled_sites');
-	}
-	let serverTemplate = fs.readFileSync(TemplatePath('subdomain.conf'), 'utf-8');
-	let nginxConf = fs.readFileSync(TemplatePath('server.conf'), 'utf-8');
-
-	let listen = '';
-	if (configuration.server.https && configuration.server.https.key) {
-		listen = `listen 443 ssl;\n\tssl on;\n\tssl_certificate ${configuration.server.https.cert};\n\tssl_certificate_key ${configuration.server.https.key};\n\tssl_protocols TLSv1 TLSv1.1 TLSv1.2;\n\tssl_prefer_server_ciphers on;`;
-		if (configuration.server.https.dhparam) {
-			listen += `\n\tssl_dhparam ${configuration.server.https.dhparam};`;
-		}
-	}
-
-	nginxConf = utils.compile(nginxConf, {
-		hostname: scfg.host,
-		port: scfg.port,
-		protocol: listen ? 'https' : 'http'
-	});
-	let childsubdomains = glob('koaton_modules/**/config/server.js').map((c) => {
-		return require(ProyPath(c)).default.subdomains;
-	});
-	childsubdomains.push(configuration.server.subdomains);
-	let allsubdomains = [].concat.apply([], childsubdomains).filter((f, i, a) => a.indexOf(f) === i);
-	for (const idx in allsubdomains) {
-		nginxConf += utils.compile(serverTemplate, {
-			subdomain: allsubdomains[idx],
-			hostname: scfg.host,
-			port: scfg.port,
-			listen: listen || 'listen 80',
-			client_max_body_size: (configuration.server.client_max_body_size || '1M'),
-			protocol: listen ? 'https' : 'http'
-		});
-	}
-	let res = utils.write(ProyPath(`${scfg.name}.conf`), nginxConf);
-	console.log(`   ${res !== null ? __ok.green : __nok.red} Built ${scfg.name}.conf`);
-}
 async function buildApps () {
 	if (Object.keys(configuration.ember).length === 0) return 0;
 	await Events('pre', 'ember_build');

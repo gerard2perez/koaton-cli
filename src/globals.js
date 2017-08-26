@@ -49,12 +49,10 @@ global.readDir = function (...args) {
 		return [];
 	}
 };
-global.Events = (phase, event) => {
-	let promises = [];
+global.Events = async (phase, event) => {
 	for (const file of glob(`events/${phase}_${event}.js`).concat(glob(`koaton_modules/**/events/${phase}_${event}.js`))) {
-		promises.push(require(path.resolve(file)).default)(ProyPath());
+		await require(path.resolve(file)).default(ProyPath());
 	}
-	return Promise.all(promises);
 };
 global.requireSafe = function requireSafe (lib, defaults) {
 	try {

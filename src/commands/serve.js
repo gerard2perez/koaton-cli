@@ -118,34 +118,31 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 			await WactchAndCompressImages();
 		}
 		await Events('pre', 'build');
-		return Events('pre', 'ember_build').then(() => {
-			let buildingAppsEmber = Object.entries(embercfg).map(([app, cfg]) => (new EmberBuilder(app, 'development', cfg)));
-			screen.line1(true);
-			// const building = spinner();
-			// building.start(100, `Building ${buildingAppsEmber.map(e => e.name).join(', ').green}`, undefined, process.stdout.columns);
-			return Promise.all(buildingAppsEmber.map(e => e.serve(nginxbuilt))).then((reports) => {
-				// building.end('    Ember apps:');
-				for (const report of reports) {
-					report.log = true;
-					console.log(`      ${report.result}`);
-				}
-				screen.line1();
-				buildingAppsEmber.map(e => e.createWatcher((file) => {
-					livereload.reload(file);
-				}));
-				return Events('post', 'ember_build').then(() => {
-					return reports.map((r) => r.pid);
-				});
-			});
-		}).then((EmberPids) => {
-			return Events('pre', 'serve').then(() => {
-				return new Promise(function (resolve, reject) {
-					let server = deamon(resolve, reject, EmberPids, nginxbuilt);
-					/* istanbul ignore next */
-					process.once('SIGINT', function () {
-						server.kill();
-						resolve(0);
-					});
+		await Events('pre', 'ember_build');
+		let buildingAppsEmber = Object.entries(embercfg).map(([app, cfg]) => (new EmberBuilder(app, 'development', cfg)));
+		screen.line1(true);
+		// const building = spinner();
+		// building.start(100, `Building ${buildingAppsEmber.map(e => e.name).join(', ').green}`, undefined, process.stdout.columns);
+		let EmberPids = await Promise.all(buildingAppsEmber.map(e => e.serve(nginxbuilt))).then((reports) => {
+			// building.end('    Ember apps:');
+			for (const report of reports) {
+				report.log = true;
+				console.log(`      ${report.result}`);
+			}
+			screen.line1();
+			buildingAppsEmber.map(e => e.createWatcher((file) => {
+				livereload.reload(file);
+			}));
+			return reports.map((r) => r.pid);
+		});
+		await Events('post', 'ember_build');
+		return Events('pre', 'serve').then(() => {
+			return new Promise(function (resolve, reject) {
+				let server = deamon(resolve, reject, EmberPids, nginxbuilt);
+				/* istanbul ignore next */
+				process.once('SIGINT', function () {
+					server.kill();
+					resolve(0);
 				});
 			});
 		});

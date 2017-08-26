@@ -18,6 +18,5 @@ export default function copy (...args) {
 	let [from, to, mode] = args;
 	return readFile(from, {
 		encoding: encoding(extname(from))
-	})
-	.then(data => write(to, data, mode));
+	}).then(data => write(to, data, mode));
 }

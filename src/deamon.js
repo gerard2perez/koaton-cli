@@ -26,7 +26,8 @@ function LoadServer (resolve, reject, EmberPids, nginx) {
 		let text = buffer.toString();
 		let found = text.indexOf('Enviroment') > -1;
 		if (found) {
-			notifier('Koaton', `Serving http://${scfg.hostname}${nginx ? '' : ':' + scfg.port}`);
+			let protocol = configuration.server.https && configuration.server.https.cert ? 'https' : 'http';
+			notifier('Koaton', `Serving ${protocol}://${scfg.hostname}${nginx ? '' : ':' + scfg.port}`);
 			livereload.reload();
 			if (process.env.istesting) {
 				Promise.all(PIDPromises).then((PIDs) => {

@@ -10,7 +10,7 @@ import utils from '../utils';
 import Command from 'cmd-line/lib/Command';
 import BundleItem from '../support/BundleItem';
 // import spin from '../spinner';
-import { buildNginx } from '../utils/nginx';
+import { buildNginx } from '../functins/nginx';
 import { buildAllImages } from '../functions/imagecompressor';
 import EmberBuilder from '../support/EmberBuilder';
 

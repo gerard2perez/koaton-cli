@@ -5,7 +5,6 @@ import * as spawn from 'cross-spawn';
 import * as psTree from 'ps-tree';
 
 function LoadServer (resolve, reject, EmberPids, nginx) {
-	console.log(nginx);
 	let PIDPromises = [];
 	if (process.env.istesting) {
 		for (const pid of EmberPids) {
@@ -27,7 +26,7 @@ function LoadServer (resolve, reject, EmberPids, nginx) {
 		let found = text.indexOf('Enviroment') > -1;
 		if (found) {
 			let protocol = configuration.server.https && configuration.server.https.cert ? 'https' : 'http';
-			notifier('Koaton', `Serving ${protocol}://${scfg.hostname}${nginx ? '' : ':' + scfg.port}`);
+			notifier('Koaton', `Serving ${protocol}://${scfg.hostname}${nginx ? '' : ':' + scfg.port}/`);
 			livereload.reload();
 			if (process.env.istesting) {
 				Promise.all(PIDPromises).then((PIDs) => {

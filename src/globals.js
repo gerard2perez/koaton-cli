@@ -2,7 +2,6 @@ import * as os from 'os';
 import * as rawpath from 'path';
 import * as path from 'upath';
 import { existsSync, readdirSync } from 'fs-extra';
-import * as co from 'co';
 import { sync as glob } from 'glob';
 
 process.env.isproyect = existsSync('public') &&
@@ -53,7 +52,7 @@ global.readDir = function (...args) {
 global.Events = (phase, event) => {
 	let promises = [];
 	for (const file of glob(`events/${phase}_${event}.js`).concat(glob(`koaton_modules/**/events/${phase}_${event}.js`))) {
-		promises.push(co.wrap(require(path.resolve(file)).default)(ProyPath()));
+		promises.push(require(path.resolve(file)).default)(ProyPath());
 	}
 	return Promise.all(promises);
 };

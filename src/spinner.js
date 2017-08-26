@@ -1,5 +1,4 @@
 import 'colors';
-import * as co from 'co';
 
 const os = require('os').platform();
 
@@ -12,7 +11,7 @@ const spinners = {
 	'sunos': '⣾⣽⣻⢿⡿⣟⣯⣷',
 	'win32': '|/-\\'
 };
-const spinner = co.wrap(function (...args) {
+const spinner = function (...args) {
 	let [interval, text, extra, size] = args;
 	extra = extra === undefined ? '' : extra;
 	const that = this;
@@ -36,7 +35,7 @@ const spinner = co.wrap(function (...args) {
 			process.stderr.write(spin[current].green.bold + '\t' + that.text + '\t' + that.complent);
 		}, interval);
 	});
-});
+};
 
 class Spin {
 	get printleft () {

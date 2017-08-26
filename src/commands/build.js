@@ -1,19 +1,18 @@
-/*eslint no-div-regex: 0*/
+/* eslint no-div-regex: 0 */
 import * as path from 'upath';
 import * as crypto from 'crypto';
 import * as fs from 'fs-extra';
 import * as uglify from 'uglify-js';
 import * as Concat from 'concat-with-sourcemaps';
 import { sync as glob } from 'glob';
-import * as co from 'co';
 import copystatic from '../support/CopyStatic';
-import {postBuildEmber, preBuildEmber, buildEmber} from '../functions/emberBuilder';
 import utils from '../utils';
 import Command from 'cmd-line/lib/Command';
 import BundleItem from '../support/BundleItem';
 // import spin from '../spinner';
 import * as nginx from '../functions/nginx';
 import { buildAllImages } from '../functions/imagecompressor';
+import EmberBuilder from '../support/EmberBuilder';
 
 // const spinner = spin();
 const hasFileName = function (file, content) {
@@ -26,19 +25,23 @@ const hasFileName = function (file, content) {
 };
 
 async function buildCSS (target, bundle, development, onlypaths, logger) {
-	console.log('-------------------------------------------------------', ProyPath());
 	let error = [];
 	process.stdout.write(`Building ${target} `);
 	let start = process.hrtime();
 	const ITEM = scfg.bundles[target] || new BundleItem(target, []);
 	ITEM.clear();
-
 	utils.writeuseslog = logger;
 	const less = require('less'),
-		sass = require('node-sass').renderSync,
+		sass = function (options) {
+			return new Promise(function (resolve, reject) {
+				require('node-sass').render(options, function (err, result) {
+					if (err) reject(err);
+					resolve(result);
+				});
+			});
+		},
 		CssImporter = require('node-sass-css-importer')(),
 		LessPluginCleanCSS = require('less-plugin-clean-css');
-
 	const concat = new Concat(true, path.join('css', target + '.map'), '\n'),
 		cleanCSSPlugin = new LessPluginCleanCSS({
 			advanced: true
@@ -105,7 +108,6 @@ async function buildCSS (target, bundle, development, onlypaths, logger) {
 					concatCSS.add(target, fs.readFileSync(url));
 				}
 			}
-			// console.log(concatCSS.content.toString().match(/url\(.*\)[ |;]/igm) );
 			urlocurrencies = urlocurrencies.concat(concatCSS.content.toString().match(/url\(.*\)[ |;]/igm));
 			if (development && !onlypaths) {
 				utils.write(ProyPath('public', 'css', index + target), concatCSS.content, 'utf-8', true);
@@ -116,9 +118,6 @@ async function buildCSS (target, bundle, development, onlypaths, logger) {
 		}
 		scfg.bundles.remove(ITEM).add(ITEM);
 	}
-	// console.log(urlocurrencies.filter(u => {
-	// 	return u && (u.indexOf('.png') > -1 || u.indexOf('.jpg') > -1 || u.indexOf('.jpeg') > -1);
-	// }));
 	if (!onlypaths) {
 		if (!development) {
 			const file = hasFileName(target, concat.content.toString());
@@ -131,66 +130,73 @@ async function buildCSS (target, bundle, development, onlypaths, logger) {
 	}
 	utils.writeuseslog = undefined;
 	let [seconds, nanoseconds] = process.hrtime(start);
-	console.log(`${(seconds * 1000) + Math.ceil(nanoseconds / 1e6)} ms`);
+	process.stdout.clearLine();
+	process.stdout.cursorTo(0);
+	console.log(`   ${__ok.green} ${target} ${(seconds * 1000) + Math.ceil(nanoseconds / 1e6)} ms`);
 	if (error.length > 0) {
 		console.log(error.join('\n'));
 	}
 	return watchinFiles;
 }
-const buildjs = function buildJS (target, bundle, development, onlypaths, logger) {
+async function buildJS (target, bundle, development, onlypaths, logger) {
 	let error = [];
-	return new Promise(function (resolve) {
-		process.stdout.write(`Building ${target} `);
-		let start = process.hrtime();
-		const ITEM = scfg.bundles[target] || new BundleItem(target, []);
-		ITEM.clear();
-		utils.writeuseslog = logger;
-		let AllFiles = [];
-		for (const pattern of bundle) {
-			let bundle = glob(ProyPath(pattern));
-			if (bundle.length === 0) {
-				error.push(`${__nok.red}   Pattern ${pattern} ${'not found'.red}`);
-			}
-			AllFiles = AllFiles.concat(bundle);
+	process.stdout.write(`Building ${target} `);
+	let start = process.hrtime();
+	const ITEM = scfg.bundles[target] || new BundleItem(target, []);
+	ITEM.clear();
+	utils.writeuseslog = logger;
+	let AllFiles = [];
+	for (const pattern of bundle) {
+		let bundle = glob(ProyPath(pattern));
+		if (bundle.length === 0) {
+			error.push(`${__nok.red}   Pattern ${pattern} ${'not found'.red}`);
 		}
-		process.stdout.write(`(${AllFiles.length} files) `);
-		if (onlypaths) {
-			return AllFiles;
+		AllFiles = AllFiles.concat(bundle);
+	}
+	process.stdout.write(`(${AllFiles.length} files) `);
+	if (onlypaths) {
+		return AllFiles;
+	}
+	let readfiles = {};
+	for (const file of AllFiles) {
+		readfiles[path.basename(file)] = fs.readFileSync(file, 'utf-8');
+	}
+	let result = uglify.minify(readfiles, {
+		mangle: false,
+		sourceMap: onlypaths ? false : {
+			url: ' /js/' + target + '.map'
+		},
+		// outSourceMap: onlypaths ? false : ' /js/' + target + '.map',
+		// sourceMapIncludeSources: onlypaths ? false : development,
+		// sourceRoot: '/' + path.changeExt(target, '.min.js'),
+		compress: {
+			dead_code: true,
+			sequences: true,
+			unused: true
 		}
-		let result = uglify.minify(AllFiles, {
-			mangle: false,
-			outSourceMap: onlypaths ? false : ' /js/' + target + '.map',
-			sourceMapIncludeSources: onlypaths ? false : development,
-			sourceRoot: '/' + path.changeExt(target, '.min.js'),
-			compress: {
-				dead_code: true,
-				sequences: true,
-				unused: true
-			}
-		});
-		if (!onlypaths) {
-			const file = development ? path.changeExt(target, '.min.js') : hasFileName(target, result.code.toString());
-			utils.write(path.join('public', 'js', file), result.code, {
-				encoding: 'utf-8'
-			}, true);
-			if (development) {
-				fs.writeFileSync(path.join('public', 'js', target + '.map'), result.map, 'utf8');
-			}
-
-			ITEM.add('/js/' + file);
-		}
-		utils.writeuseslog = undefined;
-		scfg.bundles.remove(ITEM).add(ITEM);
-		let [seconds, nanoseconds] = process.hrtime(start);
-		console.log(`${(seconds * 1000) + Math.ceil(nanoseconds / 1e6)} ms`);
-		if (error.length > 0) {
-			console.log(error.join('\n'));
-		}
-		resolve(AllFiles);
 	});
-};
+	if (!onlypaths) {
+		const file = development ? path.changeExt(target, '.min.js') : hasFileName(target, result.code.toString());
+		utils.write(path.join('public', 'js', file), result.code, {
+			encoding: 'utf-8'
+		}, true);
+		if (development) {
+			fs.writeFileSync(path.join('public', 'js', target + '.map'), result.map, 'utf8');
+		}
 
-const buildJS = co.wrap(buildjs);
+		ITEM.add('/js/' + file);
+	}
+	utils.writeuseslog = undefined;
+	scfg.bundles.remove(ITEM).add(ITEM);
+	let [seconds, nanoseconds] = process.hrtime(start);
+	process.stdout.clearLine();
+	process.stdout.cursorTo(0);
+	console.log(`   ${__ok.green} ${target}  ${(seconds * 1000) + Math.ceil(nanoseconds / 1e6)} ms`);
+	if (error.length > 0) {
+		console.log(error.join('\n'));
+	}
+	return AllFiles;
+};
 
 export { buildCSS, buildJS };
 async function buildNginx () {
@@ -204,9 +210,19 @@ async function buildNginx () {
 	}
 	let serverTemplate = fs.readFileSync(TemplatePath('subdomain.conf'), 'utf-8');
 	let nginxConf = fs.readFileSync(TemplatePath('server.conf'), 'utf-8');
+
+	let listen = '';
+	if (configuration.server.https && configuration.server.https.key) {
+		listen = `listen 443 ssl;\n\tssl on;\n\tssl_certificate ${configuration.server.https.cert};\n\tssl_certificate_key ${configuration.server.https.key};\n\tssl_protocols TLSv1 TLSv1.1 TLSv1.2;\n\tssl_prefer_server_ciphers on;`;
+		if (configuration.server.https.dhparam) {
+			listen += `\n\tssl_dhparam ${configuration.server.https.dhparam};`;
+		}
+	}
+
 	nginxConf = utils.compile(nginxConf, {
 		hostname: scfg.host,
-		port: scfg.port
+		port: scfg.port,
+		protocol: listen ? 'https' : 'http'
 	});
 	let childsubdomains = glob('koaton_modules/**/config/server.js').map((c) => {
 		return require(ProyPath(c)).default.subdomains;
@@ -217,7 +233,10 @@ async function buildNginx () {
 		nginxConf += utils.compile(serverTemplate, {
 			subdomain: allsubdomains[idx],
 			hostname: scfg.host,
-			port: scfg.port
+			port: scfg.port,
+			listen: listen || 'listen 80',
+			client_max_body_size: (configuration.server.client_max_body_size || '1M'),
+			protocol: listen ? 'https' : 'http'
 		});
 	}
 	let res = utils.write(ProyPath(`${scfg.name}.conf`), nginxConf);
@@ -226,17 +245,16 @@ async function buildNginx () {
 async function buildApps () {
 	if (Object.keys(configuration.ember).length === 0) return 0;
 	await Events('pre', 'ember_build');
-	for (const emberAPP in configuration.ember) {
-		let cfg = {
-			directory: configuration.ember[emberAPP].directory,
-			mount: configuration.ember[emberAPP].mount,
-			build: scfg.env,
-			layout: configuration.ember[emberAPP].layout,
-			show: false
-		};
-		await preBuildEmber(emberAPP, cfg);
-		await buildEmber(emberAPP, cfg);
-		await postBuildEmber(emberAPP, cfg);
+	for (const appname in configuration.ember) {
+		let EmberAPP = new EmberBuilder(appname, scfg.env, configuration.ember[appname]);
+		await EmberAPP.build();
+		// let cfg = {
+		// 	directory: configuration.ember[emberAPP].directory,
+		// 	mount: configuration.ember[emberAPP].mount,
+		// 	build: scfg.env,
+		// 	layout: configuration.ember[emberAPP].layout,
+		// 	show: false
+		// };
 	}
 	await Events('post', 'ember_build');
 }
@@ -251,7 +269,7 @@ async function buildBundles () {
 				utils.rmdir(path.join('public', path.normalize(compiledfile)));
 			}
 		}
-		console.log(`Updating bundles (env: ${scfg.env})`);
+		console.log(`   Updating bundles (env: ${scfg.env})`);
 		for (const key in configuration.bundles) {
 			if (key.indexOf('.css') > -1) {
 				await buildCSS(key, configuration.bundles[key], scfg.env === 'development');

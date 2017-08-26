@@ -10,7 +10,7 @@ tests.push(new TestNode('(no args)', [{}], true))
 		process.chdir('testingapp');
 		process.env.isproyect = 'true';
 		global.scfg = new ServerConfiguaration();
-		requireNoCache(ProyPath('node_modules', 'koaton/lib/support', 'globals'));
+		requireNoCache(ProyPath('node_modules', 'koaton/support', 'globals'));
 		global.skipshell = true;
 	})
 	.Expect('Command Executed', true, () => true)

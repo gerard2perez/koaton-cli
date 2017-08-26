@@ -6,8 +6,7 @@ process.env.DEBUG = 'koaton';
 require('babel-register')({
 	babelrc: false,
 	plugins: [
-		'babel-plugin-transform-koaton-es6-modules',
-		'babel-plugin-transform-koa2-async-to-generator'
+		'babel-plugin-transform-koaton-es6-modules'
 	]
 });
 require('./src');

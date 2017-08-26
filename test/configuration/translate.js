@@ -13,7 +13,7 @@ tests.push(new TestNode(cmdname, [undefined, undefined, {
 	.SetUp(() => {
 		process.chdir('testingapp');
 		process.env.isproyect = 'true';
-		require(ProyPath('node_modules', 'koaton/lib/support', 'globals'));
+		require(ProyPath('node_modules', 'koaton/support', 'globals'));
 		global.scfg = new ServerConfiguaration();
 		scfg.port = 62626;
 		global.skipshell = true;

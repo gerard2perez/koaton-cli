@@ -94,7 +94,7 @@ tests.push(new TestNode('(no args)', [{}], true))
 		process.chdir('testingapp');
 		process.env.NODE_ENV = 'development';
 		process.env.isproyect = 'true';
-		requireUnCached(ProyPath('node_modules', 'koaton/lib/support', 'globals'));
+		requireUnCached(ProyPath('node_modules', 'koaton/support', 'globals'));
 		requireUnCached(CLIPath('support', 'CheckBundles'));
 		global.scfg = new ServerConfiguaration();
 		scfg.env = 'development';

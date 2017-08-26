@@ -9,10 +9,10 @@ let cmdname = 'koaton seed';
 tests.push(new TestNode('(no args)', [undefined, {}], true))
 	.SetUp(() => {
 		process.chdir('testingapp');
-		requireNoCache(ProyPath('node_modules', 'koaton/lib/support', 'globals'));
+		requireNoCache(ProyPath('node_modules', 'koaton/support', 'globals'));
 		process.env.isproyect = 'true';
 		global.scfg = new ServerConfiguaration();
-		// require(ProyPath('node_modules', 'koaton/lib/support', 'globals'));
+		// require(ProyPath('node_modules', 'koaton/support', 'globals'));
 		scfg.env = 'development';
 		fs.removeSync(ProyPath('seeds', 'user.js'));
 	})

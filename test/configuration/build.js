@@ -54,7 +54,7 @@ tests.push(new TestNode('(no args)', [{}], true))
 				delete require.cache[file];
 			}
 		}
-		requireNoCache(ProyPath('node_modules', 'koaton/lib/support', 'globals'));
+		requireNoCache(ProyPath('node_modules', 'koaton/support', 'globals'));
 		configuration.ember = requireNoCache(ProyPath('config', 'ember')).default;
 		scfg.env = 'development';
 		global.scfg = new ServerConfiguaration();

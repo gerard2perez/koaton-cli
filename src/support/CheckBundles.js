@@ -1,5 +1,4 @@
 import spin from '../spinner';
-import * as co from 'co';
 import * as fs from 'fs-extra';
 import livereload from '../utils/livereload';
 import mkdir from '../utils/mkdir';
@@ -13,9 +12,8 @@ import { hasChanged, getDiferences } from './DetectChangesInArray';
 
 const spinner = spin();
 let BundleMappings = {}, production;
-const DetectChanges = function () {
+const DetectChanges = async function () {
 		console.log(arguments);
-		co(async function () {
 			const newconf = requireNoCache(ProyPath('config', 'bundles.js')).default;
 			for (const bundle of Object.keys(newconf)) {
 				newconf[bundle] = new BundleItem(bundle, newconf[bundle]);
@@ -49,26 +47,23 @@ const DetectChanges = function () {
 				}
 			}
 			configuration.bundles = newconf;
-		});
 	},
-	RebuildAndReload = function (bundle, compiledFile, sources, build) {
-		co(async function () {
-			await build(bundle.file, bundle, !production);
-		}).then((target) => {
-			let files = [];
-			for (const file of scfg.bundles[bundle.file].content) {
-				files.push(file);
-				livereload.reload(file);
-			}
-			notifier('Koaton', `Reloading ${bundle.file} -> ${files.join(',')}`);
-		});
+	RebuildAndReload = async function (bundle, compiledFile, sources, build) {
+		let target = await build(bundle.file, bundle, !production);
+		let files = [];
+		for (const file of scfg.bundles[bundle.file].content) {
+			files.push(file);
+			livereload.reload(file);
+		}
+		notifier('Koaton', `Reloading ${bundle.file} -> ${files.join(',')}`);
 	},
 	logger = function (msg) {
 		spinner.update(msg.replace(/\n|\t/igm, ''));
 	},
 	getMapping = async function getMapping (bundle) {
 		if (bundle.kind === '.css') {
-			let buildresult = await buildCSS(bundle.file, bundle, !production, production && !(canAccess(ProyPath('public', 'css', bundle))), logger);
+			let buildresult;
+			buildresult = await buildCSS(bundle.file, bundle, !production, production && !(canAccess(ProyPath('public', 'css', bundle))), logger);
 			for (const b of Object.keys(buildresult)) {
 				BundleMappings[b] = {
 					Target: b,
@@ -133,6 +128,4 @@ async function checkbundles () {
 	return true;
 }
 
-const CheckBundles = co.wrap(checkbundles);
-
-export default CheckBundles;
+export default checkbundles;

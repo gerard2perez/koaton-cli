@@ -1,28 +1,27 @@
 env:
- es6: true
+ node: true
+ mocha: true
 
 parserOptions:
   sourceType: module
-  ecmaVersion: 2017
+  ecmaVersion: 8
 
 globals:
- describe: true
- it: true
- ProyPath: true
- scfg: true
- readDir: true
- requireNoCache: false
- TemplatePath: true
- requireSafe: true
- Events: true
- LibPath: true
- makeObjIterable: true
- __ok: true
- __nok: true
- skipshell: true
- cleanString: true
- configuration: true
- requireUnCached: true
+  ProyPath: true
+  scfg: true
+  readDir: true
+  requireNoCache: false
+  TemplatePath: true
+  requireSafe: .3true
+  Events: true
+  LibPath: true
+  makeObjIterable: true
+  __ok: true
+  __nok: true
+  skipshell: true
+  cleanString: true
+  configuration: true
+  requireUnCached: true
 
 rules:
  one-var: [0, never]

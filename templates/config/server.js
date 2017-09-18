@@ -1,12 +1,12 @@
 'use strict';
 
 exports.default = {
-	name: 'koaton',
+	name: '{{name}}',
 	client_max_body_size: '1M',
 	bodyParser: {
 		formLimit: '1mb'
 	},
-	hhtps: {
+	https: {
 		dev: {
 			key: undefined,
 			cert: undefined
@@ -25,8 +25,7 @@ exports.default = {
 		serchTerm: 'search'
 	},
 	subdomains: [
-		'www',
-		'origin'
+		'www'
 	],
 	host: {
 		dev: 'localhost',
@@ -38,7 +37,7 @@ exports.default = {
 	error: {
 		layout: 'error.handlebars',
 		data: {
-			support_email: 'gerard2perez@outlook.com',
+			support_email: 'support@{{name}}.com',
 			description: 'Oops! - looks like something went completely wrong.'
 		}
 	},

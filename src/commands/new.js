@@ -28,6 +28,7 @@ const setupConfig = async function setupConfig (app) {
 	utils.render(TemplatePath('config/inflections.js'), Project('config/inflections.js'));
 	utils.render(TemplatePath('config/security.js'), Project('config/security.js'));
 	utils.render(TemplatePath('config/server.js'), Project('config/server.js'), {
+		name: application,
 		key: `'${(await secret(48)).toString('hex')}'`
 	});
 	utils.render(TemplatePath('config/static.js'), Project('config/static.js'));

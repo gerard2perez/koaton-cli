@@ -51,8 +51,8 @@ export async function buildNginx () {
 	}
 
 	nginxConf = compile(nginxConf, {
-		hostname: scfg.host,
-		port: scfg.port,
+		hostname: configuration.server.host,
+		port: configuration.server.port,
 		protocol: listen ? 'https' : 'http'
 	});
 	let childsubdomains = glob('koaton_modules/**/config/server.js').map((c) => {
@@ -63,8 +63,8 @@ export async function buildNginx () {
 	for (const idx in allsubdomains) {
 		nginxConf += compile(serverTemplate, {
 			subdomain: allsubdomains[idx],
-			hostname: scfg.host,
-			port: scfg.port,
+			hostname: configuration.server.host,
+			port: configuration.server.port,
 			listen: listen || 'listen 80',
 			client_max_body_size: (configuration.server.client_max_body_size || '1M'),
 			protocol: listen ? 'https' : 'http'

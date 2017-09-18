@@ -121,10 +121,10 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 		await Events('pre', 'ember_build');
 		let buildingAppsEmber = Object.entries(embercfg).map(([app, cfg]) => (new EmberBuilder(app, 'development', cfg)));
 		screen.line1(true);
-		// const building = spinner();
-		// building.start(100, `Building ${buildingAppsEmber.map(e => e.name).join(', ').green}`, undefined, process.stdout.columns);
+		const building = spinner();
+		building.start(100, `Building ${buildingAppsEmber.map(e => e.name).join(', ').green}`, undefined, process.stdout.columns);
 		let EmberPids = await Promise.all(buildingAppsEmber.map(e => e.serve(nginxbuilt))).then((reports) => {
-			// building.end('    Ember apps:');
+			building.end('    Ember apps:');
 			for (const report of reports) {
 				report.log = true;
 				console.log(`      ${report.result}`);

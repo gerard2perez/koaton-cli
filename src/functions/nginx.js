@@ -2,11 +2,11 @@ import exec from '../utils/exec';
 import {join} from 'upath';
 import { sync as glob } from 'glob';
 import * as fs from 'fs-extra';
-import copy from './copy';
-import shell from './shell';
-import mkdir from './mkdir';
-import compile from './compile';
-import write from './write';
+import copy from '../utils/copy';
+import shell from '../utils/shell';
+import mkdir from '../utils/mkdir';
+import compile from '../utils/compile';
+import write from '../utils/write';
 
 let nginxpath;
 export async function getnginxpath () {
@@ -44,7 +44,7 @@ export async function buildNginx () {
 
 	let listen = '';
 	if (configuration.server.https && configuration.server.https.key) {
-		listen = `listen 443 ssl;\n\tssl on;\n\tssl_certificate ${configuration.server.https.cert};\n\tssl_certificate_key ${configuration.server.https.key};\n\tssl_protocols TLSv1 TLSv1.1 TLSv1.2;\n\tssl_prefer_server_ciphers on;`;
+		listen = `listen 443 ssl;\n\tssl on;\n\tssl_certificate ${configuration.server.https.cert};\n\tssl_certificate_key ${configuration.server.https.key};\n\tssl_protocols TLSv1 TLSv1.1 TLSv1.2;\n\tssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';\n\tssl_prefer_server_ciphers on;`;
 		if (configuration.server.https.dhparam) {
 			listen += `\n\tssl_dhparam ${configuration.server.https.dhparam};`;
 		}

@@ -43,6 +43,7 @@
     "node-sass-css-importer": "0.0.3",
     "passport-local": "^1.0.0",
     "uglify-js": "^3.0.27",
+    "babel-plugin-transform-koaton-es6-modules": "^1.0.0",
     "upath": "^1.0.0"
   },
   "devDependencies": {

@@ -6,7 +6,6 @@
   "scripts": {
     "commit": "git add -A & git-cz",
     "convert": "koaton-exporter **/*.es6 ./ -e js",
-    "assets":"node ./node_modules/koaton/scripts/build.js",
     "prestart": "npm run assets",
     "start": "node app.js"
   },
@@ -18,7 +17,7 @@
 	"author": "",
 	"license": "",
 	"dependencies": {
-		"koaton":"^2.0.2"
+		"koaton":"^2.0.5"
 	},
   "config": {
      "commitizen": {

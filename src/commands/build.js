@@ -10,7 +10,7 @@ import utils from '../utils';
 import Command from 'cmd-line/lib/Command';
 import BundleItem from '../support/BundleItem';
 // import spin from '../spinner';
-import { buildNginx } from '../functins/nginx';
+import { buildNginx } from '../functions/nginx';
 import { buildAllImages } from '../functions/imagecompressor';
 import EmberBuilder from '../support/EmberBuilder';
 
@@ -161,14 +161,16 @@ async function buildJS (target, bundle, development, onlypaths, logger) {
 	for (const file of AllFiles) {
 		readfiles[path.basename(file)] = fs.readFileSync(file, 'utf-8');
 	}
+	console.log(target);
+	let map = target.replace('.js', '.map');
 	let result = uglify.minify(readfiles, {
 		mangle: false,
 		sourceMap: onlypaths ? false : {
-			url: ' /js/' + target + '.map'
+			root: '/src/',
+			includeSources: onlypaths ? false : development,
+			// filename: target,
+			url: path.join('/js', map)
 		},
-		// outSourceMap: onlypaths ? false : ' /js/' + target + '.map',
-		// sourceMapIncludeSources: onlypaths ? false : development,
-		// sourceRoot: '/' + path.changeExt(target, '.min.js'),
 		compress: {
 			dead_code: true,
 			sequences: true,
@@ -181,7 +183,7 @@ async function buildJS (target, bundle, development, onlypaths, logger) {
 			encoding: 'utf-8'
 		}, true);
 		if (development) {
-			fs.writeFileSync(path.join('public', 'js', target + '.map'), result.map, 'utf8');
+			fs.writeFileSync(path.join('public', 'js', map), result.map, 'utf8');
 		}
 
 		ITEM.add('/js/' + file);

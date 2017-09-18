@@ -1,6 +1,6 @@
 import { write, mkdir, shell, compile, render, challenge } from '../utils';
 import { sync as glob } from 'glob';
-import { readFile, unlink } from 'fs-extra';
+import { readFile, unlink, exists } from 'fs-extra';
 import { join, basename } from 'path';
 import * as spawn from 'cross-spawn';
 import { watch as Watch } from 'chokidar';
@@ -21,11 +21,11 @@ export default class EmberBuilder {
 			uncontable: JSON.stringify(uncontable)
 		}, show ? 1 : null);
 	}
-	constructor (app, env, config) {
+	constructor (app, env, config = {}) {
 		this.index = index++;
 		this.name = app;
 		this.env = env;
-		this.directory = config.directory;
+		this.directory = config.directory || app.toLowerCase().replace(/ /g, '_').replace(/-/g, '_').replace(/_+/g, '_');
 		this.mount = join('/', config.mount || '', '/').replace(/\\/igm, '/');
 		this.adapter = config.adapter;
 		this.subdomain = config.subdomain;
@@ -36,7 +36,9 @@ export default class EmberBuilder {
 	}
 	async create (options) {
 		if (await challenge(this.path(), `destination ${this.path().yellow} is not empty, continue?`, options.force)) {
-			await unlink(this.path());
+			if (await exists(this.path())) {
+				await unlink(this.path());
+			}
 			await shell(`Installing ${this.name.green}`, ['ember', 'new', this.name, '-dir', this.path()], process.cwd());
 			await mkdir(this.path('app', 'initializers'));
 			await this.getInflections(true);

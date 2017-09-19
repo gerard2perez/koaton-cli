@@ -8,6 +8,6 @@ export default (new Command(__filename, 'helps bind the server to nginx'))
 	.Action(async function (options) {
 		await buildNginx();
 		if (options.install) {
-			await copyconf(`${scfg.name}.conf`);
+			await copyconf(`${configuration.server.name}.conf`);
 		}
 	});

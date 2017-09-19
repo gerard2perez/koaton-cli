@@ -49,7 +49,6 @@ export async function buildNginx () {
 			listen += `\n\tssl_dhparam ${configuration.server.https.dhparam};`;
 		}
 	}
-
 	nginxConf = compile(nginxConf, {
 		hostname: configuration.server.host,
 		port: configuration.server.port,
@@ -65,11 +64,11 @@ export async function buildNginx () {
 			subdomain: allsubdomains[idx],
 			hostname: configuration.server.host,
 			port: configuration.server.port,
-			listen: listen || 'listen 80',
+			listen: listen || 'listen 80;',
 			client_max_body_size: (configuration.server.client_max_body_size || '1M'),
 			protocol: listen ? 'https' : 'http'
 		});
 	}
-	let res = write(ProyPath(`${scfg.name}.conf`), nginxConf);
-	console.log(`   ${res !== null ? __ok.green : __nok.red} Built ${scfg.name}.conf`);
+	let res = write(ProyPath(`${configuration.server.name}.conf`), nginxConf);
+	console.log(`   ${res !== null ? __ok.green : __nok.red} Built ${configuration.server.name}.conf`);
 }

@@ -102,6 +102,7 @@ export default class EmberBuilder {
 			await unlink(file);
 		}
 		await mkdir(ProyPath('views', 'ember_apps'), null);
+		console.log(ProyPath('views', 'ember_apps', `${this.directory}.handlebars`));
 		return write(ProyPath('views', 'ember_apps', `${this.directory}.handlebars`), text);
 	}
 	async compile () {
@@ -135,7 +136,7 @@ export default class EmberBuilder {
 				storebuffer += buffer.toString();
 				if (storebuffer.indexOf('SyntaxError') > -1) {
 					appst.buffer = storebuffer;
-					appst.result = `${this.name.yellow} ${'✗'.red} build failed.`;
+					appst.result = `${this.name.yellow} ${__nok.red} build failed.`;
 					resolve(appst);
 				}
 			});
@@ -143,7 +144,8 @@ export default class EmberBuilder {
 				storebuffer += buffer.toString();
 				if (appst.log) {
 				} else if (buffer.toString().indexOf('Build successful') > -1) {
-					appst.result = `${this.name.yellow} → http://${scfg.hostname}${nginxbuilt ? '' : ':' + scfg.port}${this.mount.cyan}`;
+					appst.success = true;
+					appst.result = `${__ok.green} ${this.name.yellow} → http://${scfg.hostname}${nginxbuilt ? '' : ':' + configuration.server.port}${this.mount.cyan}`;
 					resolve(appst);
 				}
 			});
@@ -153,7 +155,7 @@ export default class EmberBuilder {
 			ember.on('close', (code) => {
 				if (code !== 0) {
 					appst.buffer = storebuffer;
-					appst.result = `${this.name.yellow} ${'✗'.red} build failed.`;
+					appst.result = `${this.name.yellow} ${__nok.red} build failed.`;
 					resolve(appst);
 				}
 			});
@@ -190,7 +192,6 @@ export default class EmberBuilder {
 		// 	});
 		// };
 		let fileSelector = async (file) => {
-			console.log(file);
 			if (file.indexOf('index.html') > -1) {
 				await this.postbuild();
 				reload();

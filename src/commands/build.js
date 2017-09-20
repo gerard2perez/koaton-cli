@@ -8,7 +8,7 @@ import { sync as glob } from 'glob';
 import copystatic from '../support/CopyStatic';
 import utils from '../utils';
 import Command from 'cmd-line/lib/Command';
-import BundleItem from '../support/BundleItem';
+import BundleItem from 'koaton/support/BundleItem';
 // import spin from '../spinner';
 import { buildNginx } from '../functions/nginx';
 import { buildAllImages } from '../functions/imagecompressor';
@@ -142,6 +142,7 @@ async function buildJS (target, bundle, development, onlypaths, logger) {
 	let error = [];
 	process.stdout.write(`Building ${target} `);
 	let start = process.hrtime();
+	console.log(BundleItem);
 	const ITEM = scfg.bundles[target] || new BundleItem(target, []);
 	ITEM.clear();
 	utils.writeuseslog = logger;
@@ -197,7 +198,7 @@ async function buildJS (target, bundle, development, onlypaths, logger) {
 	if (error.length > 0) {
 		console.log(error.join('\n'));
 	}
-	return AllFiles;
+	return {[target]: AllFiles};
 };
 
 export { buildCSS, buildJS };

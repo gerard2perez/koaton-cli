@@ -1,5 +1,11 @@
 import * as path from 'upath';
+import { watch as Watch } from 'chokidar';
+import { buildCSS, buildJS } from '../commands/build';
 
+const builder = {
+	css: buildCSS,
+	js: buildJS
+};
 const bundletemplates = {
 	'.css': (file) => {
 		return `<link rel='stylesheet' href='${file}'>`;
@@ -17,13 +23,33 @@ const bundletemplates = {
  * @param {string|string[]} source File(s) that will be bundled.
  */
 export default class BundleItem {
+	async build (logger) {
+		try {
+			this.sources.forEach(f => {
+				this.watcher.unwatch(f);
+			});
+		} catch (Ex) { }
+		let data = await builder[this.kind](this.file, this, configuration.server.env === 'development', false, logger);
+		let sources = [];
+		let files = [];
+		for (const key in data) {
+			files.push(key);
+			sources = sources.concat(data[key]);
+		}
+		this.sources = sources;
+		sources.forEach(f => {
+			this.watcher.add(f);
+		});
+		return files;
+	}
 	valueOf () {
 		return this.file;
 	}
-	constructor (target, source) {
+	constructor (target, source, watch = false) {
+		this.sources = [];
 		Object.defineProperty(this, 'kind', {
 			enumerable: false,
-			value: target.replace(path.trimExt(target), '')
+			value: target.replace(path.trimExt(target), '').replace('.', '')
 		});
 		Object.defineProperty(this, 'file', {
 			enumerable: true,
@@ -34,6 +60,35 @@ export default class BundleItem {
 			enumerable: false,
 			value: source instanceof Array ? source : (source ? [source] : [])
 		});
+		if (watch) {
+			this.watcher = new Watch(this.content, {
+				persistent: true,
+				ignoreInitial: true,
+				alwaysStat: false,
+				awaitWriteFinish: {
+					stabilityThreshold: 300,
+					pollInterval: 100
+				}
+			});
+		}
+	}
+	watch (fn) {
+		if (!this.watcher) {
+			this.watcher = new Watch(this.content, {
+				persistent: true,
+				ignoreInitial: true,
+				alwaysStat: false,
+				awaitWriteFinish: {
+					stabilityThreshold: 300,
+					pollInterval: 100
+				}
+			});
+			this.content.forEach(f => {
+				this.watcher.unwatch(f);
+			});
+		}
+		this.watchfn = fn;
+		this.watcher.on('change', fn);
 	}
 	add (item) {
 		if (this.content.indexOf(item) === -1) {
@@ -41,9 +96,15 @@ export default class BundleItem {
 		}
 		return this;
 	}
+	remove (item) {
+		if (this.content.indexOf(item) > -1) {
+			this.content.splice(this.content.indexOf(item), 1);
+		}
+		return this;
+	}
 	clear () {
 		while (this.content.length > 0) {
-			this.content.pop();
+			this.watcher.unwatch(this.content.pop());
 		}
 		return this;
 	}

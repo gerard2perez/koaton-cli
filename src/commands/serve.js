@@ -117,8 +117,10 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 			WatchFileToCopy();
 			await WactchAndCompressImages();
 		}
+		console.log(0);
 		await Events('pre', 'build');
 		await Events('pre', 'ember_build');
+		console.log(0);
 		let buildingAppsEmber = Object.entries(embercfg).map(([app, cfg]) => (new EmberBuilder(app, 'development', cfg)));
 		screen.line1(true);
 		const building = spinner();
@@ -137,6 +139,7 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 		});
 		await Events('post', 'ember_build');
 		return Events('pre', 'serve').then(() => {
+			console.log(0);
 			return new Promise(function (resolve, reject) {
 				let server = deamon(resolve, reject, EmberPids, nginxbuilt);
 				/* istanbul ignore next */

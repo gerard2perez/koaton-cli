@@ -16,7 +16,7 @@ function fail () {
 }
 
 export default async function copystatic () {
-	const config = requireNoCache(ProyPath('config', 'static'), {default: {}}).default.copy;
+	const config = requireNoCache(ProyPath('config', 'static')).default.copy;
 	let promises = [];
 	for (const bundle of config) {
 		let compiled = false;

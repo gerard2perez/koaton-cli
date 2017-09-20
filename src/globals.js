@@ -37,7 +37,7 @@ global.makeObjIterable = function makeObjIterable (obj) {
 };
 global.requireUnCached = function (lib) {
 	delete require.cache[require.resolve(lib)];
-	return requireSafe(lib);
+	return require(lib);
 };
 global.cleanString = (text) => {
 	return text.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
@@ -54,20 +54,13 @@ global.Events = async (phase, event) => {
 		await require(path.resolve(file)).default(ProyPath());
 	}
 };
-global.requireSafe = function requireSafe (lib, defaults) {
-	try {
-		return require(lib);
-	} catch (e) {
-		return defaults;
-	}
-};
-global.requireNoCache = function requireNoCache (lib, defaults) {
+global.requireNoCache = function requireNoCache (lib) {
 	let library = rawpath.normalize(rawpath.resolve(lib));
 	if (library.indexOf('.json') === -1) {
 		library = library.replace('.js', '') + '.js';
 	}
 	delete require.cache[library];
-	return requireSafe(library, defaults);
+	return require(library);
 };
 global.CLIPath = function CLIPath (...args) {
 	args.splice(0, 0, __dirname);

@@ -40,14 +40,16 @@ async function DetectChanges (changed) {
 			let removed = current.filter(o => { return incoming.indexOf(o) === -1; });
 			for (const add of added) {
 				mustrebuild = true;
-				allBundles[bundle].add(add);
+				// allBundles[bundle].add(add);
 				hashes[resolve(add)] = await hasfile(add);
 			}
 			for (const remove of removed) {
 				mustrebuild = true;
-				allBundles[bundle].remove(remove);
+				// allBundles[bundle].remove(remove);
 				delete hashes[resolve(remove)];
 			}
+			allBundles[bundle].clear();
+			incoming.forEach(allBundles[bundle].add);
 		} else {
 			mustrebuild = true;
 			allBundles[bundle] = new BundleItem(bundle, newconf[bundle], true);

@@ -142,7 +142,6 @@ async function buildJS (target, bundle, development, onlypaths, logger) {
 	let error = [];
 	process.stdout.write(`Building ${target} `);
 	let start = process.hrtime();
-	console.log(BundleItem);
 	const ITEM = scfg.bundles[target] || new BundleItem(target, []);
 	ITEM.clear();
 	utils.writeuseslog = logger;
@@ -162,7 +161,6 @@ async function buildJS (target, bundle, development, onlypaths, logger) {
 	for (const file of AllFiles) {
 		readfiles[path.basename(file)] = fs.readFileSync(file, 'utf-8');
 	}
-	console.log(target);
 	let map = target.replace('.js', '.map');
 	let result = uglify.minify(readfiles, {
 		mangle: false,

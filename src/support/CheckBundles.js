@@ -13,15 +13,15 @@ const spinner = spin();
 function reloadFiles (bundle, files) {
 	for (const file of files) {
 		livereload.reload(`/${bundle.kind}/${file}`);
-		notifier('Koaton', `Reloading /${bundle.kind}/${file}`);
+		// notifier('Koaton', `Reloading /${bundle.kind}/${file}`);
 	}
 }
 async function onChange (bundle, file) {
 	let filepath = resolve(file);
 	let newhash = await hasfile(file);
 	if (newhash !== hashes[filepath]) {
-		hashes[filepath] = newhash;
 		reloadFiles(bundle, await bundle.build());
+		hashes[filepath] = newhash;
 	}
 }
 async function makehashes (files) {

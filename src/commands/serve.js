@@ -23,9 +23,24 @@ const deleted = function (file) {
 		livereload.reload(file);
 	},
 	compress = function (file) {
-		console.log(file);
 		imagecompressor([file], file.replace(path.basename(file), '').replace('assets', 'public')).then(() => {
 			livereload.reload(file);
+		});
+	},
+	ReloadTemplates = function ReloadTemplates () {
+		let watcher = new Watch(path.join('views', '*'), {
+			ignored: '**/**/',
+			persistent: true,
+			ignoreInitial: true,
+			alwaysStat: false,
+			awaitWriteFinish: {
+				stabilityThreshold: 1000,
+				pollInterval: 100
+			}
+		});
+		watching.push(watcher);
+		watcher.on('change', async (file) => {
+			livereload.reload();
 		});
 	},
 	WactchAndCompressImages = function WactchAndCompressImages () {
@@ -115,6 +130,7 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 			await CopyStatic();
 			await CheckBundles();
 			WatchFileToCopy();
+			ReloadTemplates();
 			await WactchAndCompressImages();
 		}
 		await Events('pre', 'build');

@@ -50,6 +50,7 @@ export async function buildNginx () {
 		}
 	}
 	nginxConf = compile(nginxConf, {
+		server_name: `${configuration.server.host}${listen ? ' www.' + configuration.server.host : ''}`,
 		hostname: configuration.server.host,
 		port: configuration.server.port,
 		protocol: listen ? 'https' : 'http'

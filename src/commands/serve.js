@@ -121,17 +121,17 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 		/* istanbul ignore else */
 		if (options.nginx) {
 			const getnginxpath = require('../functions/nginx').getnginxpath;
-			await copy(ProyPath(`${scfg.name}.conf`), path.join(await getnginxpath(), 'enabled_sites', `${scfg.name}.conf`), 1);
+			await copy(ProyPath(`${configuration.server.name}.conf`), path.join(await getnginxpath(), 'enabled_sites', `${configuration.server.name}.conf`), 1);
 			nginxbuilt = await shell('Restarting Nginx', ['nginx', '-s', 'reload'], process.cwd());
 			nginxbuilt = nginxbuilt === 0;
 		}
 		/* istanbul ignore else */
 		if (options.production === 'development') {
-			await CopyStatic();
-			await CheckBundles();
-			WatchFileToCopy();
-			ReloadTemplates();
-			await WactchAndCompressImages();
+			// await CopyStatic();
+			// await CheckBundles();
+			// WatchFileToCopy();
+			// ReloadTemplates();
+			// await WactchAndCompressImages();
 		}
 		await Events('pre', 'build');
 		await Events('pre', 'ember_build');

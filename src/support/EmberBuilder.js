@@ -102,7 +102,6 @@ export default class EmberBuilder {
 			await unlink(file);
 		}
 		await mkdir(ProyPath('views', 'ember_apps'), null);
-		console.log(ProyPath('views', 'ember_apps', `${this.directory}.handlebars`));
 		return write(ProyPath('views', 'ember_apps', `${this.directory}.handlebars`), text);
 	}
 	async compile () {
@@ -133,14 +132,16 @@ export default class EmberBuilder {
 			appst.pid = ember.pid;
 			appst.process = ember;
 			ember.stderr.on('data', (buffer) => {
+				console.log(buffer.toString());
 				storebuffer += buffer.toString();
-				if (storebuffer.indexOf('SyntaxError') > -1) {
+				if (storebuffer.indexOf('SyntaxError') > -1 || storebuffer.indexOf('File not found') > -1) {
 					appst.buffer = storebuffer;
 					appst.result = `${this.name.yellow} ${__nok.red} build failed.`;
 					resolve(appst);
 				}
 			});
 			ember.stdout.on('data', (buffer) => {
+				console.log(buffer.toString());
 				storebuffer += buffer.toString();
 				if (appst.log) {
 				} else if (buffer.toString().indexOf('Build successful') > -1) {

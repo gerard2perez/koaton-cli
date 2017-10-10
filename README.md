@@ -1,4 +1,5 @@
 ![Koaton](/koaton-cli.png)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fgerard2p%2Fkoaton-cli.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fgerard2p%2Fkoaton-cli?ref=badge_shield)
 
 [![Build Status](https://img.shields.io/travis/gerard2p/koaton-cli/master.svg?style=flat-square)](https://travis-ci.org/gerard2p/koaton-cli)[![Dependency Status](https://david-dm.org/gerard2p/koaton-cli.svg?style=flat-square)](https://david-dm.org/gerard2p/koaton-cli)![PRs Welcome](https://img.shields.io/badge/PRs%20🔀-Welcome-brightgreen.svg?style=flat-square)
 
@@ -93,3 +94,6 @@ SourceMaps will be always be built in **development** environment, but **not** i
 
 ## Licensing
 Read [LICENCE.md](LICENCE.md)
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fgerard2p%2Fkoaton-cli.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fgerard2p%2Fkoaton-cli?ref=badge_large)

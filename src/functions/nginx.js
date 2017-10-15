@@ -26,34 +26,38 @@ export async function getnginxpath () {
 	return nginxpath;
 }
 export async function copyconf (name) {
-	await copy(ProyPath(name), join(await getnginxpath(), 'enabled_sites', name));
+	await copy(ProyPath(name), join(await getnginxpath(), 'sites-enabled', name));
 	console.log(`   ${'copying'.cyan}: ${name}`);
 	await shell('Restarting Nginx', ['nginx', '-s', 'reload'], process.cwd());
 }
 export async function buildNginx () {
 	let nginxpath = await getnginxpath();
 	let conf = fs.readFileSync(nginxpath + 'nginx.conf', 'utf-8');
-	if (conf.indexOf('include enabled_sites/*') === -1) {
-		conf = conf.replace(/http ?\{/igm, 'http {\n\tinclude enabled_sites/*.conf;');
+	if (conf.indexOf('include sites-enabled/*') === -1) {
+		conf = conf.replace(/http ?\{/igm, 'http {\n\tinclude ./sites-enabled/*.conf;');
+		if (!fs.existsSync(join(nginxpath, 'sites-enabled'))) {
+			fs.mkdirSync(join(nginxpath, 'sites-enabled'));
+		}
 		fs.writeFileSync(nginxpath + 'nginx.conf', conf);
 		console.log(`   ${'updated'.cyan}: nginx.conf`);
-		await mkdir(nginxpath + 'enabled_sites');
 	}
 	let serverTemplate = fs.readFileSync(TemplatePath('subdomain.conf'), 'utf-8');
 	let nginxConf = fs.readFileSync(TemplatePath('server.conf'), 'utf-8');
 
-	let listen = '';
+	let security = '';
+	let redirectSSL = '';
 	if (configuration.server.https && configuration.server.https.key) {
-		listen = `listen 443 ssl;\n\tssl on;\n\tssl_certificate ${configuration.server.https.cert};\n\tssl_certificate_key ${configuration.server.https.key};\n\tssl_protocols TLSv1 TLSv1.1 TLSv1.2;\n\tssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';\n\tssl_prefer_server_ciphers on;`;
+		security = `listen 443 ssl;\n\tssl_certificate ${configuration.server.https.cert};\n\tssl_certificate_key ${configuration.server.https.key};\n\tssl_protocols TLSv1 TLSv1.1 TLSv1.2;\n\tssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';\n\tssl_prefer_server_ciphers on;`;
 		if (configuration.server.https.dhparam) {
-			listen += `\n\tssl_dhparam ${configuration.server.https.dhparam};`;
+			security += `\n\tssl_dhparam ${configuration.server.https.dhparam};\n`;
 		}
+		redirectSSL = `server {\n\t${security}\tserver_name ${configuration.server.host};\n\treturn 301 https://www.bitsun.com.mx$request_uri;\n}\n`;
 	}
-	nginxConf = compile(nginxConf, {
-		server_name: `${configuration.server.host}${listen ? ' www.' + configuration.server.host : ''}`,
+	nginxConf = redirectSSL + compile(nginxConf, {
+		server_name: `${configuration.server.host}${security ? ' www.' + configuration.server.host : ''}`,
 		hostname: configuration.server.host,
 		port: configuration.server.port,
-		protocol: listen ? 'https' : 'http'
+		protocol: security ? 'https' : 'http'
 	});
 	let childsubdomains = glob('koaton_modules/**/config/server.js').map((c) => {
 		return require(ProyPath(c)).default.subdomains;
@@ -65,10 +69,13 @@ export async function buildNginx () {
 			subdomain: allsubdomains[idx],
 			hostname: configuration.server.host,
 			port: configuration.server.port,
-			listen: listen || 'listen 80;',
+			listen: security || 'listen 80',
 			client_max_body_size: (configuration.server.client_max_body_size || '1M'),
-			protocol: listen ? 'https' : 'http'
+			protocol: security ? 'https' : 'http'
 		});
+		if (security && allsubdomains[idx] !== 'www') {
+			nginxConf += `server {\n\tlisten 80;\n\tserver_name ${allsubdomains[idx]}.${configuration.server.host};\n\treturn 301 https://$host$request_uri;\n}\n`;
+		}
 	}
 	let res = write(ProyPath(`${configuration.server.name}.conf`), nginxConf);
 	console.log(`   ${res !== null ? __ok.green : __nok.red} Built ${configuration.server.name}.conf`);

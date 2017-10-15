@@ -7,16 +7,16 @@ let options = {
 	port: 65000,
 	quiet: true
 };
-/* istanbul ignore next */
-if (configuration.server.https && configuration.server.https.key && configuration.server.https.cert) {
-	options.key = fs.readFileSync(configuration.server.https.key);
-	options.cert = fs.readFileSync(configuration.server.https.cert);
-}
 
 module.exports = {
 	get livereload () {
 		if (!initialized) {
 			initialized = true;
+			/* istanbul ignore next */
+			if (configuration.server.https && configuration.server.https.key && configuration.server.https.cert) {
+				options.key = fs.readFileSync(configuration.server.https.key);
+				options.cert = fs.readFileSync(configuration.server.https.cert);
+			}
 			(async () => {
 				options.port = await detect(options.port);
 				livereload.listen(options);

@@ -122,7 +122,7 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 		/* istanbul ignore else */
 		if (options.nginx) {
 			const getnginxpath = require('../functions/nginx').getnginxpath;
-			await copy(ProyPath(`${configuration.server.name}.conf`), path.join(await getnginxpath(), 'enabled_sites', `${configuration.server.name}.conf`), 1);
+			await copy(ProyPath(`${configuration.server.name}.conf`), path.join(await getnginxpath(), 'sites-enabled', `${configuration.server.name}.conf`), 1);
 			nginxbuilt = await shell('Restarting Nginx', ['nginx', '-s', 'reload'], process.cwd());
 			nginxbuilt = nginxbuilt === 0;
 		}

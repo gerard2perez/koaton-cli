@@ -7,7 +7,8 @@
     "commit": "git add -A & git-cz",
     "convert": "koaton-exporter **/*.es6 ./ -e js",
     "prestart": "npm run assets",
-    "start": "node app.js"
+    "start": "node app.js",
+    "seed": "node scripts/seed"
   },
 	"keywords": [
     "Koa",

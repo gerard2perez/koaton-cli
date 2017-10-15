@@ -1,5 +1,5 @@
 import spin from '../spinner';
-import livereload from '../utils/livereload';
+import { livereload } from '../utils/livereload';
 import mkdir from '../utils/mkdir';
 import notifier from './Notifier';
 import BundleItem from './BundleItem';

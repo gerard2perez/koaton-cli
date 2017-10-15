@@ -117,9 +117,6 @@ export default class ServerConfiguaration {
 			return configuration.server.host;
 		}
 	}
-		// get relations_mode() {
-		// 	return this.localserver.relation_mode === 'ids';
-		// }
 	get emberApps () {
 		return this._emberapps;
 	}

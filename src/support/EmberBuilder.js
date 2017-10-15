@@ -4,6 +4,7 @@ import { readFile, unlink, exists } from 'fs-extra';
 import { join, basename } from 'path';
 import * as spawn from 'cross-spawn';
 import { watch as Watch } from 'chokidar';
+import * as detect from 'detect-port';
 
 // TODO: please check when the proccess failed.
 let index = 0;
@@ -121,18 +122,21 @@ export default class EmberBuilder {
 		process.env.NODE_ENV = env;
 		return !res;
 	}
-	async live (nginxbuilt) {
+	async live (nginxbuilt, live) {
 		let storebuffer = '';
 		return new Promise(async resolve => {
 			let appst = { log: false, result: '', success: false, pid: null, process: null };
-			const ember = spawn('ember', ['serve', '-lr', 'false', '--output-path', join('..', '..', 'public', this.directory), '--port', 4200 + this.index], {
+			let port = await detect(4200);
+			const ember = spawn('ember', ['serve', '-lr', live ? 'true' : 'false', '--output-path', join('..', '..', 'public', this.directory), '--port', port + this.index], {
 				cwd: this.path(),
 				shell: true
 			});
 			appst.pid = ember.pid;
 			appst.process = ember;
 			ember.stderr.on('data', (buffer) => {
-				console.log(buffer.toString());
+				if (appst.log) {
+					console.log(buffer.toString());
+				}
 				storebuffer += buffer.toString();
 				if (storebuffer.indexOf('SyntaxError') > -1 || storebuffer.indexOf('File not found') > -1) {
 					appst.buffer = storebuffer;
@@ -141,9 +145,9 @@ export default class EmberBuilder {
 				}
 			});
 			ember.stdout.on('data', (buffer) => {
-				console.log(buffer.toString());
 				storebuffer += buffer.toString();
 				if (appst.log) {
+					console.log(buffer.toString());
 				} else if (buffer.toString().indexOf('Build successful') > -1) {
 					appst.success = true;
 					appst.result = `${__ok.green} ${this.name.yellow} → http://${scfg.hostname}${nginxbuilt ? '' : ':' + configuration.server.port}${this.mount.cyan}`;
@@ -167,9 +171,9 @@ export default class EmberBuilder {
 		await this.compile();
 		await this.postbuild();
 	}
-	async serve (nginxbuilt) {
+	async serve (nginxbuilt, live = true) {
 		await this.prebuild();
-		let result = await this.live(nginxbuilt);
+		let result = await this.live(nginxbuilt, live);
 		if (!result.success) {
 			result.process.kill();
 		} else {

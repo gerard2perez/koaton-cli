@@ -5,7 +5,7 @@ import screen from '../welcome';
 import spinner from '../spinner';
 import Command from 'cmd-line/lib/Command';
 import { write, copy, shell } from '../utils';
-import livereload from '../utils/livereload';
+import { livereload } from '../utils/livereload';
 import CheckBundles from '../support/CheckBundles';
 import WatchFileToCopy from '../support/WatchFileToCopy';
 import CopyStatic from '../support/CopyStatic';
@@ -104,6 +104,7 @@ const deleted = function (file) {
 export default (new Command(__filename, 'Runs your awsome Koaton applicaction especially for development'))
 	.Options([
 		['-n', '--nginx', 'Copy the project .conf in nginx'],
+		['--no-ember-live', '--no-ember-live', ''],
 		['-s', '--skip-build', ''],
 		['-p', '--production', 'Runs with NODE_ENV = production'],
 		['--port', '--port <port>', 'Run on the especified port (port 80 requires sudo).']
@@ -127,11 +128,11 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 		}
 		/* istanbul ignore else */
 		if (options.production === 'development') {
-			// await CopyStatic();
-			// await CheckBundles();
-			// WatchFileToCopy();
-			// ReloadTemplates();
-			// await WactchAndCompressImages();
+			await CopyStatic();
+			await CheckBundles();
+			WatchFileToCopy();
+			ReloadTemplates();
+			await WactchAndCompressImages();
 		}
 		await Events('pre', 'build');
 		await Events('pre', 'ember_build');
@@ -139,7 +140,7 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 		screen.line1(true);
 		const building = spinner();
 		building.start(100, `Building ${buildingAppsEmber.map(e => e.name).join(', ').green}`, undefined, process.stdout.columns);
-		let EmberPids = await Promise.all(buildingAppsEmber.map(e => e.serve(nginxbuilt))).then((reports) => {
+		let EmberPids = await Promise.all(buildingAppsEmber.map(e => e.serve(nginxbuilt, options.noEmberLive))).then((reports) => {
 			building.end('    Ember apps:');
 			for (const report of reports) {
 				report.log = true;

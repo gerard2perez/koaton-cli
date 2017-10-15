@@ -1,6 +1,6 @@
 import { watch as Watch } from 'chokidar';
 import notifier from './support/Notifier';
-import livereload from './utils/livereload';
+import { livereload, liveReloadHost } from './utils/livereload';
 import * as spawn from 'cross-spawn';
 import * as psTree from 'ps-tree';
 
@@ -19,7 +19,7 @@ function LoadServer (resolve, reject, EmberPids, nginx) {
 			}));
 		}
 	}
-	let KoatonServer = spawn('node', ['app.js'], { shell: false });
+	let KoatonServer = spawn('node', ['app.js'], { shell: false, env: {liveReloadHost: liveReloadHost(), NODE_ENV: process.env.NODE_ENV} });
 	KoatonServer.stdout.on('data', (buffer) => {
 		process.stdout.write(buffer);
 		let text = buffer.toString();

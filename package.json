@@ -8,7 +8,7 @@
     "export:live": "npm run export & chokidar src -c \"cls && npm run export\"",
     "eslint:live": "npm run eslint & chokidar src -c \"cls && npm run eslint\"",
     "eslint": "eslint .",
-    "export": "rimraf -rf lib && koaton-exporter src/*.js src/**/*.js lib -r src/",
+    "export": "rimraf -rf lib && koaton-exporter src/*.js src/**/*.js ./ -r src/",
     "test": "cross-env NODE_ENV=koaton mocha test/unit/**/*.js test/integration.js --compilers js:babel-register",
     "test:live": "npm t -- -w",
     "cover": "nyc npm t",
@@ -91,11 +91,12 @@
     "websockets"
   ],
   "files": [
+    "templates",
     "commands/**/*.js",
     "functions/**/*.js",
     "support/**/*.js",
     "utils/**/*.js",
-    "adapter.js",
+    "adapters.js",
     "deamon.js",
     "globals.js",
     "index.js",

@@ -5,7 +5,7 @@ services:
   - mongodb
 language: node_js
 node_js:
-  - "8.2.1"
+  - "8.7.0"
 sudo: required
 env:
   - CXX=g++-4.8
@@ -21,10 +21,9 @@ cache:
   directories:
     - node_modules
 before_install:
-  - nginx -c `pwd`/etc/nginx.conf
+  - sudo nginx -c `pwd`/etc/nginx.conf
   - npm config set spin false
-  - npm install -g ember-cli@2.9.1
-  - npm install -g bower
+  - npm install -g ember-cli@2.16.2
   - npm install -g codeclimate-test-reporter
 install:
   - npm i .

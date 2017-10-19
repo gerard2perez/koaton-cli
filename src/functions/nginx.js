@@ -4,7 +4,6 @@ import { sync as glob } from 'glob';
 import * as fs from 'fs-extra';
 import copy from '../utils/copy';
 import shell from '../utils/shell';
-import mkdir from '../utils/mkdir';
 import compile from '../utils/compile';
 import write from '../utils/write';
 

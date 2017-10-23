@@ -1,3 +1,4 @@
+/doc/
 /bower_components/
 /node_modules/
 .DS_Store
@@ -17,18 +18,18 @@ npm-debug*
 .barebone.js
 /package-lock.json
 
-commands
-functions
-support
-utils
-adapters.js
-deamon.js
-globals.js
-index.js
-jutsus.js
-modelmanager.js
-secret.js
-spinner.js
-welcome.js
+/commands
+/functions
+/support
+/utils
+/adapters.js
+/deamon.js
+/globals.js
+/index.js
+/jutsus.js
+/modelmanager.js
+/secret.js
+/spinner.js
+/welcome.js
 
 koaton-cli-0.0.0-development.tgz

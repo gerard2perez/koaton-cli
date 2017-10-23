@@ -1,19 +1,20 @@
 import * as assert from 'assert';
-import * as co from 'co';
 import importindex from '../src/utils/importindex';
 import configuration from './configuration';
 
-const commands = importindex(ProyPath('/src/commands')).default;
 const CommandOrder = [].concat([
-	'new',
-	'adapter',
-	'ember',
-	'model',
-	'relation',
-	'translate',
-	'nginx',
-	'install', 'build', 'seed', 'modulify',
-	'serve'
+	// 'new',
+	// 'adapter',
+	// 'ember',
+	// 'model',
+	// 'relation',
+	// 'translate',
+	// 'nginx',
+	// 'install',
+	'build',
+	'seed',
+	'modulify',
+	// 'serve'
 ]);
 
 const notestcase = function (testname) {
@@ -37,61 +38,58 @@ function takeone (data) {
 const testcase = function testcase (TestConfig, cwd, testname, command) {
 	describe(testname, function () {
 		for (const testdata of (TestConfig || [])) {
-			it(testdata.name, function (done) {
+			it(testdata.name, async function () {
 				this.timeout(1000 * 60 * 5);
 				testdata.SetUp();
-				co(async function () {
-					let err = null;
-					const ori = console.log;
-					const WriteE = process.stderr.write;
-					const WriteO = process.stdout.write;
-					try {
-						let buffer = '';
-						process.stderr.write = () => {
-						};
-						process.stdout.write = () => {
-						};
-						console.log = (...data) => {
-							// ori(...data);
-							buffer += (data || '').toString();
-						};
-						if (testdata.asyncs) {
-							ori(testdata.args);
-							let res = command.action.apply(null, testdata.args);
-							testdata.expect.splice(0, 1);
-							return res.then((childIPIDs) => {
-								return takeone(testdata.expect).then(() => {
-									for (const pid of childIPIDs) {
-										process.kill(pid);
-									}
-								});
-							}, (err) => {
-								console.log(err);
+				let err = null;
+				const ori = console.log;
+				const WriteE = process.stderr.write;
+				const WriteO = process.stdout.write;
+				try {
+					let buffer = '';
+					process.stderr.write = () => {
+					};
+					process.stdout.write = () => {
+					};
+					console.log = (...data) => {
+						ori(...data);
+						buffer += (data || '').toString();
+					};
+					if (testdata.asyncs) {
+						let res = command.action.apply(null, testdata.args);
+						testdata.expect.splice(0, 1);
+						return res.then((childIPIDs) => {
+							return takeone(testdata.expect).then(() => {
+								for (const pid of childIPIDs) {
+									process.kill(pid);
+								}
 							});
-						} else {
-							let res = await command.action.apply(null, testdata.args);
-							console.log = ori;
-							assert.equal(!res, testdata.expect[0], `${testname} ${testdata.name} shell result.`);
-							testdata.expect.splice(0, 1);
-							for (const expect of testdata.expect) {
-								let [message, mustbe, actual] = expect(cleanString(buffer), ProyPath());
-								assert.equal(actual, mustbe, message);
-							}
+						}, (err) => {
+							console.log(err);
+						});
+					} else {
+						let res = await command.action.apply(null, testdata.args);
+						// console.log = ori;
+						assert.equal(!res, testdata.expect[0], `${testname} ${testdata.name} shell result.`);
+						testdata.expect.splice(0, 1);
+						for (const expect of testdata.expect) {
+							let [message, mustbe, actual] = expect(cleanString(buffer), ProyPath());
+							assert.equal(actual, mustbe, message);
 						}
-					} catch (e) {
-						ori(e.red);
-						err = e;
-					} finally {
-						require.cache = [];
-						testdata.CleanUp();
-						console.log = ori;
-						process.stderr.write = WriteE;
-						process.stdout.write = WriteO;
 					}
-					if (err) {
-						throw err;
-					}
-				}).then(done, done).catch(done);
+				} catch (e) {
+					ori(e.red);
+					err = e;
+				} finally {
+					require.cache = [];
+					testdata.CleanUp();
+					console.log = ori;
+					process.stderr.write = WriteE;
+					process.stdout.write = WriteO;
+				}
+				if (err) {
+					throw err;
+				}
 			});
 		}
 	});
@@ -100,7 +98,7 @@ describe('Integration tests.', function () {
 	for (const command of CommandOrder) {
 		const CommandTest = configuration[command];
 		if (CommandTest && CommandTest.config) {
-			testcase(CommandTest.config, CommandTest.cwd, CommandTest.testname, commands[command], CommandTest.asyncs);
+			testcase(CommandTest.config, CommandTest.cwd, CommandTest.testname, require(`../src/commands/${command}`).default, CommandTest.asyncs);
 		} else {
 			console.log(CommandTest);
 			notestcase(command);

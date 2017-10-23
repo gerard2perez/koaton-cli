@@ -8,7 +8,7 @@ import { sync as glob } from 'glob';
 import copystatic from '../support/CopyStatic';
 import utils from '../utils';
 import Command from 'cmd-line/lib/Command';
-import BundleItem from 'koaton/support/BundleItem';
+import BundleItem from '../support/BundleItem';
 // import spin from '../spinner';
 import { buildNginx } from '../functions/nginx';
 import { buildAllImages } from '../functions/imagecompressor';

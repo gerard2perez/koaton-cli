@@ -1,9 +1,15 @@
 import * as inflector from 'inflection';
 
+let inflectordata;
+try {
+	inflectordata = require(ProyPath('config', 'inflections'));
+} catch (ex) {
+	inflectordata = {};
+}
 const inflections = Object.assign({}, {
 	plural: [],
 	singular: []
-}, require(ProyPath('config', 'inflections')));
+}, inflectordata);
 
 for (const inflect in inflections.singular) {
 	inflector.singularize(...inflect);

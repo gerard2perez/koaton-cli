@@ -14,6 +14,7 @@ globals:
   TemplatePath: true
   Events: true
   LibPath: true
+  CLIPath: true
   makeObjIterable: true
   __ok: true
   __nok: true

@@ -74,7 +74,7 @@ function touch (...args) {
 	fs.closeSync(fs.openSync(ProyPath(...args), 'a'));
 	return wait(3000);
 }
-function wait ( time = 100 ) {
+function wait (time = 100) {
 	return new Promise((resolve) => {
 		setTimeout(() => {
 			console.log('resolve wait promise');

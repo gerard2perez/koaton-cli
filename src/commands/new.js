@@ -84,7 +84,7 @@ const ArrayToDescription = function ArrayToDescription (array) {
 		Object.keys(array).map(tx => tx.cyan).join(' | '.yellow) + ' ]'.yellow;
 };
 export default (new Command(__filename, 'Creates a new koaton aplication.'))
-.Args('AppName')
+	.Args('AppName')
 	.Options([
 		[
 			'-d', '--db <driver>',

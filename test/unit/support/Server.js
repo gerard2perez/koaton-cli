@@ -1,4 +1,3 @@
-/*global describe, it, before, after*/
 import * as assert from 'assert';
 import * as fs from 'fs-extra';
 import Server from '../../../src/support/Server';

@@ -7,10 +7,10 @@ const builder = {
 	js: buildJS
 };
 const bundletemplates = {
-	'.css': (file) => {
+	'css': (file) => {
 		return `<link rel='stylesheet' href='${file}'>`;
 	},
-	'.js': (file) => {
+	'js': (file) => {
 		return `<script src='${file}'></script>`;
 	}
 };
@@ -23,30 +23,35 @@ const bundletemplates = {
  * @param {string|string[]} source File(s) that will be bundled.
  */
 export default class BundleItem {
-	async build (logger) {
-		try {
-			this.sources.forEach(f => {
-				this.watcher.unwatch(f);
-			});
-		} catch (Ex) { }
-		let data = await builder[this.kind](this.file, this, configuration.server.env === 'development', false, logger);
-		let sources = [];
-		let files = [];
-		for (const key in data) {
-			files.push(key);
-			sources = sources.concat(data[key]);
-		}
-		this.sources = sources;
-		sources.forEach(f => {
-			this.watcher.add(f);
-		});
-		return files;
-	}
-	valueOf () {
-		return this.file;
-	}
+	/**
+ 	* @param {String} target - Identifier that will be use as name of the bundle.
+ 	* @param {String|String[]} source - File(s) that will be bundled.
+	* @param {Boolean} watch - watch source files for changes.
+ 	*/
 	constructor (target, source, watch = false) {
+		/**
+		 * This variable is used to store the sorces files of the package.
+		 * @private
+		 * @type {String[]}
+		 */
 		this.sources = [];
+		/**
+		 * This This is the function that will be triggered when a change in the source files is detected.
+		 * @private
+		 * @type {function}
+		 */
+		this.watchfn = null;
+		/**
+		 * If watch option is enabled a chockidar instance will be created in order to listen changes in the sources files
+		 * @private
+		 * @type {Chockidar}
+		 */
+		this.watcher = null;
+
+		/**
+		 * @private
+		 * @property {string} kind package kind [.js | .css]
+		 */
 		Object.defineProperty(this, 'kind', {
 			enumerable: false,
 			value: target.replace(path.trimExt(target), '').replace('.', '')
@@ -72,6 +77,28 @@ export default class BundleItem {
 			});
 		}
 	}
+	async build (logger) {
+		try {
+			this.sources.forEach(f => {
+				this.watcher.unwatch(f);
+			});
+		} catch (Ex) { }
+		let data = await builder[this.kind](this.file, this, configuration.server.env === 'development', false, logger);
+		let sources = [];
+		let files = [];
+		for (const key in data) {
+			files.push(key);
+			sources = sources.concat(data[key]);
+		}
+		this.sources = sources;
+		sources.forEach(f => {
+			this.watcher.add(f);
+		});
+		return files;
+	}
+	valueOf () {
+		return this.file;
+	}
 	watch (fn) {
 		if (!this.watcher) {
 			this.watcher = new Watch(this.content, {
@@ -90,30 +117,62 @@ export default class BundleItem {
 		this.watchfn = fn;
 		this.watcher.on('change', fn);
 	}
+	/**
+	 * Adds a new filepath to the bundle.
+	 * @param {String} item - File location of the file to add.
+	 * @return {BundleItem} - Returns the BundleItem instace for chaining.
+	 */
 	add (item) {
 		if (this.content.indexOf(item) === -1) {
 			this.content.push(item);
 		}
 		return this;
 	}
+	/**
+	 * Remove a single item and unwatch it if needed.
+	 * @param {String} - The item to be removed.
+	 */
 	remove (item) {
 		if (this.content.indexOf(item) > -1) {
-			this.content.splice(this.content.indexOf(item), 1);
+			let [Item] = this.content.splice(this.content.indexOf(item), 1);
+			if (this.watcher) {
+				this.watcher.unwatch(Item);
+			}
 		}
 		return this;
 	}
+	/**
+	 * Removes all files added to the bundle.
+	 * @return {BundleItem} - Returns the BundleItem instace for chaining.
+	 */
 	clear () {
 		while (this.content.length > 0) {
-			this.watcher.unwatch(this.content.pop());
+			let item = this.content.pop();
+			if (this.watcher) {
+				this.watcher.unwatch(item);
+			}
 		}
 		return this;
 	}
+	/**
+	 * Compares two BundleItem and returns true is equal.
+	 * @param {BundleItem} target - BundleItem to campare to.
+	 * @return {Boolean} - true if they are equal false otherwise.
+	 */
 	equals (target) {
 		return this.file === target.file;
 	}
+	/**
+	 * Makes sure that calling JSON.stringify return an array with the source files.
+	 * @return {String[]} - Return the value of the source files.
+	 */
 	toJSON () {
 		return this.content;
 	}
+	/**
+	 * Returns the representation of the bundle in <link rel='stylesheet' href='...'> or <script src='...'></script> format.
+	 * @return {String}
+	 */
 	toString () {
 		let res = '';
 		for (const idx in this.content) {
@@ -121,6 +180,11 @@ export default class BundleItem {
 		}
 		return res;
 	}
+	/**
+	 * Return an iterator that can be use with for ... of
+	 * @alias BundleItem#iterator
+	 * @return {Symbol.iterator}
+	*/
 	[ Symbol.iterator] () {
 		let index = -1;
 		return {

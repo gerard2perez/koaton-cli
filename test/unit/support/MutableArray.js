@@ -1,8 +1,7 @@
-/*global describe, it*/
 import * as assert from 'assert';
-import ORMModel from '../../../src/support/ORMModel';
 import MutableArray from '../../../src/support/MutableArray';
 import BundleItem from '../../../src/support/BundleItem';
+import ORMModel from '../../../src/support/ORMModel';
 
 let testing = {
 		database: {},

@@ -26,7 +26,7 @@ for (const lang of Object.keys(langs)) {
 				return log.indexOf('cannot translate to the same language') > -1;
 			} else {
 				let translation = fs.readJSONSync(ProyPath('locales', `${lang}.js`));
-				return translation.t001 && translation.t001 !== 'Hello';
+				return translation.t001 && translation.t001 !== undefined;
 			}
 		});
 }

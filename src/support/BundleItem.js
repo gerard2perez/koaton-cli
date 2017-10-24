@@ -1,16 +1,11 @@
 import * as path from 'upath';
 import { watch as Watch } from 'chokidar';
-import { buildCSS, buildJS } from '../commands/build';
 
-const builder = {
-	css: buildCSS,
-	js: buildJS
-};
 const bundletemplates = {
-	'css': (file) => {
+	'.css': (file) => {
 		return `<link rel='stylesheet' href='${file}'>`;
 	},
-	'js': (file) => {
+	'.js': (file) => {
 		return `<script src='${file}'></script>`;
 	}
 };
@@ -54,7 +49,7 @@ export default class BundleItem {
 		 */
 		Object.defineProperty(this, 'kind', {
 			enumerable: false,
-			value: target.replace(path.trimExt(target), '').replace('.', '')
+			value: target.replace(path.trimExt(target), '') // .replace('.', '')
 		});
 		Object.defineProperty(this, 'file', {
 			enumerable: true,
@@ -77,13 +72,13 @@ export default class BundleItem {
 			});
 		}
 	}
-	async build (logger) {
+	async build (logger, builder) {
 		try {
 			this.sources.forEach(f => {
 				this.watcher.unwatch(f);
 			});
 		} catch (Ex) { }
-		let data = await builder[this.kind](this.file, this, configuration.server.env === 'development', false, logger);
+		let data = await builder(this.file, this, configuration.server.env === 'development', false, logger);
 		let sources = [];
 		let files = [];
 		for (const key in data) {

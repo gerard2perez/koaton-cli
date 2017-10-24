@@ -71,7 +71,7 @@ export default class EmberBuilder {
 		let text = await readFile(ProyPath('public', this.directory, 'index.html'), { encoding: 'utf-8' }),
 			indextemplate = await readFile(TemplatePath('ember_apps', 'index.handlebars'), 'utf-8'),
 			meta = new RegExp(`<meta ?name="${emberinternalname}.*" ?content=".*" ?/>`);
-		const links = new RegExp('<link rel="stylesheet" href=".*?assets/.*.css.*>', 'gm');
+		const links = new RegExp('<link.*rel="stylesheet" href=".*?assets/.*.css.*>', 'gm');
 		const scripts = new RegExp('<script src=".*?assets/.*.js.*></script>', 'gm');
 		const transformlinks = (text, expresion) => {
 			return text.match(expresion).join('\n')

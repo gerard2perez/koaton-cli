@@ -55,19 +55,19 @@ tests.push(new TestNode('(no args)', [{}], true))
 			}
 		}
 		requireNoCache(ProyPath('node_modules', 'koaton/support', 'globals'));
-		configuration.ember = requireNoCache(ProyPath('config', 'ember')).default;
+		// configuration.ember = requireNoCache(ProyPath('config', 'ember')).default;
 		scfg.env = 'development';
 		global.scfg = new ServerConfiguaration();
 		for (const key of Object.keys(configuration.bundles)) {
 			if (!configuration.bundles[key].content) {
 				let bundle = new BundleItem(key, configuration.bundles[key]);
-				configuration.bundles[key] = bundle;
+				scfg.bundles[key] = bundle;
 			}
 		}
 	})
 	.Exists('public', 'css', '0admin.css')
 	.Exists('public', 'js', 'admin.min.js')
-	.Exists('public', 'js', 'admin.js.map')
+	.Exists('public', 'js', 'admin.map')
 	.Expect('Builds Ember Apps', true, () => {
 		for (const app of scfg.emberApps) {
 			fs.accessSync(ProyPath('public', app.directory));
@@ -87,7 +87,7 @@ tests.push(new TestNode('(no args)', [{}], true))
 		return true;
 	})
 	.Expect('Copy Static Content', true, () => {
-		const copy = requireSafe(ProyPath('config', 'copy'), {});
+		const copy = require(ProyPath('config', 'static'), {});
 		for (const dir in copy) {
 			for (const idx in copy[dir]) {
 				let directories = glob(ProyPath(copy[dir][idx]));

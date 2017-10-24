@@ -10,5 +10,5 @@ if (__dirname.indexOf('Development') > -1) {
 	});
 	require('./src');
 } else {
-	require('./lib');
+	require('./index');
 }

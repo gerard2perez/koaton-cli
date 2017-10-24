@@ -24,16 +24,15 @@ const notestcase = function (testname) {
 		});
 	});
 };
-function takeone (data) {
+async function takeone (data) {
 	if (data.length === 0) {
 		return Promise.resolve(true);
 	}
 	let test = data.splice(0, 1)[0];
 	let [message, mustbe, Actual] = test();
-	return Actual.then((actual) => {
-		assert.equal(actual, mustbe, message);
-		return takeone(data);
-	});
+	let actual = await Actual;
+	assert.equal(actual, mustbe, message);
+	return takeone(data);
 }
 const testcase = function testcase (TestConfig, cwd, testname, command) {
 	describe(testname, function () {
@@ -47,26 +46,22 @@ const testcase = function testcase (TestConfig, cwd, testname, command) {
 				const WriteO = process.stdout.write;
 				try {
 					let buffer = '';
-					process.stderr.write = () => {
-					};
-					process.stdout.write = () => {
-					};
-					console.log = (...data) => {
-						ori(...data);
-						buffer += (data || '').toString();
-					};
+					// process.stderr.write = () => {
+					// };
+					// process.stdout.write = () => {
+					// };
+					// console.log = (...data) => {
+					// 	ori(...data);
+					// 	buffer += (data || '').toString();
+					// };
 					if (testdata.asyncs) {
 						let res = command.action.apply(null, testdata.args);
 						testdata.expect.splice(0, 1);
-						return res.then((childIPIDs) => {
-							return takeone(testdata.expect).then(() => {
-								for (const pid of childIPIDs) {
-									process.kill(pid);
-								}
-							});
-						}, (err) => {
-							console.log(err);
-						});
+						let childIPIDs = await res;
+						await takeone(testdata.expect);
+						for (const pid of childIPIDs) {
+							process.kill(pid);
+						}
 					} else {
 						let res = await command.action.apply(null, testdata.args);
 						// console.log = ori;

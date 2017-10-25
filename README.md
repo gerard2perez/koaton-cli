@@ -11,6 +11,8 @@ Koaton is a CLI tool that allow you to easily create and manage your [Koaton](ht
 
   The Latest Version
   ------------------
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/gerard2p/koaton-cli.svg)](https://greenkeeper.io/)
  [![NPM Version](http://img.shields.io/npm/v/koaton-cli.svg?style=flat-square)](https://www.npmjs.org/package/koaton-cli)
 
 ## Documentation

@@ -23,7 +23,7 @@ describe('copy', function () {
 			let res = await utils.copy('./templates/public/img/koaton.png', './koaton.png', utils.writemodes.create);
 			f.init(true);
 			assert.equal(res, 'koaton.png');
-			assert.equal('   \u001b[36mcreate\u001b[39m: \u001b[32mkoaton.png\u001b[39m', f.log());
+			assert.ok(f.log().indexOf('koaton.png') > -1);
 
 			f.init();
 			await utils.copy('./templates/public/img/koaton.png', './koaton.png', utils.writemodes.update);

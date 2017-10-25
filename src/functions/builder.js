@@ -40,11 +40,11 @@ export async function buildCSS (target, bundle, development, onlypaths, logger) 
 		}),
 		watchinFiles = {};
 	let urlocurrencies = [];
-	for (let index in bundle.content) {
+	for (let index in bundle) {
 		if (!development) {
 			utils.rmdir(path.join('public', 'css', index + target));
 		}
-		let file = path.normalize(bundle.content[index]),
+		let file = path.normalize(bundle[index]),
 			basename = path.basename(file);
 		if (file.indexOf('.less') > -1) {
 			let content = await less.render(fs.readFileSync(file, 'utf-8'), {

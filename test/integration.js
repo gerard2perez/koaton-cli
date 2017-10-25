@@ -1,19 +1,18 @@
 import * as assert from 'assert';
-import importindex from '../src/utils/importindex';
 import configuration from './configuration';
 
 const CommandOrder = [].concat([
-	// 'new',
-	// 'adapter',
-	// 'ember',
-	// 'model',
-	// 'relation',
-	// 'translate',
-	// 'nginx',
-	// 'install',
+	'new',
+	'adapter',
+	'ember',
+	'model',
+	'relation',
+	'install',
 	'build',
+	'translate',
 	'seed',
 	'modulify',
+	'nginx',
 	// 'serve'
 ]);
 
@@ -46,14 +45,14 @@ const testcase = function testcase (TestConfig, cwd, testname, command) {
 				const WriteO = process.stdout.write;
 				try {
 					let buffer = '';
-					// process.stderr.write = () => {
-					// };
-					// process.stdout.write = () => {
-					// };
-					// console.log = (...data) => {
-					// 	ori(...data);
-					// 	buffer += (data || '').toString();
-					// };
+					process.stderr.write = () => {
+					};
+					process.stdout.write = () => {
+					};
+					console.log = (...data) => {
+						// ori(...data);
+						buffer += (data || '').toString();
+					};
 					if (testdata.asyncs) {
 						let res = command.action.apply(null, testdata.args);
 						testdata.expect.splice(0, 1);

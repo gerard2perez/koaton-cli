@@ -15,9 +15,6 @@ tests.push(new TestNode('(no args)', [undefined, {}], true))
 		// require(ProyPath('node_modules', 'koaton/support', 'globals'));
 		scfg.env = 'development';
 		fs.removeSync(ProyPath('seeds', 'user.js'));
-	})
-	.Expect('Nothing to seed', true, (log) => {
-		return log.indexOf('Nothing to seed') > -1;
 	});
 
 tests.push(new TestNode(cmdname, ['user', {

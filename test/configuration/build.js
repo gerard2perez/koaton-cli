@@ -3,7 +3,7 @@ import { sync as glob } from 'glob';
 import * as path from 'upath';
 import * as fs from 'fs-extra';
 import TestNode from '../support/TestNode';
-import BundleItem from '../../src/support/BundleItem';
+import BundleItemCLI from '../../src/support/BundleItem';
 import '../support/array';
 import ServerConfiguaration from '../../src/support/Server';
 
@@ -20,6 +20,7 @@ let cmdname = 'koaton build';
 
 tests.push(new TestNode('(no args)', [{}], true))
 	.SetUp(() => {
+		require.cache = [];
 		process.env.NODE_ENV = 'development';
 		fs.removeSync(ProyPath('./.koaton'));
 		global.skipshell = false;
@@ -49,20 +50,21 @@ tests.push(new TestNode('(no args)', [{}], true))
 			]
 		});
 		process.env.isproyect = 'true';
-		for (const file of Object.keys(require.cache)) {
-			if (file.indexOf('bundles') > -1 || file.indexOf('globals') > -1 || file.indexOf('ember') > -1) {
-				delete require.cache[file];
-			}
-		}
+		// for (const file of Object.keys(require.cache)) {
+		// 	if (file.indexOf('bundles') > -1 || file.indexOf('globals') > -1 || file.indexOf('ember') > -1) {
+		// 		delete require.cache[file];
+		// 	}
+		// }
 		requireNoCache(ProyPath('node_modules', 'koaton/support', 'globals'));
-		// configuration.ember = requireNoCache(ProyPath('config', 'ember')).default;
+		const BundleItem = requireNoCache(ProyPath('node_modules', 'koaton/support', 'BundleItem')).default;
+		configuration.ember = requireNoCache(ProyPath('config', 'ember')).default;
 		scfg.env = 'development';
 		global.scfg = new ServerConfiguaration();
 		for (const key of Object.keys(configuration.bundles)) {
-			if (!configuration.bundles[key].content) {
-				let bundle = new BundleItem(key, configuration.bundles[key]);
-				scfg.bundles[key] = bundle;
+			if (!scfg.bundles[key]) {
+				scfg.bundles.add(new BundleItemCLI(key, configuration.bundles[key]));
 			}
+			configuration.bundles[key] = new BundleItem(key, configuration.bundles[key]);
 		}
 	})
 	.Exists('public', 'css', '0admin.css')
@@ -87,12 +89,22 @@ tests.push(new TestNode('(no args)', [{}], true))
 		return true;
 	})
 	.Expect('Copy Static Content', true, () => {
-		const copy = require(ProyPath('config', 'static'), {});
-		for (const dir in copy) {
-			for (const idx in copy[dir]) {
-				let directories = glob(ProyPath(copy[dir][idx]));
+		const {copy} = require(ProyPath('config', 'static'), {}).default;
+		for (const item of copy) {
+			for (const filepath of item.src) {
+				let originalnodes = filepath.split('/');
+				let directories = glob(ProyPath(filepath));
 				for (const file of directories) {
-					fs.accessSync(ProyPath('public', dir, path.basename(file)));
+					let filename = path.basename(file);
+					if (item.flatten) {
+						fs.accessSync(ProyPath('public', path.basename(file)));
+					} else {
+						let targetnodes = file.split('/');
+						let filtered = originalnodes.filter(n => targetnodes.indexOf(n) > -1).join('/');
+						filtered = path.dirname(file).replace(filtered, '');
+						filename = path.join(filtered, filename);
+						fs.accessSync(filename);
+					}
 				}
 			}
 		}

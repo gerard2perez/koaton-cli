@@ -40,9 +40,9 @@ async function buildBundles () {
 		console.log(`   Updating bundles (env: ${scfg.env})`);
 		for (const bundle of configuration.bundles) {
 			if (bundle.kind === '.css') {
-				await buildCSS(bundle.file, bundle, scfg.env === 'development');
+				await buildCSS(bundle.file, bundle.content.slice(0), scfg.env === 'development');
 			} else if (bundle.kind === '.js') {
-				await buildJS(bundle.file, bundle, scfg.env === 'development');
+				await buildJS(bundle.file, bundle.content.slice(0), scfg.env === 'development');
 			}
 		}
 	}

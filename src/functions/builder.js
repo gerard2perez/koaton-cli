@@ -122,8 +122,11 @@ export async function buildCSS (target, bundle, development, onlypaths, logger) 
 	}
 	utils.writeuseslog = undefined;
 	let [seconds, nanoseconds] = process.hrtime(start);
-	process.stdout.clearLine();
-	process.stdout.cursorTo(0);
+	/* istanbul ignore next */
+	if (process.stdout.isTTY) {
+		process.stdout.clearLine();
+		process.stdout.cursorTo(0);
+	}
 	console.log(`   ${__ok.green} ${target} ${(seconds * 1000) + Math.ceil(nanoseconds / 1e6)} ms`);
 	if (error.length > 0) {
 		console.log(error.join('\n'));
@@ -182,8 +185,11 @@ export async function buildJS (target, bundle, development, onlypaths, logger) {
 	utils.writeuseslog = undefined;
 	scfg.bundles.remove(ITEM).add(ITEM);
 	let [seconds, nanoseconds] = process.hrtime(start);
-	process.stdout.clearLine();
-	process.stdout.cursorTo(0);
+	/* istanbul ignore next */
+	if (process.stdout.isTTY) {
+		process.stdout.clearLine();
+		process.stdout.cursorTo(0);
+	}
 	console.log(`   ${__ok.green} ${target}  ${(seconds * 1000) + Math.ceil(nanoseconds / 1e6)} ms`);
 	if (error.length > 0) {
 		console.log(error.join('\n'));

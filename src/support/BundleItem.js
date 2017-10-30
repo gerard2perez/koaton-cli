@@ -72,24 +72,26 @@ export default class BundleItem {
 			});
 		}
 	}
-	async build (logger, builder) {
+	async build (builder, logger) {
 		try {
 			this.sources.forEach(f => {
 				this.watcher.unwatch(f);
 			});
-		} catch (Ex) { }
-		let data = await builder(this.file, this.content.slice(0), configuration.server.env === 'development', false, logger);
-		let sources = [];
-		let files = [];
-		for (const key in data) {
-			files.push(key);
-			sources = sources.concat(data[key]);
+			let data = await builder(this.file, this.content.slice(0), configuration.server.env === 'development', false, logger);
+			let sources = [];
+			let files = [];
+			for (const key in data) {
+				files.push(key);
+				sources = sources.concat(data[key]);
+			}
+			this.sources = sources;
+			sources.forEach(f => {
+				this.watcher.add(f);
+			});
+			return files;
+		} catch (Ex) {
+			console.log(Ex.stack);
 		}
-		this.sources = sources;
-		sources.forEach(f => {
-			this.watcher.add(f);
-		});
-		return files;
 	}
 	valueOf () {
 		return this.file;

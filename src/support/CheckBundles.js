@@ -20,7 +20,7 @@ async function onChange (bundle, file) {
 	let filepath = resolve(file);
 	let newhash = await hasfile(file);
 	if (newhash !== hashes[filepath]) {
-		reloadFiles(bundle, await bundle.build());
+		reloadFiles(bundle, await bundle.build(bundle.kind === '.css' ? buildCSS : buildJS));
 		hashes[filepath] = newhash;
 	}
 }
@@ -58,7 +58,7 @@ async function DetectChanges (changed) {
 		}
 		allBundles[bundle].isUpdating = true;
 		if (mustrebuild) {
-			reloadFiles(allBundles[bundle], await allBundles[bundle].build());
+			reloadFiles(allBundles[bundle], await allBundles[bundle].build(allBundles[bundle].kind === '.css' ? buildCSS : buildJS));
 		}
 	}
 	for (const bundle in allBundles) {
@@ -90,7 +90,7 @@ async function checkbundles () {
 	await mkdir(ProyPath('public', 'js'), null);
 	for (const bundle of configuration.bundles) {
 		let b = allBundles[bundle.file] = new BundleItem(bundle.file, bundle.content, true);
-		await b.build(logger, bundle.kind === '.css' ? buildCSS : buildJS);
+		await b.build(bundle.kind === '.css' ? buildCSS : buildJS, logger);
 		b.watch(onChange.bind(null, b));
 		makehashes(b.sources);
 	}

@@ -78,7 +78,7 @@ export default class BundleItem {
 				this.watcher.unwatch(f);
 			});
 		} catch (Ex) { }
-		let data = await builder(this.file, this, configuration.server.env === 'development', false, logger);
+		let data = await builder(this.file, this.content.slice(0), configuration.server.env === 'development', false, logger);
 		let sources = [];
 		let files = [];
 		for (const key in data) {

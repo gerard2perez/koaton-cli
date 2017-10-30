@@ -5,6 +5,7 @@ import BundleItem from './BundleItem';
 import { watch as Watch } from 'chokidar';
 import { resolve } from 'path';
 import hasfile from '../utils/hasfile';
+import { buildCSS, buildJS } from '../functions/builder';
 
 let allBundles = {};
 let hashes = {};
@@ -89,7 +90,7 @@ async function checkbundles () {
 	await mkdir(ProyPath('public', 'js'), null);
 	for (const bundle of configuration.bundles) {
 		let b = allBundles[bundle.file] = new BundleItem(bundle.file, bundle.content, true);
-		await b.build(logger);
+		await b.build(logger, bundle.kind === '.css' ? buildCSS : buildJS);
 		b.watch(onChange.bind(null, b));
 		makehashes(b.sources);
 	}

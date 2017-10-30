@@ -183,6 +183,7 @@ export default class EmberBuilder {
 	}
 	createWatcher (reload) {
 		let watcher = new Watch(ProyPath('public', this.directory, '**/*'), {
+			// ignored: ,
 			persistent: true,
 			ignoreInitial: true,
 			alwaysStat: false,
@@ -197,15 +198,16 @@ export default class EmberBuilder {
 		// 	});
 		// };
 		let fileSelector = async (file) => {
+			console.log('fileSelector', file);
 			if (file.indexOf('index.html') > -1) {
 				await this.postbuild();
-				reload();
+				// reload();
 				// rebuildview();
-			} else if (file.indexOf('.css')) {
+			} else if (file.indexOf('.css') > -1) {
 				if (file.indexOf('.map') === -1) {
 					reload(basename(file));
 				}
-			} else if (file.indexOf('.js')) {
+			} else if (file.indexOf('.js') > -1 && file.indexOf('testem.js') === -1) {
 				if (file.indexOf('.map') === -1) {
 					reload(basename(file));
 				}

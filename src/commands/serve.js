@@ -29,7 +29,7 @@ const deleted = function (file) {
 	},
 	ReloadTemplates = function ReloadTemplates () {
 		let watcher = new Watch(path.join('views', '*'), {
-			ignored: '**/**/',
+			ignored: 'views/ember_apps',
 			persistent: true,
 			ignoreInitial: true,
 			alwaysStat: false,
@@ -40,6 +40,7 @@ const deleted = function (file) {
 		});
 		watching.push(watcher);
 		watcher.on('change', async (file) => {
+			console.log('ReloadTemplates', file);
 			livereload.reload();
 		});
 	},

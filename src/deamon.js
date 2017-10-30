@@ -71,6 +71,7 @@ export default function StartKoatonServer (resolve, reject, EmberPids, nginx = f
 			'public',
 			'commands',
 			'koaton_modules',
+			'views/ember_apps/*',
 			'views/*.*',
 			'downloads',
 			'config/bundles.js',
@@ -81,6 +82,7 @@ export default function StartKoatonServer (resolve, reject, EmberPids, nginx = f
 	});
 	let server = LoadServer(resolve, reject, EmberPids, nginx);
 	watcher.on('all', (event, path) => {
+		console.log(123, event, path);
 		server.kill();
 		server = LoadServer(resolve, reject, EmberPids, nginx);
 	});

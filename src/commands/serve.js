@@ -135,33 +135,32 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 			ReloadTemplates();
 			await WactchAndCompressImages();
 		}
-		await Events('pre', 'build');
-		await Events('pre', 'ember_build');
-		let buildingAppsEmber = Object.entries(embercfg).map(([app, cfg]) => (new EmberBuilder(app, 'development', cfg)));
-		screen.line1(true);
-		const building = spinner();
-		building.start(100, `Building ${buildingAppsEmber.map(e => e.name).join(', ').green}`, undefined, process.stdout.columns);
-		let EmberPids = await Promise.all(buildingAppsEmber.map(e => e.serve(nginxbuilt, options.noEmberLive))).then((reports) => {
-			building.end('    Ember apps:');
-			for (const report of reports) {
-				report.log = true;
-				console.log(`      ${report.result}`);
-			}
-			screen.line1();
-			buildingAppsEmber.map(e => e.createWatcher((file) => {
-				livereload.reload(file);
-			}));
-			return reports.map((r) => r.pid);
-		});
-		await Events('post', 'ember_build');
-		return Events('pre', 'serve').then(() => {
-			return new Promise(function (resolve, reject) {
-				let server = deamon(resolve, reject, EmberPids, nginxbuilt);
-				/* istanbul ignore next */
-				process.once('SIGINT', function () {
-					server.kill();
-					resolve(0);
-				});
+		return new Promise(async function (resolve, reject) {
+			await Events('pre', 'serve');
+			let server = deamon(resolve, reject, nginxbuilt);
+			await Events('pre', 'ember_build');
+			let buildingAppsEmber = Object.entries(embercfg).map(([app, cfg]) => (new EmberBuilder(app, 'development', cfg)));
+			screen.line1(true);
+			const building = spinner();
+			building.start(100, `Building ${buildingAppsEmber.map(e => e.name).join(', ').green}`, undefined, process.stdout.columns);
+			let EmberPids = await Promise.all(buildingAppsEmber.map(e => e.serve(nginxbuilt, options.noEmberLive))).then((reports) => {
+				building.end('    Ember apps:');
+				for (const report of reports) {
+					report.log = true;
+					console.log(`      ${report.result}`);
+				}
+				screen.line1();
+				buildingAppsEmber.map(e => e.createWatcher((file) => {
+					livereload.reload(file);
+				}));
+				return reports.map((r) => r.pid);
+			});
+			await Events('post', 'ember_build');
+			await Events('post', 'serve');
+			/* istanbul ignore next */
+			process.once('SIGINT', function () {
+				server.kill();
+				resolve(0);
 			});
 		});
 	});

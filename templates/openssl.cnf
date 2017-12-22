@@ -1,0 +1,23 @@
+[req]
+serial					= 1
+default_bits			= 2048
+distinguished_name = req_distinguished_name
+x509_extensions        = v3_ca
+prompt = no
+
+[req_distinguished_name]
+C						= {{c}}
+ST						= {{st}}
+L						= {{l}}
+O						= {{o}}
+OU						= {{ou}}
+CN						= {{root_website}}
+emailAddress			= {{email}}
+
+[v3_ca]
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always,issuer:always
+basicConstraints       = critical,CA:TRUE
+keyUsage               = digitalSignature,nonRepudiation,keyEncipherment,dataEncipherment,keyAgreement,keyCertSign
+subjectAltName         = {{alt_names_dns}},email:{{email}}
+issuerAltName          = issuer:copy

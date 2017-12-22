@@ -4,21 +4,8 @@ import { livereload, liveReloadHost } from './utils/livereload';
 import * as spawn from 'cross-spawn';
 import * as psTree from 'ps-tree';
 
-function LoadServer (resolve, reject, EmberPids, nginx) {
+function LoadServer (resolve, reject, nginx) {
 	let PIDPromises = [];
-	if (process.env.istesting) {
-		for (const pid of EmberPids) {
-			PIDPromises.push(new Promise((resolve) => {
-				psTree(pid, (err, children) => {
-					if (err) {
-						reject(err);
-					}
-					let childIPIDs = children.map((p) => parseInt(p.PID, 10));
-					resolve(childIPIDs);
-				});
-			}));
-		}
-	}
 	let KoatonServer = spawn('node', ['app.js'], { shell: false, env: {liveReloadHost: liveReloadHost(), NODE_ENV: process.env.NODE_ENV} });
 	KoatonServer.stdout.on('data', (buffer) => {
 		process.stdout.write(buffer);
@@ -48,14 +35,13 @@ function LoadServer (resolve, reject, EmberPids, nginx) {
 	KoatonServer.stderr.on('data', (data) => {
 		console.log(`stderr: ${data}`);
 	});
-
 	KoatonServer.on('close', (code) => {
 		console.log(`child process exited with code ${code}`);
 	});
 	return KoatonServer;
 }
 
-export default function StartKoatonServer (resolve, reject, EmberPids, nginx = false) {
+async function StartKoatonServer (resolve, reject, nginx = false) {
 	let watcher = new Watch('./**', {
 		awaitWriteFinish: {
 			stabilityThreshold: 500,
@@ -80,11 +66,12 @@ export default function StartKoatonServer (resolve, reject, EmberPids, nginx = f
 			'*.conf'
 		]
 	});
-	let server = LoadServer(resolve, reject, EmberPids, nginx);
+	let server = LoadServer(resolve, reject, nginx);
 	watcher.on('all', (event, path) => {
 		console.log(123, event, path);
 		server.kill();
-		server = LoadServer(resolve, reject, EmberPids, nginx);
+		server = LoadServer(resolve, reject, nginx);
 	});
 	return server;
 }
+export default StartKoatonServer;

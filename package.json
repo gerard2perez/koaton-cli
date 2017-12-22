@@ -79,7 +79,7 @@
     "koaton": "./koaton"
   },
   "engines": {
-    "node": ">= 6.5.0"
+    "node": ">= 8.7.0"
   },
   "preferGlobal": true,
   "repository": {

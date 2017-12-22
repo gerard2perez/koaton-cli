@@ -30,5 +30,5 @@ npm-debug*
 /secret.js
 /spinner.js
 /welcome.js
-
+package-lock.json
 koaton-cli-0.0.0-development.tgz

@@ -30,7 +30,7 @@ export default function shell (display, command, cwd = process.cwd()) {
 			cwd: path.join(cwd, '/'),
 			shell: true
 		});
-		spinner.start(50, display, undefined, process.stdout.columns).then(() => {
+		spinner.start(1000 / 24, display, undefined, process.stdout.columns).then(() => {
 			resolve(c);
 		});
 		child.stderr.on('data', output);

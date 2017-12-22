@@ -6,6 +6,8 @@ services:
 language: node_js
 node_js:
   - "8.7.0"
+  - "lts/*"
+  - "node"
 sudo: required
 env:
   - CXX=g++-4.8

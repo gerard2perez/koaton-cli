@@ -5,7 +5,7 @@ services:
   - mongodb
 language: node_js
 node_js:
-  - "8.7.0"
+  - "7.9.0"
   - "lts/*"
   - "node"
 sudo: required
@@ -26,6 +26,7 @@ before_install:
   - sudo nginx -c `pwd`/etc/nginx.conf
   - npm config set spin false
   - npm install -g ember-cli@2.16.2
+  - npm install -g semantic-release
   - npm install -g codeclimate-test-reporter
 install:
   - npm i .

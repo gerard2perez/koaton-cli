@@ -1,4 +1,5 @@
 ![Koaton](/koaton-cli.png)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fgerard2p%2Fkoaton-cli.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fgerard2p%2Fkoaton-cli?ref=badge_shield)
 
 [![Build Status](https://img.shields.io/travis/gerard2p/koaton-cli/master.svg?style=flat-square)](https://travis-ci.org/gerard2p/koaton-cli)[![Dependency Status](https://david-dm.org/gerard2p/koaton-cli.svg?style=flat-square)](https://david-dm.org/gerard2p/koaton-cli)![PRs Welcome](https://img.shields.io/badge/PRs%20🔀-Welcome-brightgreen.svg?style=flat-square)
 
@@ -11,6 +12,8 @@ Koaton is a CLI tool that allow you to easily create and manage your [Koaton](ht
 
   The Latest Version
   ------------------
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/gerard2p/koaton-cli.svg)](https://greenkeeper.io/)
  [![NPM Version](http://img.shields.io/npm/v/koaton-cli.svg?style=flat-square)](https://www.npmjs.org/package/koaton-cli)
 
 ## Documentation
@@ -93,3 +96,6 @@ SourceMaps will be always be built in **development** environment, but **not** i
 
 ## Licensing
 Read [LICENCE.md](LICENCE.md)
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fgerard2p%2Fkoaton-cli.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fgerard2p%2Fkoaton-cli?ref=badge_large)

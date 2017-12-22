@@ -70,11 +70,11 @@
     "gulp-livereload": "^3.8.1",
     "husky": "^0.14.3",
     "koaton-exporter": "^1.2.1",
-    "mocha": "^3.2.0",
+    "mocha": "^4.0.1",
     "npm-run-all": "^4.1.1",
     "nyc": "^11.2.1",
     "ps-tree": "^1.1.0",
-    "semantic-release": "^6.3.2"
+    "semantic-release": "^8.2.0"
   },
   "bin": {
     "koaton": "./koaton"

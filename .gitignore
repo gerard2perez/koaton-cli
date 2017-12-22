@@ -16,7 +16,6 @@ duplication.html
 _*
 npm-debug*
 .barebone.js
-/package-lock.json
 
 /commands
 /functions

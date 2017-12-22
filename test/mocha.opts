@@ -1,3 +1,4 @@
 --require src/globals.js
 --bail
 --slow 0
+--exit

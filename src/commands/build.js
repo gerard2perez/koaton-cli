@@ -55,23 +55,23 @@ export default (new Command(
 		['--bundles', '--bundles', 'Builds bundles only'],
 		['--apps', '--apps', 'Builds ember apps only'],
 		['--images', '--images', 'Comprees all the images'],
-		['--static', '--static', 'Copy Static files']
+		['--copy', '--copy', 'Copy Static files']
 	])
-	.Action(async function (options) {
-		options.all = !(options.nginx || options.bundles || options.apps || options.images || options.static);
-		if (options.nginx || options.all) {
+	.Action(async function ({nginx, bundles, apps, images, copy}) {
+		const all = !(nginx && bundles && apps && images && copy);
+		if (nginx || all) {
 			await buildNginx();
 		}
-		if (options.bundles || options.all) {
+		if (bundles || all) {
 			await buildBundles();
 		}
-		if (options.apps || options.all) {
+		if (apps || all) {
 			await buildApps();
 		}
-		if (options.images || options.all) {
+		if (images || all) {
 			await buildAllImages();
 		}
-		if (options.static || options.all) {
+		if (copy || all) {
 			await copystatic();
 		}
 	});

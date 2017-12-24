@@ -1,0 +1,15 @@
+# Test against the latest version of this Node.js version
+environment:
+  nodejs_version: "8"
+install:
+  - ps: Install-Product node $env:nodejs_version
+  - npm config set spin false
+  - npm install -g ember-cli@2.16.2
+  - npm install -g semantic-release
+  - npm install -g codeclimate-test-reporter
+  - npm install
+test_script:
+  - node --version
+  - npm --version
+  - npm run cover
+build: off

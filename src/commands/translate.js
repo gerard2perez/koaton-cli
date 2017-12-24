@@ -9,7 +9,7 @@ export default (new Command(__filename, 'Translate your localization files'))
 	.Options(
 		['-l', '--list', 'Show a list of languages'],
 		['-g', '--generate', 'indicate to genereate the translation file.']
-)
+	)
 	.Action(async function (to, from, options) {
 		from = from || configuration.server.localization.locales[0];
 		if (options.list) {

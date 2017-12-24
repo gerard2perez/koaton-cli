@@ -12,7 +12,7 @@ const CommandOrder = [].concat([
 	'translate',
 	'seed',
 	'modulify',
-	'nginx',
+	'nginx'
 	// 'serve'
 ]);
 

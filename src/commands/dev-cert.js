@@ -22,14 +22,14 @@ export default (new Command(
 		let l = options.l || 'IRA';
 		let o = options.o || 'Koaton';
 		let ou = options.ou || 'DVL';
-		let root_website = options.cn || `www.${configuration.server.host}`;
+		let rootWebsite = options.cn || `www.${configuration.server.host}`;
 		let email = options.email;
-		let alt_names_dns = configuration.server.subdomains.map(sub => {
+		let altNamesDNS = configuration.server.subdomains.map(sub => {
 			return `DNS:${sub}.${configuration.server.host}`;
-		}).join(',')
+		}).join(',');
 		render(TemplatePath('openssl.cnf'), ProyPath('openssl.cnf'), {
-			root_website,
-			alt_names_dns,
+			rootWebsite,
+			altNamesDNS,
 			email,
 			c,
 			st,

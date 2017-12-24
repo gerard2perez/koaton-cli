@@ -10,7 +10,7 @@ function GET (hostname) {
 			hostname: host,
 			port: 80,
 			path: `/${url}`,
-			agent: false  // create a new agent just for this one request
+			agent: false
 		});
 		request.on('response', (response) => {
 			let result = '';

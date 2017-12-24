@@ -2,7 +2,7 @@ import * as path from 'upath';
 import * as fs from 'fs-extra';
 import TestNode from '../support/TestNode';
 import '../support/array';
-import {sync as spawn} from 'cross-spawn';
+import { sync as spawn } from 'cross-spawn';
 // import requireNoCache from '../support/custom_require';
 
 const targetdir = path.join(process.cwd(), 'testingapp');
@@ -14,7 +14,6 @@ tests.push(new TestNode('(no args)', ['', {}], true))
 		fs.removeSync(targetdir);
 	})
 	.Expect('Ask to render help.', 'The command requires a name to run.\n\tkoaton new -h\nto see help.', (log) => log);
-	// tests.push(new TestNode('Must render help',['-h',{}],false));
 
 tests.push(new TestNode('koaton new', ['testingapp', {
 	skipNpm: true,

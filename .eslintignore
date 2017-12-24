@@ -17,3 +17,19 @@ _*
 npm-debug*
 .barebone.js
 templates/
+
+#compiled files for local testing
+/doc/
+/commands
+/functions
+/support
+/utils
+/adapters.js
+/deamon.js
+/globals.js
+/index.js
+/jutsus.js
+/modelmanager.js
+/secret.js
+/spinner.js
+/welcome.js

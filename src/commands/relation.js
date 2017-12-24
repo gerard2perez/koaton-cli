@@ -54,5 +54,5 @@ export default (new Command(__filename, 'makes a relation betwen two models\n   
 			return 404;
 		}
 		model.relation(relationProperty, targetmodel, emberrel[mode], foreignKey);
-		return await persistmodel(model, sourcemodel, options);
+		return persistmodel(model, sourcemodel, options);
 	});

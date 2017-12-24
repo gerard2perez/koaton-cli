@@ -111,7 +111,7 @@ export default class ORMModel {
 					entity[key].PlaceHolder = 'account@your.domain';
 					break;
 				default:
-
+					break;
 			}
 			entity[key].Type = type;
 			entity = JSON.stringify(entity);

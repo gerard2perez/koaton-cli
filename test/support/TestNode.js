@@ -58,7 +58,6 @@ class TestNode {
 			default:
 				console.log('rejected default');
 				return this;
-
 		}
 		this.expect.push((buffer, dir) => {
 			return [message, expect === undefined ? true : expect, fn(buffer, dir)];

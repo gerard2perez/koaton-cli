@@ -1,6 +1,7 @@
 import datatypes from '../support/DataTypes';
 import Command from 'cmd-line/lib/Command';
 import inflector from '../support/inflector';
+import persistmodel from '../functions/persistmodel';
 
 let description = `Creates a new model. fields must be sourrounded by "".
        ${'Fields syntax'.yellow}:
@@ -12,7 +13,6 @@ let description = `Creates a new model. fields must be sourrounded by "".
          koaton model User hasmany Phone as Phones
          koaton model User hasmany Phone phones phoneId
 `;
-import persistmodel from '../functions/persistmodel';
 
 export default (new Command(__filename, description))
 	.Args('name', 'fields')
@@ -31,5 +31,5 @@ export default (new Command(__filename, description))
 
 		scfg.commands.add(cmd);
 		let model = scfg.database[modelname] || scfg.database.add(modelname, fields)[modelname];
-		return await persistmodel(model, modelname, options);
+		return persistmodel(model, modelname, options);
 	});

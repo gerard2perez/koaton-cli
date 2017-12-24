@@ -143,7 +143,7 @@ export default (new Command(__filename, 'Runs your awsome Koaton applicaction es
 			screen.line1(true);
 			const building = spinner();
 			building.start(100, `Building ${buildingAppsEmber.map(e => e.name).join(', ').green}`, undefined, process.stdout.columns);
-			let EmberPids = await Promise.all(buildingAppsEmber.map(e => e.serve(nginxbuilt, options.noEmberLive))).then((reports) => {
+			await Promise.all(buildingAppsEmber.map(e => e.serve(nginxbuilt, options.noEmberLive))).then((reports) => {
 				building.end('    Ember apps:');
 				for (const report of reports) {
 					report.log = true;

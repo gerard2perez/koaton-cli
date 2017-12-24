@@ -58,7 +58,7 @@ export default (new Command(
 		['--copy', '--copy', 'Copy Static files']
 	])
 	.Action(async function ({nginx, bundles, apps, images, copy}) {
-		const all = !(nginx && bundles && apps && images && copy);
+		const all = !(nginx || bundles || apps || images || copy);
 		if (nginx || all) {
 			await buildNginx();
 		}

@@ -1,4 +1,4 @@
-/*eslint no-extend-native: ["error", { "exceptions": ["Array"] }]*/
+/* eslint no-extend-native: ["error", { "exceptions": ["Array"] }] */
 const oldpush = Array.prototype.push;
 Object.defineProperty(Array.prototype, 'last', {
 	configurable: true,

@@ -69,11 +69,10 @@ export default {
 	start () {
 		console.log('Starting Server'.grey + ' ...'.grey.dim);
 		console.log(
-			flame
-			.replace(/!/gim, '!'.dim.italic.bold)
-			.replace(/:/gim, ':'.bold)
-			.replace(/\?/gim, '?'.dim)
-			.replace(/\./gim, '.'.dim.bold)
+			flame.replace(/!/gim, '!'.dim.italic.bold)
+				.replace(/:/gim, ':'.bold)
+				.replace(/\?/gim, '?'.dim)
+				.replace(/\./gim, '.'.dim.bold)
 		);
 		line1();
 		const index = Math.floor((Math.random() * jutsus.length));

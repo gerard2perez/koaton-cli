@@ -31,7 +31,7 @@
     "chokidar": "^2.0.0",
     "cmd-line": "^1.0.2",
     "colors": "^1.1.2",
-    "concat-with-sourcemaps": "^1.0.4",
+    "concat-with-sourcemaps": "^1.0.7",
     "cross-spawn": "^5.1.0",
     "detect-port": "^1.2.1",
     "eslint-plugin-async-await": "0.0.0",

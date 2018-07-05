@@ -46,7 +46,7 @@
     "less": "^2.7.1",
     "less-plugin-clean-css": "^1.5.1",
     "node-notifier": "^5.2.1",
-    "node-sass": "^4.5.0",
+    "node-sass": "^4.9.1",
     "node-sass-css-importer": "0.0.3",
     "passport-local": "^1.0.0",
     "uglify-js": "^3.0.27",

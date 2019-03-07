@@ -50,7 +50,7 @@
     "node-sass-css-importer": "0.0.3",
     "passport-local": "^1.0.0",
     "uglify-js": "^3.0.27",
-    "upath": "^1.0.0"
+    "upath": "^1.1.1"
   },
   "devDependencies": {
     "babel-plugin-istanbul": "^4.1.5",

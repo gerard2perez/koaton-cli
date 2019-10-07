@@ -32,7 +32,7 @@
     "cmd-line": "^1.0.2",
     "colors": "^1.1.2",
     "concat-with-sourcemaps": "^1.0.4",
-    "cross-spawn": "^5.1.0",
+    "cross-spawn": "^7.0.1",
     "detect-port": "^1.2.1",
     "eslint-plugin-async-await": "0.0.0",
     "fs-extra": "^4.0.0",

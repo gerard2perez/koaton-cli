@@ -39,7 +39,7 @@
     "glob": "^7.0.5",
     "google-translate-api": "^2.3.0",
     "gulp-refresh": "^1.1.0",
-    "imagemin": "^5.2.1",
+    "imagemin": "^7.0.1",
     "imagemin-mozjpeg": "^7.0.0",
     "imagemin-pngquant": "^5.0.0",
     "inflection": "^1.12.0",
